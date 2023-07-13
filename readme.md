@@ -32,8 +32,6 @@ I aim to create a website creation tool that leverages ChatGPT4 to speed up and 
 
 ### [Trello Board](https://trello.com/b/3BbQwCmk/capstone-webbie)
 
-### [Github Repo](localhost:3000)
-
 # Setup
 
 Writing this before I've written a single line of code.
@@ -41,3 +39,5 @@ Writing this before I've written a single line of code.
 Startup will likely include filling out one or more .env files, then running a docker-compose command.
 
 To run the undockerized frontend run `npm run dev` in the react-app directory.
+
+For storybook use check the readme in the react-app directory.

@@ -38,6 +38,6 @@ Writing this before I've written a single line of code.
 
 Startup will likely include filling out one or more .env files, then running a docker-compose command.
 
-To run the undockerized frontend run `npm run dev` in the react-app directory.
+To run the undockerized frontend run `npm start` in the react-frontend directory.
 
-For storybook use check the readme in the react-app directory.
+For storybook use check the readme in the react-frontend directory.

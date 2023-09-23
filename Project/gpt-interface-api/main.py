@@ -3,7 +3,13 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from contextlib import asynccontextmanager
 
-# from decouple import config
+from decouple import config
+
+import os
+import openai
+
+openai.organization = config("OPENAI_ORG")
+openai.api_key = config("OPENAI_KEY")
 
 
 @asynccontextmanager

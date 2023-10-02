@@ -2,6 +2,11 @@ import React from 'react'
 import Head from 'next/head'
 import Image from 'next/image'
 import { ConversationWindow } from '@/components/conversationWindow'
+import ClickCounter from '@/components/clicker'
+// import MessageComponent from '@/components/chatBox'
+import MessageComponent from '@/components/chatBox2'
+import BMOComponent from '@/components/BMO'
+
 
 export default function Home() {
   return (
@@ -13,7 +18,10 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main>
-        <ConversationWindow />
+        {/* <ConversationWindow />
+        <ClickCounter />
+        <MessageComponent /> */}
+        <BMOComponent />
       </main>
     </>
   )

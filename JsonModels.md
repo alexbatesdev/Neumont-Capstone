@@ -2,9 +2,13 @@
 
 ## GweepedReactComponent
 
+# CHANGES HAVE BEEN MADE AND THIS IS OUTDATED, CHECK TEST.PY FOR MODEL DEGINITION
+
 ```json
 {
-  "preCode": ["preCode"],
+  //Anything that may need to come before the imports
+  //Example: /** @jsxImportSource @emotion/react */
+  "preCode": ["preCode"], 
   "imports": [
     {
       "from": "react",
@@ -34,7 +38,6 @@
   ],
   "effects": [
     {
-      "name": "effectName",
       "dependencies": ["dependencyName"],
       "body": ["effectBody"]
     }
@@ -57,8 +60,17 @@
 ```json
 {
     "name": "stateName",
-    "type": "stateType",
     "initValue": "stateValue",
     "isConst": true //Optional
 }
+```
+
+## Import
+
+```json
+{
+  "from": "module",
+  "import": ["importName"],
+  "isNamedImport": false
+},
 ```

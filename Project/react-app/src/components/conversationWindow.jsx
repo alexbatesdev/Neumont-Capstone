@@ -21,8 +21,8 @@ export const ConversationWindow = () => {
 
     const handleSendMessage = () => {
         const message = {
-            sender: "User",
-            text: messageField
+            role: "user",
+            content: messageField
         };
 
         // Update messages state (should automatically cause rerender and visual update)
@@ -36,25 +36,27 @@ export const ConversationWindow = () => {
         // Send message to backend
         // Entirely untested and unmodified to match my needs
         // This is from copilot, it likely needs to be modified to match the backend 😎
-        fetch("/api/chat", {
-            method: "POST",
-            body: JSON.stringify(message),
-            headers: {
-                "Content-Type": "application/json"
-            }
-        }).then((response) => {
-            return response.json();
-        }).then((data) => {
-            const message = {
-                sender: "GPT",
-                text: data.text
-            };
+        // fetch("/api/chat", {
+        //     method: "POST",
+        //     body: JSON.stringify(message),
+        //     headers: {
+        //         "Content-Type": "application/json"
+        //     }
+        // }).then((response) => {
+        //     return response.json();
+        // }).then((data) => {
+        const message_back = {
+            role: "assistant",
+            content: "data.content"
+        };
 
-            // Update messages state (should automatically cause rerender and visual update)
-            setMessages((prevMessages) => {
-                return [...prevMessages, message]
-            });
+        // Update messages state (should automatically cause rerender and visual update)
+        setMessages((prevMessages) => {
+            return [...prevMessages, message_back]
         });
+        // });
+
+        console.log(messages)
     };
 
 
@@ -118,15 +120,14 @@ export const ConversationWindow = () => {
                 flexGrow: 1,
             }}>
                 {messages.map((message, index) => {
-                    if (message.sender == "GPT") {
-                        return (<Box key={message.timeSent} sx={{
+                    if (message.role == "assistant") {
+                        return (<Box key={index + "GPT"} sx={{
                             alignSelf: "flex-start",
                             display: "flex",
                             flexDirection: "row",
                             width: "100%",
                             alignItems: "flex-end",
                             justifyContent: "flex-end",
-                            key: index + "GPT",
                         }}>
                             <Box key={index} sx={{
                                 display: "flex",
@@ -140,24 +141,23 @@ export const ConversationWindow = () => {
                                 color: "black",
                                 borderRadius: "10px",
                                 borderBottomRightRadius: "0",
-                                backgroundColor: "#ebebeb",
+                                backgroundColor: "#10a37f",
                                 alignSelf: "flex-end"
                             }}>
                                 <Typography variant="body1">
-                                    {message.text}
+                                    {message.content}
                                 </Typography>
                             </Box>
                         </Box>
                         )
                     }
-                    if (message.sender == "User") {
-                        return (<Box sx={{
+                    if (message.role == "user") {
+                        return (<Box key={index + "user"} sx={{
                             alignSelf: "flex-start",
                             display: "flex",
                             flexDirection: "row",
                             width: "100%",
                             alignItems: "flex-end",
-                            key: index + "User",
                         }}>
                             <Box key={index} sx={{
                                 display: "flex",
@@ -174,7 +174,7 @@ export const ConversationWindow = () => {
                                 backgroundColor: "#065fb2"
                             }}>
                                 <Typography variant="body1">
-                                    {message.text}
+                                    {message.content}
                                 </Typography>
                             </Box>
                         </Box>

@@ -1,0 +1,11 @@
+version: '3'
+services:
+  gpt-interface:
+    image: gpt-interface-api
+    build: ./gpt-interface-api
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./gpt-interface-api:/app
+    environment:
+      - LOG_LEVEL=DEBUG

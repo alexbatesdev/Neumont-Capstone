@@ -16,11 +16,11 @@ generate_component_code = {
                     "type": "object",
                     "description": "An object defining what to import, where it's being imported from, and if it's a named import",
                     "properties": {
-                        "from": {
+                        "from_": {
                             "type": "string",
                             "description": "The module that content is getting imported from",
                         },
-                        "import": {
+                        "import_": {
                             "type": "array",
                             "items": {
                                 "type": "string",
@@ -33,7 +33,7 @@ generate_component_code = {
                             "description": "This determines if the import is a named import or a default import",
                         },
                     },
-                    "required": ["from", "import", "isNamedImport"],
+                    "required": ["from_", "import_", "isNamedImport"],
                 },
                 "description": "The lines of code that import the necessary dependencies for our component",
             },

@@ -41,4 +41,52 @@
 // }
 
 // export default MessageComponent;
+import React from 'react';
+import { Grid, Divider } from '@mui/material';
+import { useState, useCallback } from 'react';
+import { useEffect } from 'react';
 
+
+export const GridComponent = () => {
+    const [columns, setColumns] = useState(2);
+
+
+    const handleDividerMouseDown = useCallback(() => {
+        window.document.body.style.cursor = 'ew-resize';
+    }, []);
+
+    const handleDividerMouseUp = useCallback(() => {
+        window.document.body.style.cursor = 'auto';
+    }, []);
+
+
+
+    const handleDividerMouseMove = useCallback((e) => {
+        const newColumns = Math.max(Math.ceil((e.clientX - 80) / 200), 0);
+        setColumns(newColumns === 0 ? '1' : newColumns.toString());
+    }, [setColumns]);
+
+
+    return (<>
+        <Grid container spacing={2}>
+            {[...Array(parseInt(columns))].map((_, index) => (
+                <Grid item xs key={`column-${index}`}>
+                    <div style={{ borderRight: '1px solid', paddingRight: '5px' }}>
+                        Column {index + 1}
+                    </div>
+                </Grid>
+            ))}
+        </Grid>
+        <Divider style={{ margin: '10px 0' }} />
+        <div style={{ textAlign: 'center', margin: '10px 0', cursor: 'ew-resize' }}
+            onMouseDown={handleDividerMouseDown}
+            onMouseMove={handleDividerMouseMove}
+            onMouseUp={handleDividerMouseUp}
+        >
+            Divider
+        </div >
+    </>);
+
+}
+
+export default GridComponent;

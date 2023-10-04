@@ -2,37 +2,39 @@ from pydantic import BaseModel, Field
 from typing import List, Optional
 
 
-class Prop(BaseModel):
-    name: str = Field(..., alias="propertyName")
-    defaultValue: Optional[str] = Field(None, alias="propertyDefaultValue")
+class Import(BaseModel):
+    import_: List[str] = Field(..., alias="import_")
+    from_: str = Field(..., alias="from_")
+    isNamedImport: bool = Field(..., alias="isNamedImport")
 
 
 class StateVariable(BaseModel):
-    name: str = Field(..., alias="variableName")
-    initialValue: str = Field(..., alias="variableInitialValue")
+    name: str = Field(..., alias="name")
+    initialValue: str = Field(..., alias="initialValue")
 
 
 class Effect(BaseModel):
-    dependencies: List[str] = Field([], alias="variablesToWatch")
-    body: List[str] = Field([], alias="effectBody")
+    dependencies: List[str] = Field([], alias="dependencies")
+    body: List[str] = Field([], alias="body")
 
 
-class ComponentMethodParameter(BaseModel):
-    name: str = Field(..., alias="parameterName")
-    defaultValue: Optional[str] = Field(None, alias="parameterDefaultValue")
+# Both for props and regular method parameters (because props are just parameters for functional componentss)
+class Parameter(BaseModel):
+    name: str = Field(..., alias="name")
+    defaultValue: Optional[str] = Field(None, alias="defaultValue")
 
 
 class ComponentMethod(BaseModel):
-    name: str = Field(..., alias="functionName")
-    parameters: List[ComponentMethodParameter] = Field([], alias="parameters")
-    body: List[str] = Field(..., alias="functionBody")
+    name: str = Field(..., alias="name")
+    parameters: List[Parameter] = Field([], alias="parameters")
+    body: List[str] = Field(..., alias="body")
 
 
 class Component(BaseModel):
-    imports: List[str] = Field([], alias="dependencies")
-    name: str = Field(..., alias="componentName")
-    props: List[Prop] = Field([], alias="properties")
-    state: List[StateVariable] = Field([], alias="stateVariables")
-    effects: List[Effect] = Field([], alias="componentSideEffects")
-    JSX: List[str] = Field(..., alias="JSX or render body")
-    component_methods: List[ComponentMethod] = Field([], alias="componentMethods")
+    imports: List[Import] = Field([], alias="imports")
+    name: str = Field(..., alias="component_name")
+    props: List[Parameter] = Field([], alias="props")
+    state: List[StateVariable] = Field([], alias="state")
+    effects: List[Effect] = Field([], alias="effects")
+    JSX: List[str] = Field(..., alias="JSX")
+    component_methods: List[ComponentMethod] = Field([], alias="component_methods")

@@ -10,8 +10,8 @@ services:
     environment:
       - LOG_LEVEL=DEBUG
       - PYTHONUNBUFFERED=1
-  next-frontend:
-    container_name: react-frontend
-    build: ./react-app
-    ports:
-      - "3000:3000"
+  # next-frontend: # This container is not for development, but for production
+  #   container_name: react-frontend
+  #   build: ./react-app
+  #   ports:
+  #     - "3000:3000"

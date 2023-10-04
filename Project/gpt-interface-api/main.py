@@ -1,5 +1,6 @@
 import os
 import json
+import pprint
 from fastapi import FastAPI, Depends, HTTPException, status, Body
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.logger import logger
@@ -64,8 +65,13 @@ async def read_root():
 # 😎 Untested changes 😎
 @app.post("/prompt")
 async def prompt(prompt_in: PromptInput = Body(...)):
-    print(prompt_in)
+    pp = pprint.PrettyPrinter(indent=3)
+    pp.pprint(json.dumps(prompt_in.model_dump()))
 
+    system_prompt = {
+        "role": "system",
+        "content": "You are assisting in the development of a javascript React application. When you generate a component it should be a functional component. Include inline styles to make things look nice. Try to use material ui components from @mui/material whenever possible. Be sure to supply valid JSON for the component definition.",
+    }
     user_prompt = {"role": "user", "content": prompt_in.prompt}
 
     if prompt_in.apikey != None:
@@ -74,21 +80,34 @@ async def prompt(prompt_in: PromptInput = Body(...)):
     # If context is getting eaten up by functions then we may want to only provide the function when it's needed
     completion = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",
-        messages=[user_prompt],
-        functions=[functions],
+        messages=[system_prompt, user_prompt],
+        functions=functions,
         function_call=prompt_in.function.value,
     )
-
+    pp.pprint(completion.choices[0].message)
     # if the completion.choices[0].message has the attribute "function_call" then that means the function was called
     if hasattr(completion.choices[0].message, "function_call"):
         if (
             completion.choices[0].message.function_call.name
             == GPTFunction.generate_component_code.value
         ):
-            component_json = json.loads(
-                completion.choices[0].message.function_call.arguments
-            )
+            try:
+                component_json = json.loads(
+                    completion.choices[0].message.function_call.arguments
+                )
+            except Exception as e:
+                pp.pprint(e)
+                return {
+                    "GPT Gave us some invalid JSON, please try again": component_json,
+                    "error": e,
+                    "prompt": user_prompt,
+                }
+
+            pp.pprint(component_json)
+            # Try catch around this that throws the json back to GPT if it's not valid
+
             component_modeled = Component(**component_json)
+
             output = generate_component_code(
                 component_modeled, prompt_in.pre_import_code
             )

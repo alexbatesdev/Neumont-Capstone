@@ -19,9 +19,9 @@ export default function Home() {
       </Head>
       <main>
         {/* <ConversationWindow />
-        <ClickCounter />
-        <MessageComponent /> */}
-        <BMOComponent />
+        <ClickCounter /> */}
+        <MessageComponent />
+        {/* <BMOComponent /> */}
       </main>
     </>
   )

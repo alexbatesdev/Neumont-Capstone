@@ -1,2 +1,7 @@
 env/
 .env
+
+__pycache__/
+
+# ignore the pycache directory no matter how many levels it is nested
+**/__pycache__/

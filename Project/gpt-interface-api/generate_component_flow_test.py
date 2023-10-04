@@ -1,160 +1,5 @@
 import json
-
-
-def generate_component_code(
-    component_name,
-    JSX,
-    pre_import_code=[],
-    imports=[],
-    props={},
-    state={},
-    effects=[],
-    component_methods=[],
-):
-    code = ""
-
-    for line in pre_import_code:
-        code += f"{line}\n"
-
-    # if effects is not empty make sure to import useEffect
-    if len(effects) > 0:
-        hasAlreadyImportedUseEffect = False
-        if len(imports) != 0:
-            for component_import in imports:
-                if (
-                    component_import["from"] == "react"
-                    and "useEffect" in component_import["import"]
-                ):
-                    hasAlreadyImportedUseEffect = True
-                    break
-
-        if not hasAlreadyImportedUseEffect:
-            imports.append(
-                {
-                    "from": "react",
-                    "import": ["useEffect"],
-                    "isNamedImport": True,
-                }
-            )
-
-    # if state is not empty make sure to import useState
-    if len(state) > 0:
-        hasAlreadyImportedUseState = False
-        if len(imports) != 0:
-            for component_import in imports:
-                if (
-                    component_import["from"] == "react"
-                    and "useState" in component_import["import"]
-                ):
-                    hasAlreadyImportedUseState = True
-                    break
-
-        if not hasAlreadyImportedUseState:
-            imports.append(
-                {
-                    "from": "react",
-                    "import": ["useState"],
-                    "isNamedImport": True,
-                }
-            )
-
-    # Iterate through component imports and construct import statements
-    for component_import in imports:
-        import_names = ", ".join(
-            import_name for import_name in component_import["import"]
-        )
-        from_module = component_import["from"]
-        import_statement = "import "
-        if component_import["isNamedImport"]:
-            import_statement += "{ "
-            import_statement += import_names
-            import_statement += " }"
-        else:
-            import_statement += import_names
-        import_statement += f" from '{from_module}';\n"
-        code += import_statement
-
-    code += f"\nexport const {component_name} = (" + (
-        "{{\n    " if len(props) > 0 else ""
-    )
-    props_with_defaults = {}
-
-    spread_prop = None
-
-    for prop in props:
-        if "..." in prop["name"]:
-            spread_prop = prop["name"]
-            continue
-        if prop["defaultValue"] != None:
-            props_with_defaults[prop["name"]] = prop["defaultValue"]
-            continue
-        code += f"{prop['name']}"
-        if prop != props[-1] or spread_prop != None:
-            code += f",\n    "
-
-    for prop["name"], prop["defaultValue"] in props_with_defaults.items():
-        code += f"{prop['name']} = {prop['defaultValue']}"
-        if prop != list(props_with_defaults.items())[-1] or spread_prop != None:
-            code += f",\n    "
-
-    if spread_prop != None:
-        code += f"{spread_prop}"
-
-    code += ("\n}" if len(props) > 0 else "") + ") => {\n    "
-
-    for state_item in state:
-        setStateFunctionName = "set" + state_item["name"].replace(
-            state_item["name"][0], state_item["name"][0].upper(), 1
-        )
-        code += f"const [{state_item['name']}, {setStateFunctionName}] = useState({state_item['initialValue']});\n    "
-
-    for component_function in component_methods:
-        function_name = component_function["name"]
-        function_body = "\n".join(
-            [f"        {line}" for line in component_function["body"]]
-        )
-        code += f"\n    const {function_name} = ("
-
-        if component_function.get("parameters") != None:
-            parameters_with_defaults = {}
-            for parameter in component_function["parameters"]:
-                if parameter["defaultValue"] != None:
-                    parameters_with_defaults[parameter["name"]] = parameter[
-                        "defaultValue"
-                    ]
-                    continue
-
-                code += f"{parameter['name']}"
-
-                if parameter != component_function["parameters"][-1]:
-                    code += ", "
-
-            for (
-                parameter["name"],
-                parameter["defaultValue"],
-            ) in parameters_with_defaults.items():
-                code += f"{parameter['name']} = {parameter['defaultValue']}"
-                if parameter != list(parameters_with_defaults.items())[-1]:
-                    code += ", "
-
-        code += f") => {{\n{function_body}\n    }}\n"
-
-    for effect in effects:
-        effect_body = "\n".join([f"        {line}" for line in effect["body"]])
-        code += f"\n    useEffect(() => {{\n"
-        code += f"{effect_body}\n"
-        code += f"    }}, [{', '.join(effect['dependencies'])}]);\n"
-
-    code += f"\n    return (<>\n"
-    code += "\n".join([f"         {line}" for line in JSX])
-    code += "\n    </>);\n"
-
-    code += "}\n\n"
-
-    code += f"export default {component_name};\n"
-
-    return code
-
+from util.component_util import generate_component_code
 
 # Example JSON object
 component_json = {
@@ -430,7 +275,7 @@ component_jason = component_json
 # code = '{\n  "component_name": "MessageComponent",\n  "imports": [\n    {\n      "from": "react",\n      "import": ["useEffect", "useState", "useRef"],\n      "isNamedImport": true\n    },\n    {\n      "from": "@mui/material",\n      "import": ["TextField", "Box", "Typography"],\n      "isNamedImport": true\n    }\n  ],\n  "state": [\n    {\n      "name": "messages",\n      "initialValue": "[]"\n    },\n    {\n      "name": "responseMessage",\n      "initialValue": "\'\'"\n    }\n  ],\n  "component_methods": [\n    {\n      "name": "pushMessage",\n      "parameters": [\n        {\n          "name": "message",\n          "defaultValue": ""\n        }\n      ],\n      "body": [\n        "setMessages((prevMessages) => [...prevMessages, { message, type: \'sent\', id: Math.random() }]);",\n        "setResponseMessage(randomResponse());"\n      ]\n    },\n    {\n      "name": "randomResponse",\n      "parameters": [],\n      "body": [\n        "const responses = [\'Hello there!\', \'Good day!\', \'Nice to meet you!\', \'How may I help you?\'];",\n        "return responses[Math.floor(Math.random() * responses.length)];"\n      ]\n    }\n  ],\n  "JSX": [\n    "<Box style={{ padding: \'20px\' }}>",\n    "  <Typography variant=\'h4\' style={{ marginBottom: \'20px\' }}>Chat</Typography>",\n    "  <Box style={{ minHeight: \'300px\', overflowY: \'scroll\', border: \'1px solid purple\', padding: \'10px\', marginBottom: \'10px\' }}>",\n    "  {messages.map((message) =>",\n    "    <Typography variant=\'body1\' style={{ backgroundColor: message.type === \'sent\' ? \'lightblue\' : \'lightgreen\', margin: \'10px 0\', padding: \'5px\', borderRadius: \'10px\' }}>{message.message}</Typography>",\n    "  )}",\n    "  <Typography variant=\'body1\' style={{ backgroundColor: \'lightgreen\', margin: \'10px 0\', padding: \'5px\', borderRadius: \'10px\' }}>{responseMessage}</Typography>",\n    "  </Box>",\n    "  <TextField",\n    "    fullWidth",\n    "    variant=\'outlined\'",\n    "    placeholder=\'Type a message..\'",\n    "    onKeyUp={(e) => {",\n    "      if (e.key === \'Enter\' && e.target.value) {",\n    "        pushMessage(e.target.value);",\n    "        e.target.value = \'\';",\n    "    }",\n    "  }}",\n    "</Box>"\n  ]\n}'
 code = '{\n  "component_name": "MessageComponent",\n  "imports": [\n    {\n      "from": "react",\n      "import": ["useState"],\n      "isNamedImport": true\n    },\n    {\n      "from": "@mui/material",\n      "import": ["TextField", "Typography"],\n      "isNamedImport": true\n    }\n  ],\n  "props": [],\n  "state": [\n    {\n      "name": "messages",\n      "initialValue": "[]"\n    },\n    {\n      "name": "input",\n      "initialValue": "\'\'"\n    }\n  ],\n  "effects": [],\n  "component_methods": [\n    {\n      "name": "sendMessage",\n      "parameters": [],\n      "body": [\n        "setMessages([...messages, { isUser: true, text: input }]);",\n        "setInput(\'\');",\n        "const responses = [\'Hi\', \'Hello\', \'How are you?\', \'Good to see you\', \'Welcome\'];",\n        "const response = responses[Math.floor(Math.random()*responses.length)];",\n        "setMessages((msgs) => [...msgs, { isUser: false, text: response }]);"\n      ]\n    },\n    {\n      "name": "handleChange",\n      "parameters": [\n        {\n          "name": "event",\n          "defaultValue": "{}"\n        }\n      ],\n      "body": [\n        "setInput(event.target.value);"\n      ]\n    },\n    {\n      "name": "handleKeyUp",\n      "parameters": [\n        {\n          "name": "event",\n          "defaultValue": "{}"\n        }\n      ],\n      "body": [\n        "if(event.key === \'Enter\') {",\n        "  sendMessage();",\n        "}"\n      ]\n    },\n  ],\n  "JSX": [\n    "<div style={{ padding: 20, backgroundColor: \'#fafafa\' }}>",\n    "  <Typography variant=\'h3\'>Chat</Typography>",\n    "  <TextField",\n    "    value={input}",\n    "    onChange={handleChange}",\n    "    onKeyUp={handleKeyUp}",\n    "    fullWidth",\n    "    placeholder=\'Type your message here...\' />",\n    "  <div style={{ marginTop: 20 }}>",\n    "    {messages.map((message, index) => (",\n    "      <div key={index} style={{ padding: 10, borderRadius: 5, marginBottom: 10, backgroundColor: message.isUser ? \'#007BFF\' : \'#6c757d\' }}>",\n    "        <Typography variant=\'body1\' style={{ color: \'#FFF\' }}>{message.text}</Typography>",\n    "      </div>",\n    "    ))}",\n    "  </div>",\n    "</div>"\n  ]\n}'
 
-component_json = json.loads(code)
+# component_json = json.loads(code)
 
 component_name = ""
 component_imports = []
@@ -465,15 +310,22 @@ for key, value in component_json.items():
         continue
 
 
-component_code = generate_component_code(
-    component_name=component_name,
-    JSX=JSX_code,
-    pre_import_code=["import React from 'react';"],
-    imports=component_imports,
-    props=props,
-    state=state,
-    effects=effects,
-    component_methods=component_methods,
-)
+# component_code = generate_component_code(
+#     component_name=component_name,
+#     JSX=JSX_code,
+#     pre_import_code=["import React from 'react';"],
+#     imports=component_imports,
+#     props=props,
+#     state=state,
+#     effects=effects,
+#     component_methods=component_methods,
+# )
 
-print(component_code)
+# print(component_code)
+import pprint
+
+pp = pprint.PrettyPrinter(indent=4)
+
+code = '{\n  "component_name": "ClickCounter",\n  "imports": [\n    {\n      "from": "react",\n      "import": "{ useState }",\n      "isNamedImport": true\n    }\n  ],\n  "componentMethods": [\n    {\n      "name": "handleClick",\n      "body": [\n        "setClickCount(clickCount + 1);"\n      ]\n    }\n  ],\n  "JSX": [\n    "<div>",\n    "  <p>Number of clicks: {clickCount}</p>",\n    "  <button onClick={handleClick}>Click me</button>",\n    "</div>"\n  ]\n}'
+
+pp.pprint(json.loads(code))

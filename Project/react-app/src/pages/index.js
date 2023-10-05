@@ -4,7 +4,7 @@ import Image from 'next/image'
 import { ConversationWindow } from '@/components/conversationWindow'
 import ClickCounter from '@/components/clicker'
 // import MessageComponent from '@/components/chatBox'
-import MessageComponent from '@/components/chatBox2'
+import MyGridComponent from '@/components/devPanels'
 import BMOComponent from '@/components/BMO'
 
 
@@ -20,7 +20,7 @@ export default function Home() {
       <main>
         {/* <ConversationWindow />
         <ClickCounter /> */}
-        <MessageComponent />
+        <MyGridComponent />
         {/* <BMOComponent /> */}
       </main>
     </>

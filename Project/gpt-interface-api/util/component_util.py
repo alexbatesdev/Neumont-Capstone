@@ -15,7 +15,7 @@ def generate_component_code(component: Component, pre_import_code: list = []):
         code += f"{line}\n"
 
     # if effects is not empty make sure to import useEffect
-    if len(component.effects) > 0:
+    if len(component.side_effects) > 0:
         hasAlreadyImportedUseEffect = False
         if len(component.imports) != 0:
             for component_import in component.imports:
@@ -155,7 +155,7 @@ def generate_component_code(component: Component, pre_import_code: list = []):
         code += f") => {{\n{function_body}\n    }}\n"
 
     # Iterate through component effects and construct them
-    for effect in component.effects:
+    for effect in component.side_effects:
         effect_body = "\n".join([f"        {line}" for line in effect.body])
         code += f"\n    useEffect(() => {{\n"
         code += f"{effect_body}\n"

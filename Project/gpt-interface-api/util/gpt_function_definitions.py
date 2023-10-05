@@ -73,7 +73,7 @@ generate_component_code = {
                 },
                 "description": "The state variables and their initial values that the component will have",
             },
-            "effects": {
+            "side_effects": {
                 "type": "array",
                 "items": {
                     "type": "object",

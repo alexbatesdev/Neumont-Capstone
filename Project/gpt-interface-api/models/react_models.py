@@ -35,6 +35,6 @@ class Component(BaseModel):
     name: str = Field(..., alias="component_name")
     props: List[Parameter] = Field([], alias="props")
     state: List[StateVariable] = Field([], alias="state")
-    effects: List[Effect] = Field([], alias="effects")
+    side_effects: List[Effect] = Field([], alias="side_effects")
     JSX: List[str] = Field(..., alias="JSX")
     component_methods: List[ComponentMethod] = Field([], alias="component_methods")

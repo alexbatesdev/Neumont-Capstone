@@ -20,7 +20,12 @@ export default function Home() {
       <main>
         {/* <ConversationWindow />
         <ClickCounter /> */}
-        <MyGridComponent />
+        <MyGridComponent>
+          {/* Remember to refactor Conversation Window to have the state kept track of up here */}
+          <ConversationWindow />
+          <BMOComponent />
+          <ConversationWindow />
+        </MyGridComponent>
         {/* <BMOComponent /> */}
       </main>
     </>

@@ -35,7 +35,6 @@ export const ConversationWindow = () => {
 
         // Send message to backend
         // Entirely untested and unmodified to match my needs
-        // This is from copilot, it likely needs to be modified to match the backend 😎
         // fetch("/api/chat", {
         //     method: "POST",
         //     body: JSON.stringify(message),
@@ -76,8 +75,7 @@ export const ConversationWindow = () => {
             <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/uicons-bold-rounded/css/uicons-bold-rounded.css'></link>
         </Head>
         <Box sx={{
-            maxWidth: "500px",
-            minHeight: "500px",
+            height: "100%",
             display: "flex",
             flexDirection: "column",
             justifyContent: "flex-start",
@@ -97,16 +95,17 @@ export const ConversationWindow = () => {
                 <Box sx={{
                     width: 56,
                     height: 56,
+                    aspectRatio: "1/1",
                     display: "inline-block",
-                    borderRadius: "50%",
+                    borderRadius: "50px",
                     marginRight: "1rem",
                     backgroundColor: "grey",
                     backgroundSize: "cover",
                     backgroundPosition: "center",
                     backgroundImage: "url(https://upload.wikimedia.org/wikipedia/commons/0/04/ChatGPT_logo.svg)"
                 }}> </Box>
-                <Typography variant="h4" sx={{ display: "inline-block" }}>
-                    ChatGPT 4 - Chat
+                <Typography variant="h5" sx={{ display: "inline-block" }}>
+                    GPT - Chat
                 </Typography>
             </Box>
             <Box ref={messageBoxRef} sx={{

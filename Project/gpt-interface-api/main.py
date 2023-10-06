@@ -62,7 +62,7 @@ async def read_root():
     return openai.Model.list()
 
 
-# 😎 Untested changes 😎
+# Add a field for a sample component!!! This is for refactoring!
 @app.post("/prompt")
 async def prompt(prompt_in: PromptInput = Body(...)):
     pp = pprint.PrettyPrinter(indent=3)
@@ -70,8 +70,20 @@ async def prompt(prompt_in: PromptInput = Body(...)):
 
     system_prompt = {
         "role": "system",
-        "content": "You are assisting in the development of a javascript React application. When you generate a component it should be a functional component. Include inline styles to make things look nice. Try to use material ui components from @mui/material whenever possible. Be sure to supply valid JSON for the component definition.",
+        "content": "You are assisting in the development of a javascript React application. When you generate a component it should be a functional component. Include inline styles to make things look nice. Try to use material ui components from @mui/material whenever makes sense. Be sure to supply valid JSON for the component definition.",
     }
+
+    # Test me!!!!!~ 😎
+    alternate = {
+        "role": "system",
+        "content": """You are tasked with assisting in the development of a JavaScript React application. Please adhere to the following guidelines when generating code:
+                    - Create Functional Components: Each generated component should be a functional component.
+                    - Style Appropriately: Incorporate inline styles to enhance the appearance of the components. Ensure the styles are clean and organized.
+                    - Utilize Material-UI: Integrate components from the '@mui/material' library where appropriate and logical. Familiarize yourself with the library's documentation to make effective use of its components.
+                    - Provide Valid JSON: The component definition should be supplied in a valid JSON format.
+                    Please ensure your code is clean, efficient, and follows React and Material-UI best practices.""",
+    }
+
     user_prompt = {"role": "user", "content": prompt_in.prompt}
 
     if prompt_in.apikey != None:

@@ -4,7 +4,6 @@ import pprint
 pp = pprint.PrettyPrinter(indent=3)
 
 
-# 😎 Untested changes 😎
 def generate_component_code(component: Component, pre_import_code: list = []):
     code = ""
 

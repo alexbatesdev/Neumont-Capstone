@@ -108,7 +108,7 @@ section {
 
 body {
     line-height: 1;
-    background-color: antiquewhite;
+    min-height: 100vh;
 }
 
 ol,

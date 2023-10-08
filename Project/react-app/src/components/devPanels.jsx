@@ -4,36 +4,9 @@
 import React, { useState, useCallback, useRef, useEffect, Children, cloneElement } from 'react';
 import { ConversationWindow } from './conversationWindow';
 import { Card } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
 
-const gridContainerStyle = {
-    display: 'flex',
-    width: 'calc(100% - 10px)',
-    padding: '5px',
-    height: '70vh',
-    backgroundColor: 'white',
-    borderRadius: '5px',
-};
-
-const columnStyle = (width) => ({
-    flexGrow: 1,
-    flexBasis: `${width}%`,
-    overflow: 'hidden',
-    padding: '8px',
-    border: '1px solid #ddd',
-    borderRadius: '5px',
-    position: 'relative'
-});
-
-const dividerStyle = {
-    cursor: 'col-resize',
-    backgroundColor: 'lightgray',
-    borderRadius: '5px',
-    width: '8px',
-    height: '100%',
-    margin: '0 3px',
-    zIndex: 1
-};
-
+// Refactor so the columns use pixels instead of percentages 💭
 const ResizableGrid = ({ children, initialColumnComponents: initialColumns = [{ id: 0, width: 50 }, { id: 1, width: 50 }] }) => {
     const containerRef = useRef(null);
     const [columns, setColumns] = useState(initialColumns);
@@ -42,6 +15,40 @@ const ResizableGrid = ({ children, initialColumnComponents: initialColumns = [{ 
     const [isDragging, setIsDragging] = useState(false);
     const [lineStart, setLineStart] = useState({ x: 0, y: 0 });
     const [lineEnd, setLineEnd] = useState({ x: 0, y: 0 });
+    const theme = useTheme();
+
+    const gridContainerStyle = {
+        display: 'flex',
+        width: 'calc(100% - 20px)',
+        padding: '10px',
+        // Refactor so component has a static height and width 💭
+        minHeight: '650px',
+        height: '650px',
+        backgroundColor: theme.palette.background.default,
+        borderRadius: '5px',
+    };
+
+    const columnStyle = (width) => ({
+        flexGrow: 1,
+        flexBasis: `${width}%`,
+        overflow: 'hidden',
+        padding: '8px',
+        border: `1px solid ${theme.palette.divider.default}`,
+        borderRadius: '5px',
+        position: 'relative',
+        backgroundColor: theme.palette.background.paper,
+    });
+    console.log(theme.palette.divider.secondary)
+    const dividerStyle = {
+        cursor: 'col-resize',
+        backgroundColor: theme.palette.divider.secondary,
+        borderRadius: '5px',
+        width: '8px',
+        height: '100%',
+        margin: '0 3px',
+        zIndex: 1
+    };
+    console.log(dividerStyle)
 
     const SpiderWebLine = ({ start, end }) => {
         const points = 100; // Number of points to calculate

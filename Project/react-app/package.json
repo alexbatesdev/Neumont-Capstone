@@ -13,6 +13,8 @@
   "dependencies": {
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
+    "@fontsource/material-icons": "^5.0.7",
+    "@fontsource/roboto": "^5.0.8",
     "@mui/material": "^5.14.11",
     "next": "latest",
     "react": "latest",
@@ -25,6 +27,7 @@
     "@storybook/addon-interactions": "^7.4.5",
     "@storybook/addon-links": "^7.4.5",
     "@storybook/addon-onboarding": "^1.0.8",
+    "@storybook/addon-themes": "^7.4.6",
     "@storybook/blocks": "^7.4.5",
     "@storybook/react": "^7.4.5",
     "@storybook/react-webpack5": "^7.4.5",

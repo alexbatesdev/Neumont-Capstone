@@ -1,14 +1,13 @@
 import React from 'react'
 import Head from 'next/head'
 import Image from 'next/image'
-import { ConversationWindow } from '@/components/conversationWindow'
-import ClickCounter from '@/components/clicker'
-// import MessageComponent from '@/components/chatBox'
-import MyGridComponent from '@/components/devPanels'
-import BMOComponent from '@/components/BMO'
+import Link from 'next/link'
+
+import { Button, Typography, useTheme } from '@mui/material'
 
 
 export default function Home() {
+  const theme = useTheme()
   return (
     <>
       <Head>
@@ -17,16 +16,50 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main>
-        {/* <ConversationWindow />
-        <ClickCounter /> */}
-        <MyGridComponent>
-          {/* Remember to refactor Conversation Window to have the state kept track of up here */}
-          <ConversationWindow />
-          <BMOComponent />
-          <ConversationWindow />
-        </MyGridComponent>
-        {/* <BMOComponent /> */}
+      <style>
+        {`
+          @keyframes rotate {
+            from {
+              transform: rotate(0deg);
+            }
+            to {
+              transform: rotate(360deg);
+            }
+          }
+        `}
+      </style>
+      <main style={{
+        // backgroundColor: theme.palette.background.default,
+        color: theme.palette.text.primary,
+        minHeight: '100vh',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        gap: '2rem',
+        position: 'relative',
+        overflow: 'hidden',
+      }}>
+        <div style={{
+          position: 'absolute',
+          // top: "50%",
+          // left: "50%",
+          // transform: "translate(-50%, -50%)",
+          width: '250vw',
+          height: '250vh',
+          zIndex: -1,
+          backgroundImage: 'url(/spiderweb.svg)',
+          backgroundSize: '110vw',
+          backgroundRepeat: 'no-repeat',
+          backgroundPosition: 'center',
+          backgroundColor: theme.palette.background.default,
+          animation: 'rotate 120s infinite linear',
+        }}></div>
+        <Typography variant="h1">Webbie</Typography>
+        <Image src="/spider.png" width={150} height={150} />
+        <Typography variant="h4">An <span style={{ color: theme.palette.primary.main }}>AI</span> powered web development tool</Typography>
+        <Link href="/demo"><Button variant="contained" color="primary">Try it out</Button></Link>
+        <Link href="/sign-in"><Button variant="contained" color="tertiary" sx={{ color: theme.palette.common.black }}>Sign In</Button></Link>
       </main>
     </>
   )

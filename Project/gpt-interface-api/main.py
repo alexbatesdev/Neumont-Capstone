@@ -11,6 +11,7 @@ from util.component_util import generate_component_code
 from models.input_models import PromptInput
 from models.enum_models import GPTModel, GPTFunction
 from models.react_models import Component
+from models.output_models import Prompt_Output
 from util.gpt_function_definitions import functions
 
 import logging
@@ -62,19 +63,22 @@ async def read_root():
     return openai.Model.list()
 
 
+# https://cookbook.openai.com
 # Add a field for a sample component!!! This is for refactoring!
 @app.post("/prompt")
 async def prompt(prompt_in: PromptInput = Body(...)):
     pp = pprint.PrettyPrinter(indent=3)
     pp.pprint(json.dumps(prompt_in.model_dump()))
 
-    system_prompt = {
+    old_system_prompt = {
         "role": "system",
         "content": "You are assisting in the development of a javascript React application. When you generate a component it should be a functional component. Include inline styles to make things look nice. Try to use material ui components from @mui/material whenever makes sense. Be sure to supply valid JSON for the component definition.",
     }
 
     # Test me!!!!!~ 😎
-    alternate = {
+    # Add some context about the available packages 💭
+    # Mui shouldn't be hard coded, it should be a variable that can be changed 💭
+    system_prompt = {
         "role": "system",
         "content": """You are tasked with assisting in the development of a JavaScript React application. Please adhere to the following guidelines when generating code:
                     - Create Functional Components: Each generated component should be a functional component.
@@ -84,17 +88,30 @@ async def prompt(prompt_in: PromptInput = Body(...)):
                     Please ensure your code is clean, efficient, and follows React and Material-UI best practices.""",
     }
 
-    user_prompt = {"role": "user", "content": prompt_in.prompt}
+    messages = [system_prompt + prompt_in.messages]
+    print(messages)
 
     if prompt_in.apikey != None:
         openai.api_key = prompt_in.apikey
 
+    function_call = "auto"
+
+    # If tthe function_call is not auto or none then we need to pass GPT the function in a different format
+    if (
+        prompt_in.function != GPTFunction.auto
+        and prompt_in.function != GPTFunction.none
+    ):
+        function_call = {"name": prompt_in.model.value}
+    # Otherwise we can just pass it the string value
+    else:
+        function_call = prompt_in.model.value
+
     # If context is getting eaten up by functions then we may want to only provide the function when it's needed
     completion = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",
-        messages=[system_prompt, user_prompt],
+        model=prompt_in.model.value,
+        messages=messages,
         functions=functions,
-        function_call=prompt_in.function.value,
+        function_call=function_call,
     )
     pp.pprint(completion.choices[0].message)
     # if the completion.choices[0].message has the attribute "function_call" then that means the function was called
@@ -109,26 +126,36 @@ async def prompt(prompt_in: PromptInput = Body(...)):
                 )
             except Exception as e:
                 pp.pprint(e)
-                return {
-                    "GPT Gave us some invalid JSON, please try again": component_json,
-                    "error": e,
-                    "prompt": user_prompt,
-                }
+                return Prompt_Output(
+                    agentResponse="Something went wrong, please try again.",
+                    userPrompt=user_prompt,
+                    agentModel=completion.model,
+                )
 
             pp.pprint(component_json)
             # Try catch around this that throws the json back to GPT if it's not valid
 
             component_modeled = Component(**component_json)
 
-            output = generate_component_code(
-                component_modeled, prompt_in.pre_import_code
+            output = Prompt_Output(
+                agentResponse=generate_component_code(
+                    component_modeled, prompt_in.pre_import_code
+                ),
+                userPrompt=user_prompt,
+                function=completion.choices[0].message.function_call.name,
+                agentModel=completion.model,
             )
             # send the output to a code linter and formatter to make sure it's valid and pretty
     else:
-        output = {
-            "prompt": user_prompt,
-            "completion": completion,
-            "completion_message": completion.choices[0].message,
-        }
+        function_call = "none"
+        if hasattr(completion.choices[0].message, "function_call"):
+            function_call = completion.choices[0].message.function_call.name
+
+        output = Prompt_Output(
+            agentResponse=completion.choices[0].message.content,
+            userPrompt=user_prompt,
+            function=function_call,
+            agentModel=completion.model,
+        )
 
     return output

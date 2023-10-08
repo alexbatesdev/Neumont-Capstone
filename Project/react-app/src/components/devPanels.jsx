@@ -38,7 +38,6 @@ const ResizableGrid = ({ children, initialColumnComponents: initialColumns = [{ 
         position: 'relative',
         backgroundColor: theme.palette.background.paper,
     });
-    console.log(theme.palette.divider.secondary)
     const dividerStyle = {
         cursor: 'col-resize',
         backgroundColor: theme.palette.divider.secondary,
@@ -48,7 +47,6 @@ const ResizableGrid = ({ children, initialColumnComponents: initialColumns = [{ 
         margin: '0 3px',
         zIndex: 1
     };
-    console.log(dividerStyle)
 
     const SpiderWebLine = ({ start, end }) => {
         const points = 100; // Number of points to calculate
@@ -184,6 +182,7 @@ const ResizableGrid = ({ children, initialColumnComponents: initialColumns = [{ 
                         </div>
                         {index < columns.length - 1 && (
                             <div
+                                key={`divider-${column.id}`}
                                 style={dividerStyle}
                                 onMouseDown={handleMouseDown(index)}
                                 onDoubleClick={addColumn}

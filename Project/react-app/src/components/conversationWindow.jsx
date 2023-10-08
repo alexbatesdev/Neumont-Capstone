@@ -3,6 +3,18 @@ import React, { useEffect, useState, useRef } from "react";
 import { Card, Typography, Box, Button, TextField } from "@mui/material";
 import Head from "next/head";
 import { useTheme } from '@mui/material/styles';
+import CircularProgress from "@mui/material/CircularProgress";
+
+const trimMessages = (messages) => {
+    let newMessages = [];
+    messages.forEach(message => {
+        newMessages.push({
+            role: message.role,
+            content: message.content,
+        })
+    });
+    return newMessages;
+}
 
 // Refactor so the messageHistory state is stored in the parent component
 // This component should still be the one making api calls and updating the state (with the parent component passing down the state and the function to update it as props) 💭
@@ -28,44 +40,92 @@ export const ConversationWindow = ({ messages, setMessages }) => {
     // Refactor so the messageHistory state is stored in the parent component
     // This component should still be the one making api calls and updating the state 💭
     const handleSendMessage = () => {
+        if (messageField.length == 0) {
+            return;
+        }
         const message = {
             role: "user",
             content: messageField,
-            model: modelIsGPT4 ? "GPT-4" : "GPT-3.5 Turbo"
+            model: modelIsGPT4 ? "gpt-4-0613" : "gpt-3.5-turbo-0613"
         };
 
+        // We store the new message state in a variable so we can immediately use the new state
+        // Even though the new state is not yet set (setMessages is async)
+        let newMessages;
         // Update messages state (should automatically cause rerender and visual update)
         setMessages((prevMessages) => {
+            newMessages = [...prevMessages, message];
             return [...prevMessages, message]
         });
 
         // Clear message field
         setMessageField("");
 
+        // Check if message is a command
+        if (messageField[0] == "/") {
+            const command = messageField.split(" ")[0].substring(1).toLowerCase();
+            const command_args = messageField.split(" ").slice(1);
+            const command_prompt = messageField.slice(1);
+            if (command == "clear") {
+                setMessages([]);
+            } else if (command == "preimport") {
+                if (command_args.length == 0) {
+                    return;
+                } else if (command_args[0] == "add") {
+                    // Set a contextual state variable to include the preimport code
+                    console.log("adding: " + command_args.slice(1).join(" "));
+                } else if (command_args[0] == "remove") {
+                    // Set a contextual state variable to remove the preimport code
+                    console.log("removing: " + command_args.slice(1).join(" "));
+                } else if (command_args[0] == "clear") {
+                    // Set a contextual state variable to clear the preimport code
+                    console.log("clearing");
+                }
+            } else if (command == "refactor") {
+                // Refactor a component
+                // I don't know how I want to do this yet
+                // I could have the user input their code
+                // But I think it should probably be a filename
+                // And then the backend can read the file and give it to the model
+            }
+            // Return so we don't send the message to the backend
+            return;
+        }
+
+        const body = {
+            messages: trimMessages(newMessages),
+            preImportCode: [],
+            componentToRefactor: "",
+            node_packages: [],
+            model: modelIsGPT4 ? "gpt-4-0613" : "gpt-3.5-turbo-0613",
+            function: "auto",
+        }
+
         // Send message to backend
-        // Entirely untested and unmodified to match my needs
-        // fetch("/api/chat", {
+        // const URL = "http://localhost:8000/prompt"
+        // fetch(URL, {
         //     method: "POST",
-        //     body: JSON.stringify(message),
+        //     body: JSON.stringify(),
         //     headers: {
         //         "Content-Type": "application/json"
         //     }
         // }).then((response) => {
         //     return response.json();
         // }).then((data) => {
-        const message_back = {
-            role: "assistant",
-            content: "data.content", // Get the response from the api call 💭
-            model: modelIsGPT4 ? "GPT-4" : "GPT-3.5 Turbo" // Add model to the response 💭
-        };
+        //     console.log(data);
+        //     const message_back = {
+        //         role: "assistant",
+        //         content: data.agentResponse,
+        //         model: data.agentModel
+        //     };
 
-        // Update messages state (should automatically cause rerender and visual update)
-        setMessages((prevMessages) => {
-            return [...prevMessages, message_back]
-        });
+        //     // Update messages state (should automatically cause rerender and visual update)
+        //     setMessages((prevMessages) => {
+        //         return [...prevMessages, message_back]
+        //     });
         // });
 
-        console.log(messages)
+
     };
 
 
@@ -79,7 +139,6 @@ export const ConversationWindow = ({ messages, setMessages }) => {
         scrollToBottom();
     }, [messages]);
 
-    console.log(theme)
     return (<>
         <Head>
             <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/uicons-bold-rounded/css/uicons-bold-rounded.css'></link>
@@ -144,9 +203,9 @@ export const ConversationWindow = ({ messages, setMessages }) => {
                 {messages.map((message, index) => {
                     if (message.role == "assistant") {
                         let color;
-                        if (message.model == "GPT-4") {
+                        if (message.model == "gpt-4-0613") {
                             color = theme.palette.secondary.main;
-                        } else if (message.model == "GPT-3.5 Turbo") {
+                        } else if (message.model == "gpt-3.5-turbo-0613") {
                             color = theme.palette.primary.main;
                         }
                         return (<Box key={index + "GPT"} sx={{
@@ -209,6 +268,22 @@ export const ConversationWindow = ({ messages, setMessages }) => {
                         )
                     }
                 })}
+                {isLoading && <Box sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "flex-start",
+                    alignItems: "flex-start",
+                    marginTop: "8px",
+                    padding: "10px",
+                    maxWidth: "300px",
+                    width: "fit-content",
+                    color: "black",
+                    borderRadius: "10px",
+                    borderBottomRightRadius: "0",
+                    backgroundColor: modelIsGPT4 ? theme.palette.secondary.main : theme.palette.primary.main,
+                    alignSelf: "flex-end"
+                }}><CircularProgress color="common" /></Box>
+                }
             </Box>
             <Box sx={{
                 width: "calc(100% - 2rem)",

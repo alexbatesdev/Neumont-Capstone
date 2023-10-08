@@ -13,3 +13,5 @@ class GPTFunction(str, Enum):
     auto: str = "auto"
     # specifying the function name directly will force GPT to use that function
     generate_component_code: str = "generate_component_code"
+    # tells GPT not to use any functions
+    none: str = "none"

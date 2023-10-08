@@ -3,8 +3,13 @@ from typing import Optional
 from models.enum_models import GPTModel, GPTFunction
 
 
+class Message(BaseModel):
+    role: str = Field(alias="role")
+    content: str = Field(alias="content")
+
+
 class PromptInput(BaseModel):
-    messages: list[str] = Field(alias="messages")
+    messages: list[Message] = Field(alias="messages")
     pre_import_code: Optional[list] = Field(
         [],
         alias="preImportCode",

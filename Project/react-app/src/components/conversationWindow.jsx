@@ -32,7 +32,7 @@ export const ConversationWindow = ({ messages, setMessages }) => {
     };
 
     const handleKeyDown = (event) => {
-        if (event.key === "Enter") {
+        if (event.key === "Enter" && !event.shiftKey) {
             handleSendMessage();
         }
     };
@@ -61,6 +61,8 @@ export const ConversationWindow = ({ messages, setMessages }) => {
         // Clear message field
         setMessageField("");
 
+        let function_call = "auto"
+
         // Check if message is a command
         if (messageField[0] == "/") {
             const command = messageField.split(" ")[0].substring(1).toLowerCase();
@@ -68,6 +70,7 @@ export const ConversationWindow = ({ messages, setMessages }) => {
             const command_prompt = messageField.slice(1);
             if (command == "clear") {
                 setMessages([]);
+                return;
             } else if (command == "preimport") {
                 if (command_args.length == 0) {
                     return;
@@ -80,50 +83,61 @@ export const ConversationWindow = ({ messages, setMessages }) => {
                 } else if (command_args[0] == "clear") {
                     // Set a contextual state variable to clear the preimport code
                     console.log("clearing");
+                } else if (command_args[0] == "list") {
+                    // Return a list of the preimport code entries
+                    console.log("listing");
                 }
+                return;
             } else if (command == "refactor") {
                 // Refactor a component
                 // I don't know how I want to do this yet
                 // I could have the user input their code
                 // But I think it should probably be a filename
                 // And then the backend can read the file and give it to the model
+                return;
+            } else if (command == "create") {
+                message.content = command_prompt;
+                function_call = "generate_component_code";
             }
-            // Return so we don't send the message to the backend
-            return;
         }
 
         const body = {
             messages: trimMessages(newMessages),
             preImportCode: [],
             componentToRefactor: "",
-            node_packages: [],
+            nodePackages: [],
             model: modelIsGPT4 ? "gpt-4-0613" : "gpt-3.5-turbo-0613",
-            function: "auto",
+            function: function_call,
         }
-
+        console.log(body);
+        console.log(JSON.stringify(body));
+        setIsLoading(true);
+        // Needs a try catch block just in case 💭
         // Send message to backend
-        // const URL = "http://localhost:8000/prompt"
-        // fetch(URL, {
-        //     method: "POST",
-        //     body: JSON.stringify(),
-        //     headers: {
-        //         "Content-Type": "application/json"
-        //     }
-        // }).then((response) => {
-        //     return response.json();
-        // }).then((data) => {
-        //     console.log(data);
-        //     const message_back = {
-        //         role: "assistant",
-        //         content: data.agentResponse,
-        //         model: data.agentModel
-        //     };
+        const URL = "http://localhost:8000/prompt"
+        fetch(URL, {
+            method: "POST",
+            body: JSON.stringify(body),
+            headers: {
+                "Content-Type": "application/json"
+            }
+        }).then((response) => {
+            return response.json();
+        }).then((data) => {
+            console.log(data);
+            const message_back = {
+                role: "assistant",
+                content: data.agentResponse,
+                model: data.agentModel,
+                isCodeSnippet: data.function == "generate_component_code" ? true : false,
+            };
 
-        //     // Update messages state (should automatically cause rerender and visual update)
-        //     setMessages((prevMessages) => {
-        //         return [...prevMessages, message_back]
-        //     });
-        // });
+            // Update messages state (should automatically cause rerender and visual update)
+            setMessages((prevMessages) => {
+                return [...prevMessages, message_back]
+            });
+            setIsLoading(false);
+        });
 
 
     };
@@ -197,6 +211,7 @@ export const ConversationWindow = ({ messages, setMessages }) => {
                 justifyContent: "flex-start",
                 alignItems: "flex-start",
                 overflowY: "auto",
+                overflowX: "hidden",
                 width: "calc(100% - 2rem)",
                 flexGrow: 1,
             }}>
@@ -223,7 +238,7 @@ export const ConversationWindow = ({ messages, setMessages }) => {
                                 alignItems: "flex-start",
                                 marginTop: "8px",
                                 padding: "10px",
-                                maxWidth: "300px",
+                                maxWidth: "80%",
                                 width: "fit-content",
                                 color: "black",
                                 borderRadius: "10px",
@@ -253,7 +268,7 @@ export const ConversationWindow = ({ messages, setMessages }) => {
                                 alignItems: "flex-start",
                                 marginTop: "8px",
                                 padding: "10px",
-                                maxWidth: "300px",
+                                maxWidth: "80%",
                                 width: "fit-content",
                                 color: "white",
                                 borderRadius: "10px",
@@ -294,7 +309,7 @@ export const ConversationWindow = ({ messages, setMessages }) => {
                 justifyContent: "flex-start",
                 alignItems: "center",
             }}>
-                <TextField sx={{ flexGrow: 1 }} color="tertiary" label="Message" variant="outlined" value={messageField} onChange={handleMessageFieldChange} onKeyDown={handleKeyDown} />
+                <TextField sx={{ flexGrow: 1 }} multiline color="tertiary" label="Message" variant="outlined" value={messageField} onChange={handleMessageFieldChange} onKeyDown={handleKeyDown} />
                 <Button variant="contained" color="tertiary" onClick={handleSendMessage} sx={{
                     fontSize: "2rem",
                     marginLeft: "1rem",

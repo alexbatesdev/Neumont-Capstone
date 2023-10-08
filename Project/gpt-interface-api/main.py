@@ -3,6 +3,7 @@ import json
 import pprint
 from fastapi import FastAPI, Depends, HTTPException, status, Body
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.encoders import jsonable_encoder
 from fastapi.logger import logger
 from contextlib import asynccontextmanager
 from decouple import config
@@ -68,7 +69,6 @@ async def read_root():
 @app.post("/prompt")
 async def prompt(prompt_in: PromptInput = Body(...)):
     pp = pprint.PrettyPrinter(indent=3)
-    pp.pprint(json.dumps(prompt_in.model_dump()))
 
     old_system_prompt = {
         "role": "system",
@@ -88,8 +88,7 @@ async def prompt(prompt_in: PromptInput = Body(...)):
                     Please ensure your code is clean, efficient, and follows React and Material-UI best practices.""",
     }
 
-    messages = [system_prompt + prompt_in.messages]
-    print(messages)
+    messages = [system_prompt] + jsonable_encoder(prompt_in.messages)
 
     if prompt_in.apikey != None:
         openai.api_key = prompt_in.apikey
@@ -101,10 +100,10 @@ async def prompt(prompt_in: PromptInput = Body(...)):
         prompt_in.function != GPTFunction.auto
         and prompt_in.function != GPTFunction.none
     ):
-        function_call = {"name": prompt_in.model.value}
+        function_call = {"name": prompt_in.function.value}
     # Otherwise we can just pass it the string value
     else:
-        function_call = prompt_in.model.value
+        function_call = prompt_in.function.value
 
     # If context is getting eaten up by functions then we may want to only provide the function when it's needed
     completion = openai.ChatCompletion.create(
@@ -113,7 +112,6 @@ async def prompt(prompt_in: PromptInput = Body(...)):
         functions=functions,
         function_call=function_call,
     )
-    pp.pprint(completion.choices[0].message)
     # if the completion.choices[0].message has the attribute "function_call" then that means the function was called
     if hasattr(completion.choices[0].message, "function_call"):
         if (
@@ -128,20 +126,18 @@ async def prompt(prompt_in: PromptInput = Body(...)):
                 pp.pprint(e)
                 return Prompt_Output(
                     agentResponse="Something went wrong, please try again.",
-                    userPrompt=user_prompt,
+                    userPrompt=prompt_in.messages[-1].content,
                     agentModel=completion.model,
                 )
 
-            pp.pprint(component_json)
             # Try catch around this that throws the json back to GPT if it's not valid
-
             component_modeled = Component(**component_json)
 
             output = Prompt_Output(
                 agentResponse=generate_component_code(
                     component_modeled, prompt_in.pre_import_code
                 ),
-                userPrompt=user_prompt,
+                userPrompt=prompt_in.messages[-1].content,
                 function=completion.choices[0].message.function_call.name,
                 agentModel=completion.model,
             )
@@ -153,7 +149,7 @@ async def prompt(prompt_in: PromptInput = Body(...)):
 
         output = Prompt_Output(
             agentResponse=completion.choices[0].message.content,
-            userPrompt=user_prompt,
+            userPrompt=prompt_in.messages[-1].content,
             function=function_call,
             agentModel=completion.model,
         )

@@ -4,6 +4,9 @@ import { Card, Typography, Box, Button, TextField } from "@mui/material";
 import Head from "next/head";
 import { useTheme } from '@mui/material/styles';
 import CircularProgress from "@mui/material/CircularProgress";
+import SyntaxHighlighter from "react-syntax-highlighter";
+import { atelierCaveDark } from "react-syntax-highlighter/dist/cjs/styles/hljs";
+
 
 const trimMessages = (messages) => {
     let newMessages = [];
@@ -125,9 +128,15 @@ export const ConversationWindow = ({ messages, setMessages }) => {
             return response.json();
         }).then((data) => {
             console.log(data);
+            let content = data.agentResponse;
+
+            if (data.function == "generate_component_code") {
+                content = "```javascript\n" + content + "\n```";
+            }
+
             const message_back = {
                 role: "assistant",
-                content: data.agentResponse,
+                content: content,
                 model: data.agentModel,
                 isCodeSnippet: data.function == "generate_component_code" ? true : false,
             };
@@ -138,10 +147,34 @@ export const ConversationWindow = ({ messages, setMessages }) => {
             });
             setIsLoading(false);
         });
-
-
     };
 
+    const handleDisplayCodeSnippet = (message) => {
+        const segments = [];
+        const regex = /```(?:([\w-]+)\s+)?([\s\S]*?)```/g; // Modified regex to optionally capture language specification
+        let lastIndex = 0;
+        let match;
+
+        while ((match = regex.exec(message)) !== null) {
+
+            // Add plain text leading up to the code snippet
+            if (match.index > lastIndex) {
+                segments.push({ type: 'text', content: message.slice(lastIndex, match.index) });
+            }
+            // Determine language (if specified, otherwise default to 'javascript')
+            const language = match[1] || 'javascript'; // Use captured language specification or default to 'javascript'
+            // Add code snippet
+            segments.push({ type: 'code', content: match[2], language }); // Include language in segment
+            lastIndex = regex.lastIndex;
+        }
+
+        // Add remaining plain text after the last code snippet
+        if (lastIndex < message.length) {
+            segments.push({ type: 'text', content: message.slice(lastIndex) });
+        }
+
+        return segments;
+    }
 
     const scrollToBottom = () => {
         if (messageBoxRef.current) {
@@ -238,7 +271,7 @@ export const ConversationWindow = ({ messages, setMessages }) => {
                                 alignItems: "flex-start",
                                 marginTop: "8px",
                                 padding: "10px",
-                                maxWidth: "80%",
+                                maxWidth: "calc(100% - 20px)",
                                 width: "fit-content",
                                 color: "black",
                                 borderRadius: "10px",
@@ -246,9 +279,51 @@ export const ConversationWindow = ({ messages, setMessages }) => {
                                 backgroundColor: color,
                                 alignSelf: "flex-end"
                             }}>
-                                <Typography variant="body1">
-                                    {message.content}
-                                </Typography>
+                                {handleDisplayCodeSnippet(message.content).map((segment, index) => {
+                                    switch (segment.type) {
+                                        case 'text':
+                                            return (
+                                                <Typography key={index} variant="body1">
+                                                    {segment.content}
+                                                </Typography>
+                                            );
+                                        case 'code':
+                                            return (<>
+                                                <Button
+                                                    variant="contained"
+                                                    color="tertiary"
+                                                    size="small"
+                                                    onClick={() => {
+                                                        navigator.clipboard.writeText(segment.content);
+                                                    }}
+                                                    sx={{
+                                                        fontSize: "1rem",
+                                                        marginBottom: "1rem",
+                                                        marginTop: "1rem",
+                                                        width: "fit-content",
+                                                        alignSelf: "flex-end",
+                                                        marginBottom: "0",
+                                                    }}>
+                                                    Copy
+                                                </Button>
+                                                <SyntaxHighlighter
+                                                    key={index}
+                                                    language={segment.language}
+                                                    showLineNumbers
+                                                    customStyle={{
+                                                        borderRadius: "10px",
+                                                        overflowX: "auto",
+                                                        maxWidth: "calc(100% - 10px)",
+                                                    }}
+                                                    style={atelierCaveDark}
+                                                >
+                                                    {segment.content}
+                                                </SyntaxHighlighter>
+                                            </>);
+                                        default:
+                                            return null;
+                                    }
+                                })}
                             </Box>
                         </Box>
                         )

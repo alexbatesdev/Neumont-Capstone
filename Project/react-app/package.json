@@ -18,7 +18,8 @@
     "@mui/material": "^5.14.11",
     "next": "latest",
     "react": "latest",
-    "react-dom": "latest"
+    "react-dom": "latest",
+    "react-syntax-highlighter": "^15.5.0"
   },
   "devDependencies": {
     "@babel/preset-env": "^7.22.20",

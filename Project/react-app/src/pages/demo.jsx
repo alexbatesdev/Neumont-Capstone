@@ -10,7 +10,38 @@ import BMOComponent from '@/components/BMO'
 import { useState } from 'react'
 
 export default function Home() {
-    const [messageHistory, setMessageHistory] = useState([]);
+    let sample_snippet_2 = "Blah blah blah some natural text is cool \
+    \n```javascript \
+    \nimport React from 'react'; \
+    \nimport { Box, Typography } from '@mui/material'; \
+    \n \
+    \nexport const SampleComponent = () => { \
+    \n    return ( \
+    \n        <Box sx={{ \
+    \n            display: 'flex', \
+    \n            flexDirection: 'column', \
+    \n            justifyContent: 'flex-start', \
+    \n            alignItems: 'flex-start', \
+    \n            width: '100%', \
+    \n            height: '100%', \
+    \n        }}> \
+    \n            <Typography variant='h1'> \
+    \n                Hello World! \
+    \n            </Typography> \
+    \n        </Box> \
+    \n    ); \
+    \n} \
+    \n``` \
+    \nBlah blah blah some natural text is cool \
+    "
+
+    const [messageHistory, setMessageHistory] = useState([{
+        role: "assistant",
+        content: sample_snippet_2,
+        model: "gpt-4-0613",
+    }]);
+
+
 
     return (
         <>

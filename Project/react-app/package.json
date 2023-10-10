@@ -15,6 +15,7 @@
     "@emotion/styled": "^11.11.0",
     "@fontsource/material-icons": "^5.0.7",
     "@fontsource/roboto": "^5.0.8",
+    "@monaco-editor/react": "^4.6.0",
     "@mui/material": "^5.14.11",
     "next": "latest",
     "react": "latest",

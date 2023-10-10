@@ -130,15 +130,10 @@ export const ConversationWindow = ({ messages, setMessages }) => {
             console.log(data);
             let content = data.agentResponse;
 
-            if (data.function == "generate_component_code") {
-                content = "```javascript\n" + content + "\n```";
-            }
-
             const message_back = {
                 role: "assistant",
                 content: content,
                 model: data.agentModel,
-                isCodeSnippet: data.function == "generate_component_code" ? true : false,
             };
 
             // Update messages state (should automatically cause rerender and visual update)
@@ -271,7 +266,7 @@ export const ConversationWindow = ({ messages, setMessages }) => {
                                 alignItems: "flex-start",
                                 marginTop: "8px",
                                 padding: "10px",
-                                maxWidth: "calc(100% - 20px)",
+                                maxWidth: "calc(100% - 50px)",
                                 width: "fit-content",
                                 color: "black",
                                 borderRadius: "10px",
@@ -343,7 +338,7 @@ export const ConversationWindow = ({ messages, setMessages }) => {
                                 alignItems: "flex-start",
                                 marginTop: "8px",
                                 padding: "10px",
-                                maxWidth: "80%",
+                                maxWidth: "calc(100% - 50px)",
                                 width: "fit-content",
                                 color: "white",
                                 borderRadius: "10px",

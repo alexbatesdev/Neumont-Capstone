@@ -66,7 +66,7 @@ async def read_root():
 
 # https://cookbook.openai.com
 # Add a field for a sample component!!! This is for refactoring!
-@app.post("/prompt")
+@app.post("/prompt", response_model=Prompt_Output)
 async def prompt(prompt_in: PromptInput = Body(...)):
     pp = pprint.PrettyPrinter(indent=3)
 
@@ -114,6 +114,7 @@ async def prompt(prompt_in: PromptInput = Body(...)):
     )
     # if the completion.choices[0].message has the attribute "function_call" then that means the function was called
     if hasattr(completion.choices[0].message, "function_call"):
+        print("Top-----------------------------------------")
         if (
             completion.choices[0].message.function_call.name
             == GPTFunction.generate_component_code.value
@@ -133,16 +134,20 @@ async def prompt(prompt_in: PromptInput = Body(...)):
             # Try catch around this that throws the json back to GPT if it's not valid
             component_modeled = Component(**component_json)
 
+            print("Middle-----------------------------------------")
+            pp.pprint(completion.choices[0].message)
+
             output = Prompt_Output(
-                agentResponse=generate_component_code(
-                    component_modeled, prompt_in.pre_import_code
-                ),
+                agentResponse="```javascript "
+                + generate_component_code(component_modeled, prompt_in.pre_import_code)
+                + "```",
                 userPrompt=prompt_in.messages[-1].content,
-                function=completion.choices[0].message.function_call.name,
+                executedFunction=completion.choices[0].message.function_call.name,
                 agentModel=completion.model,
             )
             # send the output to a code linter and formatter to make sure it's valid and pretty
     else:
+        print("Bottom-----------------------------------------")
         function_call = "none"
         if hasattr(completion.choices[0].message, "function_call"):
             function_call = completion.choices[0].message.function_call.name
@@ -150,7 +155,7 @@ async def prompt(prompt_in: PromptInput = Body(...)):
         output = Prompt_Output(
             agentResponse=completion.choices[0].message.content,
             userPrompt=prompt_in.messages[-1].content,
-            function=function_call,
+            executedFunction=function_call,
             agentModel=completion.model,
         )
 

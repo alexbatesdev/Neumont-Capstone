@@ -75,7 +75,7 @@ def generate_component_code(component: Component, pre_import_code: list = []):
 
     # Component function definition
     code += f"\nexport const {component.name} = (" + (
-        "{{\n    " if len(component.props) > 0 else ""
+        "{\n    " if len(component.props) > 0 else ""
     )
     props_with_defaults = {}
 
@@ -95,7 +95,8 @@ def generate_component_code(component: Component, pre_import_code: list = []):
             continue
         # If the prop has no default value then we add it to the function parameters
         code += f"{prop.name}"
-        if prop != component.props[-1] or spread_prop != None:
+        # if prop != component.props[-1] or spread_prop != None:
+        if (component.props > 1 and prop != component.props[-1]) or spread_prop != None:
             code += f",\n    "
 
     # Add the props with default values to the function parameters

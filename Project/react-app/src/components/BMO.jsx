@@ -1,31 +1,4 @@
-// import React from 'react';
-// import { useState, useEffect } from 'react';
-// import Container from './BMOStyles';
-
-// export const BMO = ({
-//     size = "medium",
-// }) => {
-//     const [characterState, setCharacterState] = useState("Happy");
-
-//     const play = (game = "Adventure Time",) => {
-//         console.log(`Playing: ${game}`);
-//         setCharacterState('Excited');
-//     }
-
-//     useEffect(() => {
-//         console.log(`BMO feels ${characterState}`);
-//     }, [characterState]);
-
-//     return (<>
-//         <Container size={size}>
-//             <img src="/images/bmo.png" alt="BMO" />
-//             <button onClick={() => play()}>Play a Game</button>
-//         </Container>
-//     </>);
-// }
-
-// export default BMO;
-
+// 100% GPT
 import React from 'react';
 import { Box } from '@mui/material';
 

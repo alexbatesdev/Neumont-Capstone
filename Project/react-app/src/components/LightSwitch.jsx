@@ -1,7 +1,9 @@
+// 90% GPT
 import React from 'react';
 import { useState } from 'react';
 import ReactNode from 'react-dom';
 
+// My only change was to pull the statemanagement out of the component and into the parent
 export const LightSwitch = ({
     isOn,
     setIsOn

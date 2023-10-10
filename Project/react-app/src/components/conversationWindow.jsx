@@ -269,7 +269,7 @@ export const ConversationWindow = ({ messages, setMessages }) => {
                                 maxWidth: "calc(100% - 50px)",
                                 width: "fit-content",
                                 color: "black",
-                                borderRadius: "10px",
+                                borderRadius: theme.shape.borderRadius,
                                 borderBottomRightRadius: "0",
                                 backgroundColor: color,
                                 alignSelf: "flex-end"
@@ -284,29 +284,55 @@ export const ConversationWindow = ({ messages, setMessages }) => {
                                             );
                                         case 'code':
                                             return (<>
-                                                <Button
-                                                    variant="contained"
-                                                    color="tertiary"
-                                                    size="small"
-                                                    onClick={() => {
-                                                        navigator.clipboard.writeText(segment.content);
-                                                    }}
-                                                    sx={{
-                                                        fontSize: "1rem",
-                                                        marginBottom: "1rem",
-                                                        marginTop: "1rem",
-                                                        width: "fit-content",
-                                                        alignSelf: "flex-end",
-                                                        marginBottom: "0",
-                                                    }}>
-                                                    Copy
-                                                </Button>
+                                                <div style={{
+                                                    width: "100%",
+                                                    backgroundColor: theme.palette.background.paper,
+                                                    borderTopLeftRadius: theme.shape.borderRadius,
+                                                    borderTopRightRadius: theme.shape.borderRadius,
+                                                }}>
+                                                    {/* Refactor to a button group, possibly vanilla html so I can style it more freely 💭 */}
+                                                    <Button
+                                                        color="tertiary"
+                                                        variant="contained"
+                                                        size="small"
+                                                        disabled
+                                                        style={{
+                                                            fontSize: "1rem",
+                                                            marginBottom: "1rem",
+                                                            width: "fit-content",
+                                                            marginBottom: "0",
+                                                            display: "inline",
+                                                            float: "right",
+                                                        }}
+                                                    >
+                                                        Diff
+                                                    </Button>
+                                                    {/* Add React-Toasts to notify about saving and copying and more 💭 */}
+                                                    <Button
+                                                        variant="contained"
+                                                        color="tertiary"
+                                                        size="small"
+                                                        onClick={() => {
+                                                            navigator.clipboard.writeText(segment.content);
+                                                        }}
+                                                        sx={{
+                                                            fontSize: "1rem",
+                                                            marginBottom: "1rem",
+                                                            width: "fit-content",
+                                                            marginBottom: "0",
+                                                            display: "inline",
+                                                            float: "right",
+                                                        }}>
+                                                        Copy
+                                                    </Button>
+                                                </div>
                                                 <SyntaxHighlighter
                                                     key={index}
                                                     language={segment.language}
                                                     showLineNumbers
                                                     customStyle={{
-                                                        borderRadius: "10px",
+                                                        borderBottomLeftRadius: theme.shape.borderRadius,
+                                                        borderBottomRightRadius: theme.shape.borderRadius,
                                                         overflowX: "auto",
                                                         maxWidth: "calc(100% - 10px)",
                                                     }}
@@ -341,7 +367,7 @@ export const ConversationWindow = ({ messages, setMessages }) => {
                                 maxWidth: "calc(100% - 50px)",
                                 width: "fit-content",
                                 color: "white",
-                                borderRadius: "10px",
+                                borderRadius: theme.shape.borderRadius,
                                 borderBottomLeftRadius: "0",
                                 backgroundColor: theme.palette.tertiary.main,
                             }}>
@@ -363,7 +389,7 @@ export const ConversationWindow = ({ messages, setMessages }) => {
                     maxWidth: "300px",
                     width: "fit-content",
                     color: "black",
-                    borderRadius: "10px",
+                    borderRadius: theme.shape.borderRadius,
                     borderBottomRightRadius: "0",
                     backgroundColor: modelIsGPT4 ? theme.palette.secondary.main : theme.palette.primary.main,
                     alignSelf: "flex-end"

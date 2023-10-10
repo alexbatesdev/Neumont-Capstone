@@ -1,7 +1,7 @@
 import React from 'react'
 import "@/reset.css"
 import { ThemeProvider } from '@mui/material'
-import { theme } from '@/components/theme'
+import { theme } from '@/components/themes'
 
 export default function App({ Component, pageProps }) {
   return (<>

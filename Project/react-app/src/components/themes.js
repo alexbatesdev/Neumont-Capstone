@@ -21,6 +21,9 @@ export const theme = createTheme({
             secondary: '#493566'
         }
     },
+    shape: {
+        borderRadius: "10px",
+    }
 })
 
 export const monaco_spooky = {

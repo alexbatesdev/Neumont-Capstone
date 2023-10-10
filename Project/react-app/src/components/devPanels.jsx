@@ -25,7 +25,7 @@ const ResizableGrid = ({ children, initialColumnComponents: initialColumns = [{ 
         minHeight: '650px',
         height: '650px',
         backgroundColor: theme.palette.background.default,
-        borderRadius: '5px',
+        borderRadius: theme.shape.borderRadius,
     };
 
     const columnStyle = (width) => ({
@@ -34,14 +34,14 @@ const ResizableGrid = ({ children, initialColumnComponents: initialColumns = [{ 
         overflow: 'hidden',
         padding: '8px',
         border: `1px solid ${theme.palette.divider.default}`,
-        borderRadius: '5px',
+        borderRadius: theme.shape.borderRadius,
         position: 'relative',
         backgroundColor: theme.palette.background.paper,
     });
     const dividerStyle = {
         cursor: 'col-resize',
         backgroundColor: theme.palette.divider.secondary,
-        borderRadius: '5px',
+        borderRadius: theme.shape.borderRadius,
         width: '8px',
         height: '100%',
         margin: '0 3px',

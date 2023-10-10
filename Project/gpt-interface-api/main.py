@@ -75,7 +75,6 @@ async def prompt(prompt_in: PromptInput = Body(...)):
         "content": "You are assisting in the development of a javascript React application. When you generate a component it should be a functional component. Include inline styles to make things look nice. Try to use material ui components from @mui/material whenever makes sense. Be sure to supply valid JSON for the component definition.",
     }
 
-    # Test me!!!!!~ 😎
     # Add some context about the available packages 💭
     # Mui shouldn't be hard coded, it should be a variable that can be changed 💭
     system_prompt = {

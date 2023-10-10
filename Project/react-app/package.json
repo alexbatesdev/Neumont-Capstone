@@ -17,6 +17,7 @@
     "@fontsource/roboto": "^5.0.8",
     "@monaco-editor/react": "^4.6.0",
     "@mui/material": "^5.14.11",
+    "@webcontainer/api": "^1.1.7",
     "next": "latest",
     "react": "latest",
     "react-dom": "latest",

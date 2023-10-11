@@ -15,3 +15,9 @@ services:
   #   build: ./react-app
   #   ports:
   #     - "3000:3000"
+  image-proxy:
+    # This was made entirely by gpt
+    image: image-proxy-by-gpt
+    build: ./image-proxy-by-gpt
+    ports:
+      - "3001:3001"

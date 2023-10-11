@@ -5,3 +5,5 @@ __pycache__/
 
 # ignore the pycache directory no matter how many levels it is nested
 **/__pycache__/
+
+**/node_modules/

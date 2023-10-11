@@ -1,0 +1,22 @@
+# Start of assistant generated code
+# Use an official Node runtime as the base image
+FROM node:14
+
+# Set the working directory inside the container
+WORKDIR /usr/src/app
+
+# Copy package.json and package-lock.json
+COPY package*.json ./
+
+# Install the application's dependencies inside the container
+RUN npm install
+
+# Copy the application code to the container
+COPY . .
+
+# Expose the port the app will run on
+EXPOSE 3001
+
+# Run the application
+CMD ["npm", "start"]
+# End of assistant generated code

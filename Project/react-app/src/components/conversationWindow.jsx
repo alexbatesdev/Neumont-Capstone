@@ -4,9 +4,7 @@ import { Card, Typography, Box, Button, TextField } from "@mui/material";
 import Head from "next/head";
 import { useTheme } from '@mui/material/styles';
 import CircularProgress from "@mui/material/CircularProgress";
-import SyntaxHighlighter from "react-syntax-highlighter";
-import { atelierCaveDark } from "react-syntax-highlighter/dist/cjs/styles/hljs";
-
+import { Message } from "./message";
 
 const trimMessages = (messages) => {
     let newMessages = [];
@@ -18,6 +16,7 @@ const trimMessages = (messages) => {
     });
     return newMessages;
 }
+
 
 // Refactor so the messageHistory state is stored in the parent component
 // This component should still be the one making api calls and updating the state (with the parent component passing down the state and the function to update it as props) 💭
@@ -144,33 +143,6 @@ export const ConversationWindow = ({ messages, setMessages }) => {
         });
     };
 
-    const handleDisplayCodeSnippet = (message) => {
-        const segments = [];
-        const regex = /```(?:([\w-]+)\s+)?([\s\S]*?)```/g; // Modified regex to optionally capture language specification
-        let lastIndex = 0;
-        let match;
-
-        while ((match = regex.exec(message)) !== null) {
-
-            // Add plain text leading up to the code snippet
-            if (match.index > lastIndex) {
-                segments.push({ type: 'text', content: message.slice(lastIndex, match.index) });
-            }
-            // Determine language (if specified, otherwise default to 'javascript')
-            const language = match[1] || 'javascript'; // Use captured language specification or default to 'javascript'
-            // Add code snippet
-            segments.push({ type: 'code', content: match[2], language }); // Include language in segment
-            lastIndex = regex.lastIndex;
-        }
-
-        // Add remaining plain text after the last code snippet
-        if (lastIndex < message.length) {
-            segments.push({ type: 'text', content: message.slice(lastIndex) });
-        }
-
-        return segments;
-    }
-
     const scrollToBottom = () => {
         if (messageBoxRef.current) {
             messageBoxRef.current.scrollTop = messageBoxRef.current.scrollHeight;
@@ -213,7 +185,7 @@ export const ConversationWindow = ({ messages, setMessages }) => {
                     backgroundColor: "grey",
                     backgroundSize: "cover",
                     backgroundPosition: "center",
-                    backgroundImage: "url(https://upload.wikimedia.org/wikipedia/commons/0/04/ChatGPT_logo.svg)",
+                    backgroundImage: "url(http://localhost:3001/proxy-image?url=https://upload.wikimedia.org/wikipedia/commons/0/04/ChatGPT_logo.svg)",
                     filter: modelIsGPT4 ? "invert(1) brightness(1.3) contrast(3) hue-rotate(275deg) brightness(1.2)" : "invert(1) brightness(1.3) contrast(1.3) hue-rotate(171deg) brightness(1.2)",
                 }}> </Box>
                 <Typography variant="h5" sx={{ display: "inline-block", color: theme.palette.text.primary }}>
@@ -244,140 +216,9 @@ export const ConversationWindow = ({ messages, setMessages }) => {
                 flexGrow: 1,
             }}>
                 {messages.map((message, index) => {
-                    if (message.role == "assistant") {
-                        let color;
-                        if (message.model == "gpt-4-0613") {
-                            color = theme.palette.secondary.main;
-                        } else if (message.model == "gpt-3.5-turbo-0613") {
-                            color = theme.palette.primary.main;
-                        }
-                        return (<Box key={index + "GPT"} sx={{
-                            alignSelf: "flex-start",
-                            display: "flex",
-                            flexDirection: "row",
-                            width: "100%",
-                            alignItems: "flex-end",
-                            justifyContent: "flex-end",
-                        }}>
-                            <Box key={index} sx={{
-                                display: "flex",
-                                flexDirection: "column",
-                                justifyContent: "flex-start",
-                                alignItems: "flex-start",
-                                marginTop: "8px",
-                                padding: "10px",
-                                maxWidth: "calc(100% - 50px)",
-                                width: "fit-content",
-                                color: "black",
-                                borderRadius: theme.shape.borderRadius,
-                                borderBottomRightRadius: "0",
-                                backgroundColor: color,
-                                alignSelf: "flex-end"
-                            }}>
-                                {handleDisplayCodeSnippet(message.content).map((segment, index) => {
-                                    switch (segment.type) {
-                                        case 'text':
-                                            return (
-                                                <Typography key={index} variant="body1">
-                                                    {segment.content}
-                                                </Typography>
-                                            );
-                                        case 'code':
-                                            return (<>
-                                                <div style={{
-                                                    width: "100%",
-                                                    backgroundColor: theme.palette.background.paper,
-                                                    borderTopLeftRadius: theme.shape.borderRadius,
-                                                    borderTopRightRadius: theme.shape.borderRadius,
-                                                }}>
-                                                    {/* Refactor to a button group, possibly vanilla html so I can style it more freely 💭 */}
-                                                    <Button
-                                                        color="tertiary"
-                                                        variant="contained"
-                                                        size="small"
-                                                        disabled
-                                                        style={{
-                                                            fontSize: "1rem",
-                                                            marginBottom: "1rem",
-                                                            width: "fit-content",
-                                                            marginBottom: "0",
-                                                            display: "inline",
-                                                            float: "right",
-                                                        }}
-                                                    >
-                                                        Diff
-                                                    </Button>
-                                                    {/* Add React-Toasts to notify about saving and copying and more 💭 */}
-                                                    <Button
-                                                        variant="contained"
-                                                        color="tertiary"
-                                                        size="small"
-                                                        onClick={() => {
-                                                            navigator.clipboard.writeText(segment.content);
-                                                        }}
-                                                        sx={{
-                                                            fontSize: "1rem",
-                                                            marginBottom: "1rem",
-                                                            width: "fit-content",
-                                                            marginBottom: "0",
-                                                            display: "inline",
-                                                            float: "right",
-                                                        }}>
-                                                        Copy
-                                                    </Button>
-                                                </div>
-                                                <SyntaxHighlighter
-                                                    key={index}
-                                                    language={segment.language}
-                                                    showLineNumbers
-                                                    customStyle={{
-                                                        borderBottomLeftRadius: theme.shape.borderRadius,
-                                                        borderBottomRightRadius: theme.shape.borderRadius,
-                                                        overflowX: "auto",
-                                                        maxWidth: "calc(100% - 10px)",
-                                                    }}
-                                                    style={atelierCaveDark}
-                                                >
-                                                    {segment.content}
-                                                </SyntaxHighlighter>
-                                            </>);
-                                        default:
-                                            return null;
-                                    }
-                                })}
-                            </Box>
-                        </Box>
-                        )
-                    }
-                    if (message.role == "user") {
-                        return (<Box key={index + "user"} sx={{
-                            alignSelf: "flex-start",
-                            display: "flex",
-                            flexDirection: "row",
-                            width: "100%",
-                            alignItems: "flex-end",
-                        }}>
-                            <Box key={index} sx={{
-                                display: "flex",
-                                flexDirection: "column",
-                                justifyContent: "flex-start",
-                                alignItems: "flex-start",
-                                marginTop: "8px",
-                                padding: "10px",
-                                maxWidth: "calc(100% - 50px)",
-                                width: "fit-content",
-                                color: "white",
-                                borderRadius: theme.shape.borderRadius,
-                                borderBottomLeftRadius: "0",
-                                backgroundColor: theme.palette.tertiary.main,
-                            }}>
-                                <Typography variant="body1">
-                                    {message.content}
-                                </Typography>
-                            </Box>
-                        </Box>
-                        )
-                    }
+                    return (
+                        <Message key={index} message={message} />
+                    );
                 })}
                 {isLoading && <Box sx={{
                     display: "flex",

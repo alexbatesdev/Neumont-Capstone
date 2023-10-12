@@ -165,6 +165,7 @@ export const ConversationWindow = ({ messages, setMessages }) => {
             alignItems: "flex-start",
             zIndex: 1,
             backgroundColor: theme.palette.background.paper,
+            width: "100%",
         }}>
             <Box sx={{
                 width: "calc(100% - 2rem)",

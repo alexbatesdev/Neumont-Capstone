@@ -12,10 +12,6 @@ export const SideBar = ({ sidebarWidth, setSidebarWidth }) => {
     const theme = useTheme();
     const [selectedTab, setSelectedTab] = React.useState(0);
 
-    // Temp dev state, pull from context later 💭
-    const [messageHistory, setMessageHistory] = React.useState([]);
-
-
     const iconDivStyle = {
         width: "50px",
         height: "50px",
@@ -80,8 +76,8 @@ export const SideBar = ({ sidebarWidth, setSidebarWidth }) => {
                 break;
             case 1:
                 setSelectedTab(1);
-                if (parseInt(sidebarWidth.substring(0, sidebarWidth.length - 2)) < 450) {
-                    setSidebarWidth("450px")
+                if (parseInt(sidebarWidth.substring(0, sidebarWidth.length - 2)) < 520) {
+                    setSidebarWidth("520px")
                 }
                 break;
             case 2:
@@ -215,7 +211,7 @@ export const SideBar = ({ sidebarWidth, setSidebarWidth }) => {
                         }}
                     >
                         {/* Conversation View Component goes here 💭 */}
-                        <ConversationWindow messages={messageHistory} setMessages={setMessageHistory} />
+                        <ConversationWindow />
                     </div>
                 </>) : null}
                 {selectedTab === 2 ? (<>

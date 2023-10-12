@@ -6,7 +6,7 @@ const nextConfig = {
     return [
       {
         // Apply these headers to only the /demo route.
-        source: '/demo',
+        source: '/editor',
         headers: [
           {
             key: 'Cross-Origin-Embedder-Policy',

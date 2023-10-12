@@ -13,6 +13,7 @@ import { CodeEditor } from '@/components/codeEditor'
 import { ResizableViewsHorizontal, ResizableViewsVertical } from '@/components/resizableViews'
 import { SideBar } from '@/components/sideBar'
 import { useTheme } from '@mui/material/styles';
+import { EditorContextProvider } from '@/contexts/editor-context'
 
 //https://www.npmjs.com/package/@monaco-editor/react
 // I don't think this applies to me, but it might vvv
@@ -40,8 +41,8 @@ export default function Home() {
     \n    ); \
     \n} \
     "
-
-    const files = {
+    //Should be gotten from backend
+    const initialFiles = {
         'my-project': {
             directory: {
                 'example.jsx': {
@@ -52,6 +53,12 @@ export default function Home() {
             }
         }
     }
+
+    const [files, setFiles] = useState(initialFiles);
+
+    const [openFiles, setOpenFiles] = useState([]);
+
+    const [webContainer, setWebContainer] = useState(null);
 
     const codeEditorFile = (directory, filename) => {
         return ({
@@ -65,8 +72,14 @@ export default function Home() {
         content: "```\n" + sample_snippet_2 + "\n```",
         model: 'gpt-4-0613'
     }]);
-    const [isThemeOne, setIsThemeOne] = useState(true);
     const [sidebarWidth, setSidebarWidth] = React.useState("300px");
+
+    const [projectSettings, setProjectSettings] = useState({});
+
+    const saveProject = () => {
+        console.log('Saving project');
+        console.log("implement me!")
+    }
 
     const components_2 = [
         {
@@ -91,7 +104,19 @@ export default function Home() {
     ]
 
     return (
-        <>
+        <EditorContextProvider
+            messageHistory={messageHistory}
+            setMessageHistory={setMessageHistory}
+            files={files}
+            setFiles={setFiles}
+            openFiles={openFiles}
+            setOpenFiles={setOpenFiles}
+            webContainer={webContainer}
+            setWebContainer={setWebContainer}
+            projectSettings={projectSettings}
+            setProjectSettings={setProjectSettings}
+            saveProject={() => { }}
+        >
             <div
                 className='pageWrapper' // I might reuse this
                 style={{
@@ -137,6 +162,6 @@ export default function Home() {
                     </div>
                 </div>
             </div>
-        </>
+        </EditorContextProvider>
     )
 }

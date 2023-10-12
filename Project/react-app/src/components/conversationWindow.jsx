@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useContext } from "react";
 // import common tags from material ui
 import { Card, Typography, Box, Button, TextField } from "@mui/material";
 import Head from "next/head";
@@ -6,6 +6,7 @@ import { useTheme } from '@mui/material/styles';
 import CircularProgress from "@mui/material/CircularProgress";
 import { Message } from "./message";
 import ArrowRightIcon from '@mui/icons-material/ArrowRight';
+import { EditorContext } from "@/contexts/editor-context";
 
 const trimMessages = (messages) => {
     let newMessages = [];
@@ -21,7 +22,8 @@ const trimMessages = (messages) => {
 
 // Refactor so the messageHistory state is stored in the parent component
 // This component should still be the one making api calls and updating the state (with the parent component passing down the state and the function to update it as props) 💭
-export const ConversationWindow = ({ messages, setMessages }) => {
+export const ConversationWindow = () => {
+    const { messageHistory, setMessageHistory } = useContext(EditorContext);
     const [messageField, setMessageField] = useState("");
     // const [messages, setMessages] = useState([]);
     const messageBoxRef = useRef(null);
@@ -56,7 +58,7 @@ export const ConversationWindow = ({ messages, setMessages }) => {
         // Even though the new state is not yet set (setMessages is async)
         let newMessages;
         // Update messages state (should automatically cause rerender and visual update)
-        setMessages((prevMessages) => {
+        setMessageHistory((prevMessages) => {
             newMessages = [...prevMessages, message];
             return [...prevMessages, message]
         });
@@ -72,7 +74,7 @@ export const ConversationWindow = ({ messages, setMessages }) => {
             const command_args = messageField.split(" ").slice(1);
             const command_prompt = messageField.slice(1);
             if (command == "clear") {
-                setMessages([]);
+                setMessageHistory([]);
                 return;
             } else if (command == "preimport") {
                 if (command_args.length == 0) {
@@ -137,7 +139,7 @@ export const ConversationWindow = ({ messages, setMessages }) => {
             };
 
             // Update messages state (should automatically cause rerender and visual update)
-            setMessages((prevMessages) => {
+            setMessageHistory((prevMessages) => {
                 return [...prevMessages, message_back]
             });
             setIsLoading(false);
@@ -152,7 +154,7 @@ export const ConversationWindow = ({ messages, setMessages }) => {
 
     useEffect(() => {
         scrollToBottom();
-    }, [messages]);
+    }, [messageHistory]);
 
     return (<>
         <Box sx={{
@@ -215,7 +217,7 @@ export const ConversationWindow = ({ messages, setMessages }) => {
                 width: "calc(100% - 2rem)",
                 flexGrow: 1,
             }}>
-                {messages.map((message, index) => {
+                {messageHistory.map((message, index) => {
                     return (
                         <Message key={index} message={message} />
                     );

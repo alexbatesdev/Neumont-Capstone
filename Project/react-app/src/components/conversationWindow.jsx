@@ -5,6 +5,7 @@ import Head from "next/head";
 import { useTheme } from '@mui/material/styles';
 import CircularProgress from "@mui/material/CircularProgress";
 import { Message } from "./message";
+import ArrowRightIcon from '@mui/icons-material/ArrowRight';
 
 const trimMessages = (messages) => {
     let newMessages = [];
@@ -154,9 +155,6 @@ export const ConversationWindow = ({ messages, setMessages }) => {
     }, [messages]);
 
     return (<>
-        <Head>
-            <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/uicons-bold-rounded/css/uicons-bold-rounded.css'></link>
-        </Head>
         <Box sx={{
             height: "100%",
             display: "flex",
@@ -166,6 +164,7 @@ export const ConversationWindow = ({ messages, setMessages }) => {
             zIndex: 1,
             backgroundColor: theme.palette.background.paper,
             width: "100%",
+            minWidth: "375px"
         }}>
             <Box sx={{
                 width: "calc(100% - 2rem)",
@@ -252,7 +251,8 @@ export const ConversationWindow = ({ messages, setMessages }) => {
                     fontSize: "2rem",
                     marginLeft: "1rem",
                 }}>
-                    <i className="fi fi-br-caret-right" style={{ height: "45px" }}></i>
+                    {/* Might need to increase the size 💭 */}
+                    <ArrowRightIcon />
                 </Button>
             </Box>
         </Box >

@@ -1,7 +1,7 @@
 // ResizableViews.stories.js
 
 import React from 'react';
-import { ResizableViewsVertical } from './resizableViewsVertical';
+import { ResizableViewsVertical } from './resizableViews';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { withThemeFromJSXProvider } from "@storybook/addon-themes";
 import { theme } from "./themes";

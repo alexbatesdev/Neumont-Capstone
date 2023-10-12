@@ -1,7 +1,7 @@
 // ResizableViews.stories.js
 
 import React from 'react';
-import { ResizableViews } from './resizableViews';
+import { ResizableViewPanel } from './resizableViews';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { withThemeFromJSXProvider } from "@storybook/addon-themes";
 import { theme } from "./themes";
@@ -11,7 +11,7 @@ import { ResizableViewsVertical } from './resizableViewsVertical';
 // This is your Storybook metadata for the component
 export default {
     title: 'Components/ResizableViews',
-    component: ResizableViews,
+    component: ResizableViewPanel,
     decorators: [
         withThemeFromJSXProvider({
             themes: {
@@ -43,7 +43,7 @@ const Template = (args) => {
     ]
 
     return (
-        <ResizableViews {...args} items={items} />
+        <ResizableViewPanel {...args} items={items} />
     );
 };
 
@@ -80,7 +80,7 @@ const Template2 = (args) => {
 
 
     return (
-        <ResizableViews {...args} items={items} />
+        <ResizableViewPanel {...args} items={items} />
     );
 };
 

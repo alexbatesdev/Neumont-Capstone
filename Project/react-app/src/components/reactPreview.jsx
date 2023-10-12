@@ -72,7 +72,6 @@ export const PreviewComponent = () => {
         }}>
             {isLoading ? "Loading..." : (<>
                 <iframe style={{
-                    backgroundColor: "white",
                     width: '100%',
                     height: '100%',
                     borderRadius: theme.shape.borderRadius,

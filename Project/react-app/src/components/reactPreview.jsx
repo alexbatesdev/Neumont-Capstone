@@ -19,7 +19,7 @@ export const PreviewComponent = () => {
         const webContainerInstance = await WebContainer.boot({
             workdirName: 'react-app'
         });
-        // webContainerInstance.mount(files['my-project'].directory)
+        webContainerInstance.mount(files)
         setWebContainer(webContainerInstance);
 
         setIsInstallingDependencies(true);
@@ -36,7 +36,7 @@ export const PreviewComponent = () => {
 
     const installDependencies = async (webContainerInstance) => {
         //Instead of using npx to initialize a new react project I should just mount the files from our project then install dependencies 💭
-        const installProcess = await webContainerInstance.spawn('npx', ['--yes', 'create-react-app', '.']);
+        const installProcess = await webContainerInstance.spawn('pnpm', ['install']);
         installProcess.output.pipeTo(
             new WritableStream({
                 write(data) {
@@ -57,6 +57,7 @@ export const PreviewComponent = () => {
             })
         )
         webContainerInstance.on('server-ready', (port, url) => {
+            console.log(url)
             setPreview(url);
         });
     }
@@ -103,7 +104,6 @@ export const PreviewComponent = () => {
                 width: '100%',
                 height: 'calc(100% - 30px)',
                 position: 'relative',
-                top: "30px",
                 borderBottomLeftRadius: theme.shape.borderRadius,
                 borderBottomRightRadius: theme.shape.borderRadius,
                 zIndex: 2,

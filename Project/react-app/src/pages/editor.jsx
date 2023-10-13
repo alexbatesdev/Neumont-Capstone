@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import Head from 'next/head'
 import Image from 'next/image'
 import { ThemeProvider } from '@mui/material'
@@ -14,6 +14,8 @@ import { ResizableViewsHorizontal, ResizableViewsVertical } from '@/components/r
 import { SideBar } from '@/components/sideBar'
 import { useTheme } from '@mui/material/styles';
 import { EditorContextProvider } from '@/contexts/editor-context'
+
+import reactFileTemplate from '@/thatOneStuffFolderUsuallyCalledUtils/reactFileTemplate'
 
 //https://www.npmjs.com/package/@monaco-editor/react
 // I don't think this applies to me, but it might vvv
@@ -42,16 +44,60 @@ export default function Home() {
     \n} \
     "
     //Should be gotten from backend
-    const initialFiles = {
-        'my-project': {
-            directory: {
-                'example.jsx': {
-                    file: {
-                        contents: sample_snippet_2,
-                    }
-                }
+    const initialFiles = reactFileTemplate;
+
+    // Used code from work for reference, my boss said to feel free to use our company code as a learning resource 
+    // (Sounds odd and very generous until you learn that he was my highschool teacher before he was my boss, then it's just very generous)
+    // I am making sure the code is my own, there are ways of doing things in here that I know aren't my style, and I almost never think of recursion as a solution (I need to get better at this)
+    // The main way I made this my own is by making swappable actionMethods. I don't know how this will go, but hopefully it's DRY B)
+    const fileTraverse = (directory, splitpath, actionMethod, parameters) => {
+        //Get the next chunk of the path
+        let path = splitpath.shift();
+
+        if (path == '.') {
+            //If it's a dot, thats the same as being at the end
+            path = splitpath.shift();
+        }
+
+        //If it's the last chunk,
+        if (splitpath.length == 0) {
+            // add the file to the directory
+            return actionMethod(directory, path, ...parameters);
+        }
+        //If it's not the last chunk, and the path doesn't exist yet,
+        let currentDirectory;
+        //If the path doesn't exist yet,
+        if (!directory[path]) {
+            // create it
+            directory[path] = {
+                directory: {}
             }
         }
+        //Then set the currentDirectory to the next directory
+        currentDirectory = directory[path].directory;
+        //Then recurse
+        fileTraverse(currentDirectory, splitpath, actionMethod, parameters);
+    }
+
+    const addFile = (directory, path, contents) => {
+        directory[path] = {
+            file: {
+                contents: contents,
+            }
+        }
+        return;
+    }
+
+    const addDirectory = (directory, path) => {
+        directory[path] = {
+            directory: {}
+        }
+        return;
+    }
+
+    const deleteFile = (directory, path) => {
+        delete directory[path];
+        return;
     }
 
     const [files, setFiles] = useState(initialFiles);
@@ -93,10 +139,10 @@ export default function Home() {
     ]
 
     const components = [
-        {
-            slot: 0,
-            component: <CodeEditor files={[codeEditorFile(files['my-project'].directory, 'example.jsx')]} />
-        },
+        // {
+        //     slot: 0,
+        //     component: <CodeEditor files={[codeEditorFile(files['my-project'].directory, 'example.jsx')]} />
+        // },
         {
             slot: 1,
             component: <ResizableViewsVertical items={components_2} />

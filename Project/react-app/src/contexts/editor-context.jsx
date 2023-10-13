@@ -10,6 +10,8 @@ export const EditorContext = createContext({
     //Code Editor Files
     openFiles: [],
     setOpenFiles: () => { },
+    //File Operations
+    fileOperations: {},
     //The web container duh
     webContainer: null,
     setWebContainer: () => { },
@@ -29,6 +31,7 @@ export const EditorContextProvider = ({
     setFiles,
     openFiles,
     setOpenFiles,
+    fileOperations,
     webContainer,
     setWebContainer,
     projectSettings,
@@ -44,6 +47,7 @@ export const EditorContextProvider = ({
                 setFiles,
                 openFiles,
                 setOpenFiles,
+                fileOperations,
                 webContainer,
                 setWebContainer,
                 projectSettings,

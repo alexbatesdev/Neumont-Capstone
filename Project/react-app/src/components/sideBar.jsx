@@ -7,6 +7,7 @@ import RadioButtonCheckedIcon from '@mui/icons-material/RadioButtonChecked';
 import PaletteIcon from '@mui/icons-material/Palette';
 import { useCallback } from "react";
 import { ConversationWindow } from "./conversationWindow";
+import StarIcon from '@mui/icons-material/Star';
 
 export const SideBar = ({ sidebarWidth, setSidebarWidth }) => {
     const theme = useTheme();
@@ -141,7 +142,7 @@ export const SideBar = ({ sidebarWidth, setSidebarWidth }) => {
                     onMouseLeave={(e) => e.target.style.backgroundColor = theme.palette.background.default}
                     onClick={() => setTab(1)}
                     style={iconDivStyle}>
-                    <RadioButtonCheckedIcon />
+                    <StarIcon />
                 </div>
                 <div
                     onMouseEnter={(e) => e.target.style.backgroundColor = theme.palette.background.paper}
@@ -262,7 +263,7 @@ export const SideBar = ({ sidebarWidth, setSidebarWidth }) => {
                     height: '100%',
                     zIndex: 2,
                     cursor: 'col-resize',
-                    backgroundColor: theme.palette.divider.secondary,
+                    backgroundColor: theme.palette.divider.default,
                     float: "right",
                 }}></div>
         </div>

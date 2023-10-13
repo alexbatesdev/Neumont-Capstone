@@ -50,20 +50,36 @@ export default function Home() {
     // (Sounds odd and very generous until you learn that he was my highschool teacher before he was my boss, then it's just very generous)
     // I am making sure the code is my own, there are ways of doing things in here that I know aren't my style, and I almost never think of recursion as a solution (I need to get better at this)
     // The main way I made this my own is by making swappable actionMethods. I don't know how this will go, but hopefully it's DRY B)
-    const fileTraverse = (directory, splitpath, actionMethod, parameters) => {
+    const fileTraverse = (directory, splitPath, actionMethod, parameters = []) => {
+        // For some reason fileTraverse is being called with a null directory and I don't know why
+        // This patches that issue up, but I wish I knew why it was happening
+        if (directory == null) {
+            console.log("Directory is null")
+            return;
+        }
+
+        // console.log("Entering fileTraverse")
+        // console.log("directory: ", directory)
+        // console.log("splitpath: ", splitpath)
+        // console.log("actionMethod: ", actionMethod)
+        let splitPathClone = [...splitPath];
         //Get the next chunk of the path
-        let path = splitpath.shift();
+        let path = splitPathClone.shift();
+        // console.log("path: ", path);
 
         if (path == '.') {
+            // console.log("Path is a dot");
             //If it's a dot, thats the same as being at the end
-            path = splitpath.shift();
+            path = splitPathClone.shift();
+            // console.log("newPath: ", path)
         }
 
         //If it's the last chunk,
-        if (splitpath.length == 0) {
-            // add the file to the directory
+        if (splitPathClone.length == 0) {
+            // console.log("Triggering actionMethod");
             return actionMethod(directory, path, ...parameters);
         }
+        // console.log("---------")
         //If it's not the last chunk, and the path doesn't exist yet,
         let currentDirectory;
         //If the path doesn't exist yet,
@@ -75,11 +91,15 @@ export default function Home() {
         }
         //Then set the currentDirectory to the next directory
         currentDirectory = directory[path].directory;
+        // console.log("newDirectory: ", currentDirectory)
+        // console.log("Exiting fileTraverse")
         //Then recurse
-        fileTraverse(currentDirectory, splitpath, actionMethod, parameters);
+        return fileTraverse(currentDirectory, splitPathClone, actionMethod, parameters);
     }
 
-    const addFile = (directory, path, contents) => {
+    //Creates or overrides a file at the given path
+    const setFile = (directory, path, contents) => {
+        console.log("Setting file")
         directory[path] = {
             file: {
                 contents: contents,
@@ -100,18 +120,46 @@ export default function Home() {
         return;
     }
 
+    const deleteDirectory = (directory, path) => {
+        delete directory[path];
+        return;
+    }
+
+    const getCodeEditorFormat = (directory, path, filepath) => {
+        // console.log(directory[path])
+        return ({
+            filename: path,
+            filepath: filepath,
+            contents: directory[path].file.contents,
+        })
+    }
+
+    //Wrapper functions for easier use
+    const fileOperations = {
+        writeFile: (fileTree, path, contents) => {
+            fileTraverse(fileTree, path.split("/"), setFile, [contents]);
+        },
+        addDirectory: (path) => {
+            fileTraverse(fileTree, path.split("/"), addDirectory);
+        },
+        deleteFile: (path) => {
+            fileTraverse(fileTree, path.split("/"), deleteFile);
+        },
+        deleteDirectory: (path) => {
+            fileTraverse(fileTree, path.split("/"), deleteDirectory);
+        },
+        getCodeEditorFile: (path) => {
+            const filepath = path; //Renaming the variable due to how ... operator works
+            return fileTraverse(files, path.split("/"), getCodeEditorFormat, [filepath]);
+        }
+    }
+
     const [files, setFiles] = useState(initialFiles);
 
-    const [openFiles, setOpenFiles] = useState([]);
+    const [openFiles, setOpenFiles] = useState([fileOperations.getCodeEditorFile("./src/App.js")]);
 
     const [webContainer, setWebContainer] = useState(null);
 
-    const codeEditorFile = (directory, filename) => {
-        return ({
-            filename: filename,
-            contents: directory[filename].file.contents,
-        })
-    }
 
     const [messageHistory, setMessageHistory] = useState([{
         role: 'assistant',
@@ -127,6 +175,11 @@ export default function Home() {
         console.log("implement me!")
     }
 
+    useEffect(() => {
+        console.log("Files changed")
+        console.log(files)
+    }, [files])
+
     const components_2 = [
         {
             slot: 0,
@@ -139,10 +192,10 @@ export default function Home() {
     ]
 
     const components = [
-        // {
-        //     slot: 0,
-        //     component: <CodeEditor files={[codeEditorFile(files['my-project'].directory, 'example.jsx')]} />
-        // },
+        {
+            slot: 0,
+            component: <CodeEditor />
+        },
         {
             slot: 1,
             component: <ResizableViewsVertical items={components_2} />
@@ -157,6 +210,7 @@ export default function Home() {
             setFiles={setFiles}
             openFiles={openFiles}
             setOpenFiles={setOpenFiles}
+            fileOperations={fileOperations}
             webContainer={webContainer}
             setWebContainer={setWebContainer}
             projectSettings={projectSettings}

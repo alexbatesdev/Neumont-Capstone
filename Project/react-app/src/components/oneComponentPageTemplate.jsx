@@ -44,7 +44,7 @@ export function OneComponentTemplate({ children, title }) {
 
                 <Typography variant="h5"
                     onClick={() => { window.history.back() }}
-                    onMouseOver={(e) => { e.target.style.backgroundColor = theme.palette.divider.secondary }}
+                    onMouseOver={(e) => { e.target.style.backgroundColor = theme.palette.divider.default }}
                     onMouseOut={(e) => { e.target.style.backgroundColor = theme.palette.background.paper }}
                     sx={{
                         fontWeight: "bold",

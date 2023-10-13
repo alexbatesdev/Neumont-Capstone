@@ -56,6 +56,8 @@ export const ResizableViewsHorizontal = ({ items }) => {
         let lastX = event.clientX;
         let startX = event.clientX;
 
+        // Polish: Add a clear overlay on top of the iframe when dragging to prevent the iframe from capturing mouse events 💭
+
         const handleMouseMove = (event) => {
             // Calculate deltaX as the difference between the current and last clientX
             const deltaX = event.clientX - lastX;
@@ -125,7 +127,7 @@ export const ResizableViewsHorizontal = ({ items }) => {
                         margin: '0 3px',
                         zIndex: 1,
                         cursor: 'col-resize',
-                        backgroundColor: theme.palette.divider.secondary,
+                        backgroundColor: theme.palette.divider.default,
                         borderRadius: theme.shape.borderRadius,
                     }}></div> : null}
             </>)
@@ -259,7 +261,7 @@ export const ResizableViewsVertical = ({ items }) => {
                                 zIndex: 1,
                                 // Change cursor to 'row-resize' for vertical orientation
                                 cursor: 'row-resize',
-                                backgroundColor: theme.palette.divider.secondary,
+                                backgroundColor: theme.palette.divider.default,
                                 borderRadius: theme.shape.borderRadius,
                             }}
                         ></div>

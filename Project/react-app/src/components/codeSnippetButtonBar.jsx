@@ -5,14 +5,12 @@ import { useTheme } from "@mui/material/styles";
 export const CodeSnippetButtonBar = ({ segment }) => {
     const theme = useTheme();
 
-    const buttonBarBackground = "#020103"
-
     const buttonStyle = {
         fontSize: "1rem",
         marginBottom: "0",
         display: "inline",
         float: "right",
-        backgroundColor: buttonBarBackground,
+        backgroundColor: theme.palette.utilBar.default,
         height: "calc(100% - 10px)",
         padding: "5px",
         color: theme.palette.text.primary,
@@ -25,7 +23,7 @@ export const CodeSnippetButtonBar = ({ segment }) => {
     return (<div style={{
         width: "100%",
         height: "30px",
-        backgroundColor: buttonBarBackground,
+        backgroundColor: theme.palette.utilBar.default,
         borderTopLeftRadius: theme.shape.borderRadius,
         borderTopRightRadius: theme.shape.borderRadius,
         overflow: "hidden",

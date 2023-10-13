@@ -1,5 +1,6 @@
 import { createTheme, ThemeProvider } from '@mui/material'
 
+// https://coolors.co/3fb59b-8d7eff-364ee0-1c0c3b-300f62-4c1e91-30125a-140523
 export const theme = createTheme({
     palette: {
         mode: 'dark',
@@ -13,12 +14,16 @@ export const theme = createTheme({
             main: '#364ee0',
         },
         background: {
-            default: '#0F091A',
-            paper: '#211643',
+            default: '#1C0C3B',
+            paper: '#300F62',
         },
         divider: {
-            default: 'rgba(255, 200, 255, 0.12)',
-            secondary: '#493566'
+            default: '#4C1E91',
+        },
+        utilBar: {
+            default: "#140523",
+            secondary: "#30125A",
+            icons: "#5C2ADB"
         }
     },
     shape: {

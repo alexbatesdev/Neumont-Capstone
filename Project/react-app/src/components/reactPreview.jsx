@@ -1,9 +1,11 @@
 import React, { useContext, useEffect } from 'react';
-import { Box, Typography } from '@mui/material';
+import { Box, FormControl, FormHelperText, Input, InputLabel, TextField, Typography } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { WebContainer } from '@webcontainer/api';
 import { PreviewLoading } from './previewLoading';
 import { EditorContext } from '@/contexts/editor-context';
+import RefreshIcon from '@mui/icons-material/Refresh';
+import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 
 export const PreviewComponent = () => {
     const theme = useTheme();
@@ -62,7 +64,35 @@ export const PreviewComponent = () => {
         });
     }
 
-    return (
+    const buttonStyle = {
+        fontSize: "1rem",
+        marginBottom: "0",
+        display: "inline",
+        float: "right",
+        backgroundColor: theme.palette.utilBar.default,
+        height: "calc(100% - 4px)",
+        padding: "2px",
+        color: theme.palette.utilBar.icons,
+        width: "auto",
+        aspectRatio: "1/1",
+        textAlign: "center",
+        userSelect: "none",
+        cursor: "pointer",
+    }
+
+    return (<>
+        <style>
+            {`
+            @keyframes rotate {
+                from {
+                transform: rotate(0deg);
+                }
+                to {
+                transform: rotate(360deg);
+                }
+            }
+            `}
+        </style>
         <Box sx={{
             display: 'flex',
             flexDirection: 'column',
@@ -84,7 +114,7 @@ export const PreviewComponent = () => {
                 <div style={{
                     height: '30px',
                     width: '100%',
-                    backgroundColor: "#020103",
+                    backgroundColor: theme.palette.utilBar.default,
                     borderTopLeftRadius: theme.shape.borderRadius,
                     borderTopRightRadius: theme.shape.borderRadius,
                     zIndex: 2,
@@ -92,12 +122,43 @@ export const PreviewComponent = () => {
                     display: 'flex',
                     flexDirection: 'row',
                     justifyContent: 'space-between',
+                    gap: '50px',
                     alignItems: 'center',
-                    color: theme.palette.text.primary,
                 }}>
-                    <div>Refresh</div>
-                    <div>BIIIIIIIIIIIIIIIIG LOOOOOOOOOOOOOOOOOOONG URL</div>
-                    <div>New Tab</div>
+                    <RefreshIcon style={buttonStyle} onClick={(e) => {
+                        let target = e.target;
+
+                        // If the target is a path element, get the parent svg element
+                        if (target.tagName === 'path') {
+                            target = target.parentElement;
+                        }
+
+                        target.style.animation = 'rotate 0.6s ease-out';
+                        console.log(target)
+                        setTimeout(() => {
+                            target.style.animation = '';
+                        }, 600);
+
+                        setPreview((prevPrev) => {
+                            if (prevPrev === null) {
+                                return null;
+                            }
+                            return prevPrev + '?reload=true';
+                        })
+                    }} />
+
+                    <Input disableUnderline value={preview} variant="standard" sx={{
+                        flexGrow: 1,
+                        height: 'calc(100% - 10px)',
+                        backgroundColor: theme.palette.utilBar.secondary,
+                        color: theme.palette.text.primary,
+                        borderRadius: theme.shape.borderRadius,
+                        padding: '0 5px',
+                    }} />
+
+                    <OpenInNewIcon style={buttonStyle} onClick={() => {
+                        window.open(preview, '_blank');
+                    }} />
                 </div>
             </>)}
             <iframe style={{
@@ -109,5 +170,5 @@ export const PreviewComponent = () => {
                 zIndex: 2,
             }} src={preview} onLoad={() => setIsLoading(false)} />
         </Box>
-    );
+    </>);
 }

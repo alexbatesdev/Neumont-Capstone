@@ -40,7 +40,7 @@ const ResizableGrid = ({ children, initialColumnComponents: initialColumns = [{ 
     });
     const dividerStyle = {
         cursor: 'col-resize',
-        backgroundColor: theme.palette.divider.secondary,
+        backgroundColor: theme.palette.divider.default,
         borderRadius: theme.shape.borderRadius,
         width: '8px',
         height: '100%',

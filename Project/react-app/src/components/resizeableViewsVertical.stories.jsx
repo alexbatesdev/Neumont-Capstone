@@ -4,7 +4,7 @@ import React from 'react';
 import { ResizableViewsVertical } from './resizableViews';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { withThemeFromJSXProvider } from "@storybook/addon-themes";
-import { theme } from "./themes";
+import { theme } from "../thatOneStuffFolderUsuallyCalledUtils/themes";
 import { ConversationWindow } from './conversationWindow';
 
 // This is your Storybook metadata for the component

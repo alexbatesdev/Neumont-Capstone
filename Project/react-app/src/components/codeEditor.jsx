@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import { Box, Typography, Button } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import Editor, { DiffEditor, useMonaco, loader } from '@monaco-editor/react';
-import { monaco_spooky, monaco_night_owl } from '@/components/themes'
+import { monaco_spooky, monaco_night_owl } from '@/thatOneStuffFolderUsuallyCalledUtils/themes'
 import { EditorContext } from '@/contexts/editor-context';
 
 export const CodeEditor = () => {

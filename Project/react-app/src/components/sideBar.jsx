@@ -8,6 +8,7 @@ import PaletteIcon from '@mui/icons-material/Palette';
 import { useCallback } from "react";
 import { ConversationWindow } from "./conversationWindow";
 import StarIcon from '@mui/icons-material/Star';
+import FileTreeDisplay from "./fileTreeDisplay";
 
 export const SideBar = ({ sidebarWidth, setSidebarWidth }) => {
     const theme = useTheme();
@@ -66,20 +67,32 @@ export const SideBar = ({ sidebarWidth, setSidebarWidth }) => {
             setSelectedTab(null)
             return;
         }
+        let minWidth;
+        let maxWidth;
 
 
         switch (tab) {
             case 0:
-                if (parseInt(sidebarWidth.substring(0, sidebarWidth.length - 2)) < 300) {
-                    setSidebarWidth("300px")
+                minWidth = 300;
+                maxWidth = 330;
+                if (parseInt(sidebarWidth.substring(0, sidebarWidth.length - 2)) < minWidth) {
+                    setSidebarWidth(minWidth + "px")
+                }
+                if (parseInt(sidebarWidth.substring(0, sidebarWidth.length - 2)) > maxWidth) {
+                    setSidebarWidth(maxWidth + "px")
                 }
                 setSelectedTab(0);
                 break;
             case 1:
-                setSelectedTab(1);
-                if (parseInt(sidebarWidth.substring(0, sidebarWidth.length - 2)) < 520) {
-                    setSidebarWidth("520px")
+                minWidth = 600;
+                maxWidth = 800;
+                if (parseInt(sidebarWidth.substring(0, sidebarWidth.length - 2)) < minWidth) {
+                    setSidebarWidth(minWidth + "px")
                 }
+                if (parseInt(sidebarWidth.substring(0, sidebarWidth.length - 2)) > maxWidth) {
+                    setSidebarWidth(maxWidth + "px")
+                }
+                setSelectedTab(1);
                 break;
             case 2:
                 if (parseInt(sidebarWidth.substring(0, sidebarWidth.length - 2)) < 300) {
@@ -192,7 +205,7 @@ export const SideBar = ({ sidebarWidth, setSidebarWidth }) => {
                         }}
                     >
                         {/* Heirarchy View Component goes here 💭 */}
-                        <Typography variant="h6">Files<br /> WIP <br /> Component goes here</Typography>
+                        <FileTreeDisplay />
                     </div>
                 </>) : null}
                 {selectedTab === 1 ? (<>

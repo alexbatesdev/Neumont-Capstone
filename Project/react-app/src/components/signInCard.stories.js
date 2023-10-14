@@ -1,5 +1,5 @@
 import React from 'react';
-import { theme } from "./themes";
+import { theme } from "../thatOneStuffFolderUsuallyCalledUtils/themes";
 import { withThemeFromJSXProvider } from "@storybook/addon-themes";
 import { ThemeProvider } from "@mui/material";
 import { SignInCard } from './signInCard';

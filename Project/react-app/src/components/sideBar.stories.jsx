@@ -3,7 +3,7 @@
 import React from 'react';
 import { ThemeProvider, useTheme } from '@mui/material';
 import { withThemeFromJSXProvider } from '@storybook/addon-themes';
-import { theme } from './themes'; // import your theme from where it is defined
+import { theme } from '../thatOneStuffFolderUsuallyCalledUtils/themes'; // import your theme from where it is defined
 import { SideBar } from './sideBar';
 
 // Assistant-generated code starts

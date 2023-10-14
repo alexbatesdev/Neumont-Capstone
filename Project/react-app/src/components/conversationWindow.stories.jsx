@@ -1,6 +1,6 @@
 import React from "react";
 import { ConversationWindow } from "@/components/conversationWindow";
-import { theme } from "./themes";
+import { theme } from "../thatOneStuffFolderUsuallyCalledUtils/themes";
 import { withThemeFromJSXProvider } from "@storybook/addon-themes";
 import { ThemeProvider } from "@mui/material";
 import { useState } from "react";

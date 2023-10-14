@@ -1,7 +1,7 @@
 import React from 'react'
 import { Html, Head, Main, NextScript } from 'next/document'
 
-import { theme } from '@/components/themes'
+import { theme } from '@/thatOneStuffFolderUsuallyCalledUtils/themes'
 import { ThemeProvider } from '@mui/material'
 
 export default function Document() {

@@ -47,10 +47,10 @@ export const CodeSnippetButtonBar = ({ segment }) => {
             variant="body1"
             sx={buttonStyle}
             onMouseOver={(event) => {
-                event.target.style.backgroundColor = theme.palette.tertiary.main;
+                event.target.style.backgroundColor = theme.palette.utilBar.icons;
             }}
             onMouseOut={(event) => {
-                event.target.style.backgroundColor = buttonBarBackground;
+                event.target.style.backgroundColor = theme.palette.utilBar.default;
             }}
         >
             Diff
@@ -62,10 +62,10 @@ export const CodeSnippetButtonBar = ({ segment }) => {
                 navigator.clipboard.writeText(segment.content);
             }}
             onMouseOver={(event) => {
-                event.target.style.backgroundColor = theme.palette.tertiary.main;
+                event.target.style.backgroundColor = theme.palette.utilBar.icons;
             }}
             onMouseOut={(event) => {
-                event.target.style.backgroundColor = buttonBarBackground;
+                event.target.style.backgroundColor = theme.palette.utilBar.default;
             }}
             sx={buttonStyle}>
             Copy

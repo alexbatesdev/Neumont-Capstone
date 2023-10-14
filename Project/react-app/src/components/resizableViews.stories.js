@@ -4,7 +4,7 @@ import React from 'react';
 import { ResizableViewPanel } from './resizableViews';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { withThemeFromJSXProvider } from "@storybook/addon-themes";
-import { theme } from "./themes";
+import { theme } from "../thatOneStuffFolderUsuallyCalledUtils/themes";
 import { ConversationWindow } from './conversationWindow';
 import { ResizableViewsVertical } from './resizableViewsVertical';
 

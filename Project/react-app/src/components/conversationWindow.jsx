@@ -157,6 +157,7 @@ export const ConversationWindow = () => {
     }, [messageHistory]);
 
     return (<>
+        {/* Might want to swap a lot of divs to Boxes for consistency 💭 */}
         <Box sx={{
             height: "100%",
             display: "flex",

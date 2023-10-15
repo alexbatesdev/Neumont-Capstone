@@ -170,7 +170,6 @@ export const CodeEditor = () => {
                     value={fileOperations.getFileContents(openFilePaths[openFilePathIndex])}
                     theme={'spooky'}
                     beforeMount={handleMonacoWillMount}
-                    onMount={handleMonacoDidMount}
                     onChange={handleEditorChange}
                     wrapperProps={{
                         style: {

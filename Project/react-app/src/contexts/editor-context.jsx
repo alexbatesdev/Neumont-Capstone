@@ -8,19 +8,21 @@ export const EditorContext = createContext({
     files: {},
     setFiles: () => { },
     //Code Editor Files
-    openFiles: [],
-    setOpenFiles: () => { },
+    openFilePaths: [],
+    setOpenFilePaths: () => { },
+    openFilePathIndex: 0,
+    setOpenFilePathIndex: () => { },
+    lastClicked: null,
+    setLastClicked: () => { },
     //File Operations
     fileOperations: {},
     //The web container duh
     webContainer: null,
     setWebContainer: () => { },
     //Project Wide settings
-    projectSettings: {},
-    setProjectSettings: () => { },
+    // projectSettings: {},
+    // setProjectSettings: () => { },
     //Save might be something a lot of components want to do
-    saveProject: () => { },
-    //Might want to add the offsets for the view panels here
 });
 
 export const EditorContextProvider = ({
@@ -29,14 +31,18 @@ export const EditorContextProvider = ({
     setMessageHistory,
     files,
     setFiles,
-    openFiles,
-    setOpenFiles,
+    openFilePaths,
+    setOpenFilePaths,
+    openFilePathIndex,
+    setOpenFilePathIndex,
+    lastClicked,
+    setLastClicked,
     fileOperations,
     webContainer,
     setWebContainer,
-    projectSettings,
-    setProjectSettings,
-    saveProject,
+    // projectSettings,
+    // setProjectSettings,
+
 }) => {
     return (
         <EditorContext.Provider
@@ -45,14 +51,18 @@ export const EditorContextProvider = ({
                 setMessageHistory,
                 files,
                 setFiles,
-                openFiles,
-                setOpenFiles,
+                openFilePaths,
+                setOpenFilePaths,
+                openFilePathIndex,
+                setOpenFilePathIndex,
+                lastClicked,
+                setLastClicked,
                 fileOperations,
                 webContainer,
                 setWebContainer,
-                projectSettings,
-                setProjectSettings,
-                saveProject,
+                // projectSettings,
+                // setProjectSettings,
+
             }}
         >
             {children}

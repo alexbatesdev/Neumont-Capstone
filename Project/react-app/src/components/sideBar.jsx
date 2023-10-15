@@ -9,20 +9,24 @@ import { useCallback } from "react";
 import { ConversationWindow } from "./conversationWindow";
 import StarIcon from '@mui/icons-material/Star';
 import FileTreeDisplay from "./fileTreeDisplay";
+import { EditorContext } from "@/contexts/editor-context";
 
 export const SideBar = ({ sidebarWidth, setSidebarWidth }) => {
     const theme = useTheme();
     const [selectedTab, setSelectedTab] = React.useState(0);
+    const [hoverIndex, setHoverIndex] = React.useState(null);
 
-    const iconDivStyle = {
-        width: "50px",
-        height: "50px",
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "center",
-        alignItems: "center",
-        backgroundColor: theme.palette.background.default,
-        color: theme.palette.text.primary,
+    const iconDivStyle = (isHovering = false) => {
+        return {
+            width: "50px",
+            height: "50px",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            alignItems: "center",
+            backgroundColor: isHovering ? theme.palette.background.paper : theme.palette.background.default,
+            color: theme.palette.text.primary,
+        }
     };
 
     // This will be a function passed down from the editor page
@@ -137,38 +141,38 @@ export const SideBar = ({ sidebarWidth, setSidebarWidth }) => {
                 alignItems: "center",
             }}>
                 <div
-                    onMouseEnter={(e) => e.target.style.backgroundColor = theme.palette.background.paper}
-                    onMouseLeave={(e) => e.target.style.backgroundColor = theme.palette.background.default}
+                    onMouseEnter={(e) => setHoverIndex(-1)}
+                    onMouseLeave={(e) => setHoverIndex(null)}
                     onClick={() => saveProject()}
-                    style={iconDivStyle}>
+                    style={iconDivStyle(hoverIndex == -1)}>
                     <SaveIcon />
                 </div>
                 <div
-                    onMouseEnter={(e) => e.target.style.backgroundColor = theme.palette.background.paper}
-                    onMouseLeave={(e) => e.target.style.backgroundColor = theme.palette.background.default}
+                    onMouseEnter={(e) => setHoverIndex(0)}
+                    onMouseLeave={(e) => setHoverIndex(null)}
                     onClick={() => setTab(0)}
-                    style={iconDivStyle}>
+                    style={iconDivStyle(hoverIndex == 0 || selectedTab == 0)}>
                     <FolderOpenIcon />
                 </div>
                 <div
-                    onMouseEnter={(e) => e.target.style.backgroundColor = theme.palette.background.paper}
-                    onMouseLeave={(e) => e.target.style.backgroundColor = theme.palette.background.default}
+                    onMouseEnter={(e) => setHoverIndex(1)}
+                    onMouseLeave={(e) => setHoverIndex(null)}
                     onClick={() => setTab(1)}
-                    style={iconDivStyle}>
+                    style={iconDivStyle(hoverIndex == 1 || selectedTab == 1)}>
                     <StarIcon />
                 </div>
                 <div
-                    onMouseEnter={(e) => e.target.style.backgroundColor = theme.palette.background.paper}
-                    onMouseLeave={(e) => e.target.style.backgroundColor = theme.palette.background.default}
+                    onMouseEnter={(e) => setHoverIndex(2)}
+                    onMouseLeave={(e) => setHoverIndex(null)}
                     onClick={() => setTab(2)}
-                    style={iconDivStyle}>
+                    style={iconDivStyle(hoverIndex == 2 || selectedTab == 2)}>
                     <PaletteIcon />
                 </div>
                 <div
-                    onMouseEnter={(e) => e.target.style.backgroundColor = theme.palette.background.paper}
-                    onMouseLeave={(e) => e.target.style.backgroundColor = theme.palette.background.default}
+                    onMouseEnter={(e) => setHoverIndex(3)}
+                    onMouseLeave={(e) => setHoverIndex(null)}
                     onClick={() => setTab(3)}
-                    style={iconDivStyle}>
+                    style={iconDivStyle(hoverIndex == 3 || selectedTab == 3)}>
                     <SettingsIcon />
                 </div>
             </div>

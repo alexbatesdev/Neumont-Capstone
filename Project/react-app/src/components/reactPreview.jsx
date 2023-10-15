@@ -9,7 +9,7 @@ import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 
 export const PreviewComponent = () => {
     const theme = useTheme();
-    const { files, setFiles, webContainer, setWebContainer } = useContext(EditorContext)
+    const { files, setFiles, webContainer, setWebContainer, fileOperations } = useContext(EditorContext)
     const [isLoading, setIsLoading] = React.useState(true);
     const [isInstallingDependencies, setIsInstallingDependencies] = React.useState(false);
     const [isStartingServer, setIsStartingServer] = React.useState(false);
@@ -134,7 +134,6 @@ export const PreviewComponent = () => {
                         }
 
                         target.style.animation = 'rotate 0.6s ease-out';
-                        console.log(target)
                         setTimeout(() => {
                             target.style.animation = '';
                         }, 600);
@@ -168,7 +167,14 @@ export const PreviewComponent = () => {
                 borderBottomLeftRadius: theme.shape.borderRadius,
                 borderBottomRightRadius: theme.shape.borderRadius,
                 zIndex: 2,
-            }} src={preview} onLoad={() => setIsLoading(false)} />
+            }} src={preview} onLoad={() => {
+                setIsLoading(false)
+                const asyncFunc = async () => {
+                    const fileTree = await fileOperations.getFileTree()
+                    setFiles(fileTree);
+                }
+                asyncFunc();
+            }} />
         </Box>
     </>);
 }

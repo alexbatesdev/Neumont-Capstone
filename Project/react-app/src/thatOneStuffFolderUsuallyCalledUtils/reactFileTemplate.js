@@ -97,7 +97,6 @@ code {
 import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
-import reportWebVitals from './reportWebVitals';
 
 ReactDOM.render(
     <React.StrictMode>
@@ -105,31 +104,6 @@ ReactDOM.render(
     </React.StrictMode>,
     document.getElementById('root')
 );
-
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
-`
-                }
-            },
-            'reportWebVitals.js': {
-                file: {
-                    contents:
-                        `// This function measures a performance metric in the browser.
-// Learn more: https://bit.ly/CRA-vitals
-const reportWebVitals = (onPerfEntry) => {
-    if (onPerfEntry && onPerfEntry instanceof Function) {
-        import('web-vitals').then(({ getCLS, getFID, getFCP, getLCP, getTTFB }) => {
-            getCLS(onPerfEntry);
-            getFID(onPerfEntry);
-            getFCP(onPerfEntry);
-            getLCP(onPerfEntry);
-            getTTFB(onPerfEntry);
-        });
-    }
-};
-export default reportWebVitals;
 `
                 }
             },
@@ -218,11 +192,11 @@ export default reportWebVitals;
             },
             'robots.txt': {
                 file: {
-                    contents: `
-                        # See http://www.robotstxt.org/robotstxt.html for documentation on how to use the robots.txt file
-                        User-agent: *
-                        Disallow: /api/
-                    `
+                    contents:
+                        `# See http://www.robotstxt.org/robotstxt.html for documentation on how to use the robots.txt file
+User-agent: *
+Disallow: /api/
+`
                 }
             },
         }
@@ -235,13 +209,9 @@ export default reportWebVitals;
     "version": "0.1.0",
     "private": true,
     "dependencies": {
-        "@testing-library/jest-dom": "^5.17.0",
-        "@testing-library/react": "^13.4.0",
-        "@testing-library/user-event": "^13.5.0",
         "react": "^18.2.0",
         "react-dom": "^18.2.0",
-        "react-scripts": "5.0.1",
-        "web-vitals": "^2.1.4"
+        "react-scripts": "5.0.1"
     },
     "scripts": {
         "start": "react-scripts start",

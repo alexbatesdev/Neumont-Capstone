@@ -114,7 +114,7 @@ export const ResizableViewsHorizontal = ({ items }) => {
                     position: 'relative',
                     backgroundColor: theme.palette.background.paper,
                     height: '100%',
-                    width: `calc(((${containerWidth}px - (2 * ${columns.length}px) - ((${columns.length} - 1) * 14px)) / ${columns.length}) - ${column.offset}px)`
+                    width: `calc(((${containerWidth}px - ((${columns.length} - 1) * 8px)) / ${columns.length}) - ${column.offset}px)`
                 }}>
                     {cloneElement(column.component, { style: { width: '100%', height: '100%' } })}
                 </div>
@@ -124,7 +124,7 @@ export const ResizableViewsHorizontal = ({ items }) => {
                     style={{
                         width: '8px',
                         height: '100%',
-                        margin: '0 3px',
+                        // margin: '0 3px',
                         zIndex: 1,
                         cursor: 'col-resize',
                         backgroundColor: theme.palette.divider.default,
@@ -244,7 +244,7 @@ export const ResizableViewsVertical = ({ items }) => {
                             backgroundColor: theme.palette.background.paper,
                             width: 'calc(100%)',
                             // Change from width to height for vertical orientation
-                            height: `calc(((${containerHeight}px - (2 * ${columns.length}px) - ((${columns.length} - 1) * 14px)) / ${columns.length}) - ${column.offset}px)`,
+                            height: `calc(((${containerHeight}px - ((${columns.length} - 1) * 8px)) / ${columns.length}) - ${column.offset}px)`,
                         }}
                     >
                         {cloneElement(column.component, { style: { width: '100%', height: '100%' } })}
@@ -257,7 +257,6 @@ export const ResizableViewsVertical = ({ items }) => {
                                 // Change from width to height for vertical orientation
                                 height: '8px',
                                 width: '100%',
-                                margin: '3px 0',
                                 zIndex: 1,
                                 // Change cursor to 'row-resize' for vertical orientation
                                 cursor: 'row-resize',

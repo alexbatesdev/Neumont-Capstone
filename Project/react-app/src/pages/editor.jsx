@@ -77,6 +77,7 @@ export default function Home() {
         //If it's the last chunk,
         if (splitPathClone.length == 0) {
             // console.log("Triggering actionMethod");
+            console.log("directory: ", directory)
             return actionMethod(directory, path, ...parameters);
         }
         // console.log("---------")
@@ -91,7 +92,7 @@ export default function Home() {
         }
         //Then set the currentDirectory to the next directory
         currentDirectory = directory[path].directory;
-        // console.log("newDirectory: ", currentDirectory)
+        console.log("newDirectory: ", currentDirectory)
         // console.log("Exiting fileTraverse")
         //Then recurse
         return fileTraverse(currentDirectory, splitPathClone, actionMethod, parameters);
@@ -125,14 +126,48 @@ export default function Home() {
         return;
     }
 
-    const getCodeEditorFormat = (directory, path, filepath) => {
-        // console.log(directory[path])
-        return ({
-            filename: path,
-            filepath: filepath,
-            contents: directory[path].file.contents,
-        })
+    const getFile = (directory, path) => {
+        console.log("Getting file")
+        console.log(directory)
+        console.log(path)
+        console.log(directory[path])
+        return directory[path].file.contents;
     }
+
+    const getDirectoryContents = async (tree = {}, path = "") => {
+        const contents = await webContainer.fs.readdir(path, { withFileTypes: true });
+        console.log(tree);
+        console.log(contents);
+
+        for (const node of contents) {
+            console.log(path + "/" + node.name);
+
+            if (node.isFile()) {
+                tree[node.name] = {
+                    file: {
+                        contents: {}
+                    }
+                };
+                tree[node.name].file.contents = await webContainer.fs.readFile(path + "/" + node.name, 'utf-8');
+            } else if (node.isDirectory()) {
+                if (node.name === 'node_modules') {
+                    tree[node.name] = {
+                        directory: {}
+                    };
+                    continue;
+                }
+                const newPath = (path + "/" + node.name);
+                tree[node.name] = {
+                    directory: {}
+                };
+                await getDirectoryContents(tree[node.name].directory, newPath);
+            }
+        }
+
+        console.log(tree);
+        return tree;
+    };
+
 
     //Wrapper functions for easier use
     const fileOperations = {
@@ -148,15 +183,22 @@ export default function Home() {
         deleteDirectory: (path) => {
             fileTraverse(fileTree, path.split("/"), deleteDirectory);
         },
-        getCodeEditorFile: (path) => {
+        getFileContents: (path) => {
             const filepath = path; //Renaming the variable due to how ... operator works
-            return fileTraverse(files, path.split("/"), getCodeEditorFormat, [filepath]);
+            return fileTraverse(files, path.split("/"), getFile, [filepath]);
+        },
+        getFileTree: async () => {
+            return await getDirectoryContents();
         }
     }
 
     const [files, setFiles] = useState(initialFiles);
 
-    const [openFiles, setOpenFiles] = useState([fileOperations.getCodeEditorFile("./src/App.js")]);
+    const [openFilePaths, setOpenFilePaths] = useState(["./src/App.js"]);
+
+    const [openFilePathIndex, setOpenFilePathIndex] = useState(0);
+
+    const [lastClicked, setLastClicked] = React.useState(null);
 
     const [webContainer, setWebContainer] = useState(null);
 
@@ -169,11 +211,6 @@ export default function Home() {
     const [sidebarWidth, setSidebarWidth] = React.useState("300px");
 
     const [projectSettings, setProjectSettings] = useState({});
-
-    const saveProject = () => {
-        console.log('Saving project');
-        console.log("implement me!")
-    }
 
     useEffect(() => {
         console.log("Files changed")
@@ -208,9 +245,13 @@ export default function Home() {
             setMessageHistory={setMessageHistory}
             files={files}
             setFiles={setFiles}
-            openFiles={openFiles}
-            setOpenFiles={setOpenFiles}
+            openFilePaths={openFilePaths}
+            setOpenFilePaths={setOpenFilePaths}
+            openFilePathIndex={openFilePathIndex}
+            setOpenFilePathIndex={setOpenFilePathIndex}
             fileOperations={fileOperations}
+            lastClicked={lastClicked}
+            setLastClicked={setLastClicked}
             webContainer={webContainer}
             setWebContainer={setWebContainer}
             projectSettings={projectSettings}

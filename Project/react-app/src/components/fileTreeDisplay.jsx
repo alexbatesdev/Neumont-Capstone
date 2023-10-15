@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useTheme } from '@mui/material/styles'; // Import useTheme from Material-UI
 import { EditorContext } from '@/contexts/editor-context';
 import FileStructureNode from './fileNode';
@@ -8,39 +8,33 @@ import { Typography } from '@mui/material';
 
 const FileTreeDisplay = () => {
     const theme = useTheme();
-    const { files, setFiles } = React.useContext(EditorContext);
+    const { files, setFiles, lastClicked, setLastClicked } = React.useContext(EditorContext);
 
-    const filez = {
-        'src': {
-            directory: {
-                'newFolder': {
-                    directory: {
-                        'newFile.js': {
-                            file: {
-                                contents: "blah blah blah"
-                            }
-                        },
-                        'newFile2.js': {
-                            file: {
-                                contents: "blah blah blah"
-                            }
-                        },
-                    }
-                },
-                'index.js': {
-                    file: {
-                        contents: "blah blah blah"
-                    }
-                },
-                'App.js': {
-                    file: {
-                        contents: "blah blah blah"
-                    }
-                },
-            }
+
+    let fileKeys = Object.keys(files)
+    let fileKeys_folders = []
+    let fileKeys_files = []
+
+    fileKeys.forEach((key, index) => {
+        const node = files[key];
+
+        if (node.hasOwnProperty('directory')) {
+            fileKeys_folders.push(key)
+        } else {
+            fileKeys_files.push(key)
         }
-    }
-    console.log(files)
+    })
+
+    // sort the keys alphabetically
+    fileKeys_folders = fileKeys_folders.sort((a, b) => {
+        return a.localeCompare(b)
+    })
+
+    fileKeys_files = fileKeys_files.sort((a, b) => {
+        return a.localeCompare(b)
+    })
+
+    fileKeys = fileKeys_folders.concat(fileKeys_files)
 
 
     return (
@@ -66,13 +60,14 @@ const FileTreeDisplay = () => {
             }}>
                 File Explorer - {"Project Name"}
             </Typography>
-            {Object.keys(files).map((key, index) => {
+
+            {fileKeys.map((key, index) => {
                 const node = {
                     [key]: files[key]
                 }
                 return (
                     <>
-                        <FileStructureNode currentNodeTree={node} path={"./" + key} />
+                        <FileStructureNode currentNodeTree={node} path={"./" + key} setLastClicked={setLastClicked} lastClicked={lastClicked} />
                     </>
                 );
             })}

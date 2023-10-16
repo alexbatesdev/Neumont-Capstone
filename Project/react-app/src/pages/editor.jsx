@@ -1,21 +1,19 @@
-import React, { useEffect } from 'react'
-import Head from 'next/head'
-import Image from 'next/image'
-import { ThemeProvider } from '@mui/material'
-import { ConversationWindow } from '@/components/conversationWindow'
-import ClickCounter from '@/components/clicker'
-// import MessageComponent from '@/components/chatBox'
-import BMOComponent from '@/components/BMO'
-import { useState } from 'react'
-import LightSwitch from '@/components/LightSwitch'
+import React, { useEffect, useState } from 'react'
 import { PreviewComponent } from '@/components/reactPreview'
 import { CodeEditor } from '@/components/codeEditor'
 import { ResizableViewsHorizontal, ResizableViewsVertical } from '@/components/resizableViews'
 import { SideBar } from '@/components/sideBar'
 import { useTheme } from '@mui/material/styles';
 import { EditorContextProvider } from '@/contexts/editor-context'
-
 import reactFileTemplate from '@/thatOneStuffFolderUsuallyCalledUtils/reactFileTemplate'
+import dynamic from 'next/dynamic'
+
+const PreviewAndTerminal = dynamic(
+    () => import('@/components/previewTerminalParent'),
+    { ssr: false }
+)
+
+
 
 //https://www.npmjs.com/package/@monaco-editor/react
 // I don't think this applies to me, but it might vvv
@@ -23,6 +21,8 @@ import reactFileTemplate from '@/thatOneStuffFolderUsuallyCalledUtils/reactFileT
 
 export default function Home() {
     const theme = useTheme();
+    const [terminal, setTerminal] = useState(null);
+
     let sample_snippet_2 = "import React from 'react'; \
     \nimport { Box, Typography } from '@mui/material'; \
     \n \
@@ -77,7 +77,7 @@ export default function Home() {
         //If it's the last chunk,
         if (splitPathClone.length == 0) {
             // console.log("Triggering actionMethod");
-            console.log("directory: ", directory)
+            // console.log("directory: ", directory)
             return actionMethod(directory, path, ...parameters);
         }
         // console.log("---------")
@@ -92,7 +92,7 @@ export default function Home() {
         }
         //Then set the currentDirectory to the next directory
         currentDirectory = directory[path].directory;
-        console.log("newDirectory: ", currentDirectory)
+        // console.log("newDirectory: ", currentDirectory)
         // console.log("Exiting fileTraverse")
         //Then recurse
         return fileTraverse(currentDirectory, splitPathClone, actionMethod, parameters);
@@ -100,7 +100,7 @@ export default function Home() {
 
     //Creates or overrides a file at the given path
     const setFile = (directory, path, contents) => {
-        console.log("Setting file")
+        // console.log("Setting file")
         directory[path] = {
             file: {
                 contents: contents,
@@ -127,20 +127,20 @@ export default function Home() {
     }
 
     const getFile = (directory, path) => {
-        console.log("Getting file")
-        console.log(directory)
-        console.log(path)
-        console.log(directory[path])
+        // console.log("Getting file")
+        // console.log(directory)
+        // console.log(path)
+        // console.log(directory[path])
         return directory[path].file.contents;
     }
 
     const getDirectoryContents = async (tree = {}, path = "") => {
         const contents = await webContainer.fs.readdir(path, { withFileTypes: true });
-        console.log(tree);
-        console.log(contents);
+        // console.log(tree);
+        // console.log(contents);
 
         for (const node of contents) {
-            console.log(path + "/" + node.name);
+            // console.log(path + "/" + node.name);
 
             if (node.isFile()) {
                 tree[node.name] = {
@@ -164,7 +164,7 @@ export default function Home() {
             }
         }
 
-        console.log(tree);
+        // console.log(tree);
         return tree;
     };
 
@@ -212,21 +212,23 @@ export default function Home() {
 
     const [projectSettings, setProjectSettings] = useState({});
 
+    const terminalRef = React.useRef(null);
+
     useEffect(() => {
         console.log("Files changed")
         console.log(files)
     }, [files])
 
-    const components_2 = [
-        {
-            slot: 0,
-            component: <PreviewComponent />
-        },
-        {
-            slot: 1,
-            component: <BMOComponent />
-        }
-    ]
+    // const components_2 = [
+    //     {
+    //         slot: 0,
+    //         component: <PreviewComponent />
+    //     },
+    //     {
+    //         slot: 1,
+    //         component: <Terminal />
+    //     }
+    // ]
 
     const components = [
         {
@@ -235,7 +237,7 @@ export default function Home() {
         },
         {
             slot: 1,
-            component: <ResizableViewsVertical items={components_2} />
+            component: <PreviewAndTerminal />
         }
     ]
 
@@ -257,6 +259,7 @@ export default function Home() {
             projectSettings={projectSettings}
             setProjectSettings={setProjectSettings}
             saveProject={() => { }}
+            terminal_instance={terminal}
         >
             <div
                 className='pageWrapper' // I might reuse this
@@ -268,7 +271,8 @@ export default function Home() {
                     minWidth: '100vw',
                     minHeight: '100vh',
                     backgroundColor: theme.palette.background.default,
-                    // overflow: 'hidden',
+                    overflow: 'hidden',
+                    position: 'relative',
                 }}>
                 <div
                     className='topBar'

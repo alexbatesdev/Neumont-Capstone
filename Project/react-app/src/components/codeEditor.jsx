@@ -178,8 +178,8 @@ export const CodeEditor = () => {
                             textAlign: "initial",
                             width: "100%",
                             height: "100%",
-                            borderBottomRightRadius: "10px",
-                            borderBottomLeftRadius: "10px",
+                            borderBottomRightRadius: theme.shape.borderRadius,
+                            borderBottomLeftRadius: theme.shape.borderRadius,
                             overflow: "hidden",
                         }
                     }}

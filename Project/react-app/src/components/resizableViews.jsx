@@ -5,6 +5,8 @@ export const ResizableViewsHorizontal = ({ items }) => {
     const theme = useTheme();
     const containerRef = useRef(null);
     const [containerWidth, setContainerWidth] = useState(0); //assistant generated code
+    const [isDragging, setIsDragging] = useState(false);
+    const dragShieldRef = useRef(null);
 
     const initialColumns = items.map((item, index) => {
         return {
@@ -52,6 +54,9 @@ export const ResizableViewsHorizontal = ({ items }) => {
     const handleMouseDown = useCallback((event, index) => {
         event.preventDefault();
 
+        // Human Addition
+        setIsDragging(true);
+
         // Get the initial mouse position
         let lastX = event.clientX;
         let startX = event.clientX;
@@ -71,6 +76,13 @@ export const ResizableViewsHorizontal = ({ items }) => {
             console.log("deltaX")
             console.log(deltaX);
 
+            // Human Addition
+            // Update the drag shield
+            dragShieldRef.current.style.left = `${event.clientX}px`;
+            console.log("event.clientX")
+            dragShieldRef.current.style.top = `${event.clientY}px`;
+            console.log("event.clientY")
+
             // Update the columns offsets based on deltaX
             setColumns((cols) => {
                 const newCols = [...cols];
@@ -83,6 +95,8 @@ export const ResizableViewsHorizontal = ({ items }) => {
         const handleMouseUp = () => {
             document.removeEventListener('mousemove', handleMouseMove);
             document.removeEventListener('mouseup', handleMouseUp);
+            // Human Addition
+            setIsDragging(false);
         };
 
         document.addEventListener('mousemove', handleMouseMove);
@@ -111,7 +125,7 @@ export const ResizableViewsHorizontal = ({ items }) => {
                     overflow: 'hidden',
                     // border: `1px solid ${theme.palette.divider.default}`,
                     borderRadius: theme.shape.borderRadius,
-                    position: 'relative',
+                    // position: 'relative',
                     backgroundColor: theme.palette.background.paper,
                     height: '100%',
                     width: `calc(((${containerWidth}px - ((${columns.length} - 1) * 8px)) / ${columns.length}) - ${column.offset}px)`
@@ -130,6 +144,14 @@ export const ResizableViewsHorizontal = ({ items }) => {
                         backgroundColor: theme.palette.divider.default,
                         borderRadius: theme.shape.borderRadius,
                     }}></div> : null}
+                {isDragging && <div ref={dragShieldRef} style={{
+                    width: "300px",
+                    height: "100px",
+                    position: "absolute",
+                    // backgroundColor: "red",
+                    zIndex: 100,
+                    transform: "translate(-50%, -50%)",
+                }}></div>}
             </>)
         })}
 
@@ -157,6 +179,7 @@ export const ResizableViewsVertical = ({ items }) => {
 
     const [columns, setColumns] = useState(initialColumns);
     const [isDragging, setIsDragging] = useState(false);
+    const dragShieldRef = useRef(null);
 
     // Assistant-generated code starts here
     useEffect(() => {
@@ -196,6 +219,13 @@ export const ResizableViewsVertical = ({ items }) => {
             const totalDeltaY = event.clientY - startY;
 
             lastY = event.clientY;
+
+            // Human Addition
+            // Update the drag shield
+            dragShieldRef.current.style.left = `${event.clientX}px`;
+            console.log("event.clientX");
+            dragShieldRef.current.style.top = `${event.clientY}px`;
+            console.log("event.clientY");
 
             setColumns((cols) => {
                 const newCols = [...cols];
@@ -265,6 +295,14 @@ export const ResizableViewsVertical = ({ items }) => {
                             }}
                         ></div>
                     ) : null}
+                    {isDragging && <div ref={dragShieldRef} style={{
+                        width: "100px",
+                        height: "300px",
+                        position: "absolute",
+                        // backgroundColor: "red",
+                        zIndex: 100,
+                        transform: "translate(-50%, -50%)",
+                    }}></div>}
                 </>
             ))}
         </div>

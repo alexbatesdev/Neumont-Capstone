@@ -27,7 +27,7 @@ export const theme = createTheme({
         }
     },
     shape: {
-        borderRadius: "10px",
+        borderRadius: 0,
     }
 })
 
@@ -44,12 +44,12 @@ export const monaco_spooky = {
             "token": "type"
         },
         {
-            "foreground": "ffffff",
+            "foreground": "8d7eff",
             "background": "434242",
             "token": "text"
         },
         {
-            "foreground": "ffffff",
+            "foreground": "8d7eff",
             "background": "000000",
             "token": "source"
         },
@@ -78,7 +78,7 @@ export const monaco_spooky = {
             "token": "variable.parameter"
         },
         {
-            "foreground": "ffffff",
+            "foreground": "8d7eff",
             "background": "9b9b9b",
             "token": "source comment.block"
         },
@@ -125,11 +125,11 @@ export const monaco_spooky = {
         }
     ],
     "colors": {
-        "editor.foreground": "#FFFFFF",
+        "editor.foreground": "#8d7eff",
         "editor.background": "#120024",
         "editor.selectionBackground": "#73597EE0",
         "editor.lineHighlightBackground": "#20004D",
-        "editorCursor.foreground": "#FFFFFF",
+        "editorCursor.foreground": "#8d7eff",
         "editorWhitespace.foreground": "#404040"
     }
 }

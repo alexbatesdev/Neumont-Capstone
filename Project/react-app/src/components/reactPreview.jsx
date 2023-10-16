@@ -7,7 +7,7 @@ import { EditorContext } from '@/contexts/editor-context';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 
-export const PreviewComponent = () => {
+export const PreviewComponent = ({ terminal_instance }) => {
     const theme = useTheme();
     const { files, setFiles, webContainer, setWebContainer, fileOperations } = useContext(EditorContext)
     const [isLoading, setIsLoading] = React.useState(true);
@@ -33,7 +33,8 @@ export const PreviewComponent = () => {
 
         setIsStartingServer(true);
         await runServer(webContainerInstance);
-        setIsStartingServer(false);
+
+        await startShell(webContainerInstance, terminal_instance);
     }, [])
 
     const installDependencies = async (webContainerInstance) => {
@@ -42,7 +43,8 @@ export const PreviewComponent = () => {
         installProcess.output.pipeTo(
             new WritableStream({
                 write(data) {
-                    console.log(data);
+                    // console.log(data);
+                    if (terminal_instance) terminal_instance.write(data);
                 },
             })
         )
@@ -55,6 +57,8 @@ export const PreviewComponent = () => {
             new WritableStream({
                 write(data) {
                     console.log(data);
+                    // console.log(terminal_instance)
+                    // if (terminal_instance) terminal_instance.write(data);
                 },
             })
         )
@@ -62,6 +66,25 @@ export const PreviewComponent = () => {
             console.log(url)
             setPreview(url);
         });
+    }
+
+    const startShell = async (webContainerInstance, terminal) => {
+        const shellProcess = await webContainerInstance.spawn('jsh')
+        shellProcess.output.pipeTo(
+            new WritableStream({
+                write(data) {
+                    console.log(data);
+                    terminal.write(data);
+                },
+            })
+        )
+
+        const shellInput = shellProcess.input.getWriter();
+        terminal.onData((data) => {
+            shellInput.write(data);
+        });
+
+        return shellProcess;
     }
 
     const buttonStyle = {
@@ -85,13 +108,13 @@ export const PreviewComponent = () => {
             {`
             @keyframes rotate {
                 from {
-                transform: rotate(0deg);
+                    transform: rotate(0deg);
                 }
                 to {
                 transform: rotate(360deg);
-                }
             }
-            `}
+        }
+        `}
         </style>
         <Box sx={{
             display: 'flex',
@@ -168,6 +191,7 @@ export const PreviewComponent = () => {
                 borderBottomRightRadius: theme.shape.borderRadius,
                 zIndex: 2,
             }} src={preview} onLoad={() => {
+                setIsStartingServer(false);
                 setIsLoading(false)
                 const asyncFunc = async () => {
                     const fileTree = await fileOperations.getFileTree()

@@ -6,7 +6,7 @@ import { useTheme } from '@mui/material/styles';
 import CircularProgress from "@mui/material/CircularProgress";
 import { Message } from "./message";
 import ArrowRightIcon from '@mui/icons-material/ArrowRight';
-import { EditorContext, useEditorContext } from "@/contexts/editor-context";
+import { useMessageHistory } from "@/contexts/editor-context";
 
 const trimMessages = (messages) => {
     let newMessages = [];
@@ -23,7 +23,7 @@ const trimMessages = (messages) => {
 // Refactor so the messageHistory state is stored in the parent component
 // This component should still be the one making api calls and updating the state (with the parent component passing down the state and the function to update it as props) 💭
 export const ConversationWindow = () => {
-    const { messageHistory, setMessageHistory } = useEditorContext();
+    const { messageHistory, setMessageHistory } = useMessageHistory();
     // const [messageHistory, setMessageHistory] = useState([
     //     {
     //         role: "assistant",

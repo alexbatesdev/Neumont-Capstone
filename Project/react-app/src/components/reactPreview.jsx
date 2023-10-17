@@ -3,13 +3,14 @@ import { Box, FormControl, FormHelperText, Input, InputLabel, TextField, Typogra
 import { useTheme } from '@mui/material/styles';
 import { WebContainer } from '@webcontainer/api';
 import { PreviewLoading } from './previewLoading';
-import { EditorContext, useEditorContext } from '@/contexts/editor-context';
+import { useFiles, useWebContainer } from '@/contexts/editor-context';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 
 export const PreviewComponent = ({ terminal_instance }) => {
     const theme = useTheme();
-    const { files, setFiles, webContainer, setWebContainer, fileOperations } = useEditorContext();
+    const { files, setFiles, fileOperations } = useFiles();
+    const { webContainer, setWebContainer } = useWebContainer();
     const [isLoading, setIsLoading] = React.useState(true);
     const [isInstallingDependencies, setIsInstallingDependencies] = React.useState(false);
     const [isStartingServer, setIsStartingServer] = React.useState(false);
@@ -35,6 +36,10 @@ export const PreviewComponent = ({ terminal_instance }) => {
         await runServer(webContainerInstance);
 
         await startShell(webContainerInstance, terminal_instance);
+
+        return () => {
+            webContainerInstance.unmount();
+        }
     }, [])
 
     const installDependencies = async (webContainerInstance) => {

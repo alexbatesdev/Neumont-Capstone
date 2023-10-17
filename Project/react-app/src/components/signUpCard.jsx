@@ -1,7 +1,9 @@
 import React, { useState } from "react";
-// import common tags from material ui
-import { Avatar, Card, CardContent, CardHeader, Typography, Box, Button, TextField, useTheme } from "@mui/material";
+
 import Link from "next/link";
+
+import { Card, Typography, Button, TextField } from "@mui/material";
+import { useTheme } from '@mui/material/styles';
 
 
 export const SignUpCard = ({ }) => {
@@ -62,17 +64,22 @@ export const SignUpCard = ({ }) => {
         })
     }
 
+    const outerCardStyle = {
+        width: "300px",
+        padding: 2,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "flex-start",
+        flexDirection: "column",
+        backgroundColor: theme.palette.background.paper,
+        textAlign: "center",
+        borderRadius: "5px",
+    }
+
+    const textFieldStyle = { width: "80%", marginBottom: "1rem" }
+
     return (<>
-        <Card sx={{
-            width: "300px",
-            padding: 2,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "flex-start",
-            flexDirection: "column",
-            backgroundColor: theme.palette.background.paper,
-            textAlign: "center"
-        }}>
+        <Card sx={outerCardStyle}>
             <Link href="/" style={{
                 textDecoration: "none",
                 color: theme.palette.text.primary
@@ -83,14 +90,63 @@ export const SignUpCard = ({ }) => {
                     cursor: "pointer",
                 }}>Webbie</Typography>
             </Link>
-            <Typography variant="h5" sx={{ fontWeight: "bold", marginBottom: "1rem" }}>Sign Up</Typography>
+            <Typography
+                variant="h5"
+                sx={{
+                    fontWeight: "bold",
+                    marginBottom: "1rem"
+                }}
+            >
+                Sign Up
+            </Typography>
             {error && (<Typography variant="body1" color={"error"} sx={{ marginBottom: "1rem" }}>{error}</Typography>)}
-            <TextField sx={{ width: "80%", marginBottom: "1rem" }} placeholder="Name" size="small" value={name} onChange={handleNameChange} />
-            <TextField sx={{ width: "80%", marginBottom: "1rem" }} placeholder="Email" size="small" value={email} onChange={handleEmailChange} type="email" />
-            <TextField sx={{ width: "80%", marginBottom: "1rem" }} placeholder="Password" type="password" size="small" value={password} onChange={handlePasswordChange} />
+            <TextField
+                sx={textFieldStyle}
+                placeholder="Name"
+                size="small"
+                value={name}
+                onChange={handleNameChange}
+            />
+            <TextField
+                sx={textFieldStyle}
+                placeholder="Email"
+                size="small"
+                value={email}
+                onChange={handleEmailChange}
+                type="email"
+            />
+            <TextField
+                sx={textFieldStyle}
+                placeholder="Password"
+                type="password"
+                size="small"
+                value={password}
+                onChange={handlePasswordChange}
+            />
 
-            <Button variant="contained" sx={{ marginTop: 1, width: "50%" }} onClick={handleSignUp}>Sign Up</Button>
-            <Button variant="contained" color="tertiary" size="small" sx={{ marginTop: 1 }} href="/sign-in">Sign In</Button>
+            <Button
+                variant="contained"
+                sx={{
+                    marginTop: 1,
+                    width: "50%",
+                    borderRadius: "5px"
+                }}
+                onClick={handleSignUp}
+            >
+                Sign Up
+            </Button>
+            <Button
+                variant="contained"
+                color="tertiary"
+                size="small"
+                sx={{
+                    marginTop: 1,
+                    borderRadius: "5px"
+                }}
+                href="/sign-in"
+            >
+                Sign In
+            </Button>
         </Card>
     </>)
 }

@@ -1,5 +1,6 @@
 import React from "react";
-import { Box, Typography, Button } from "@mui/material";
+
+import { Typography } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 
 export const CodeSnippetButtonBar = ({ segment }) => {
@@ -20,26 +21,30 @@ export const CodeSnippetButtonBar = ({ segment }) => {
         cursor: "pointer",
     }
 
-    return (<div style={{
+    const buttonBarStyle = {
         width: "100%",
         height: "30px",
         backgroundColor: theme.palette.utilBar.default,
-        borderTopLeftRadius: theme.shape.borderRadius,
-        borderTopRightRadius: theme.shape.borderRadius,
+        borderTopLeftRadius: "10px",
+        borderTopRightRadius: "10px",
         overflow: "hidden",
-    }}>
+    }
+
+    const languageDisplayStyle = {
+        fontSize: "1rem",
+        float: "left",
+        color: theme.palette.text.primary,
+        display: "inline",
+        height: "calc(100% - 10px)",
+        padding: "5px",
+        marginLeft: "5px",
+        filter: "opacity(0.75)"
+    }
+
+    return (<div style={buttonBarStyle}>
         <Typography
             variant="body1"
-            sx={{
-                fontSize: "1rem",
-                float: "left",
-                color: theme.palette.text.primary,
-                display: "inline",
-                height: "calc(100% - 10px)",
-                padding: "5px",
-                marginLeft: "5px",
-                filter: "opacity(0.75)"
-            }}
+            sx={languageDisplayStyle}
         >
             {segment.language}
         </Typography>

@@ -1,15 +1,14 @@
-import React from "react";
+import React, { useCallback } from "react";
+
 import { Typography, useTheme } from "@mui/material";
 import SaveIcon from '@mui/icons-material/Save';
 import FolderOpenIcon from '@mui/icons-material/FolderOpen';
 import SettingsIcon from '@mui/icons-material/Settings';
-import RadioButtonCheckedIcon from '@mui/icons-material/RadioButtonChecked';
 import PaletteIcon from '@mui/icons-material/Palette';
-import { useCallback } from "react";
-import { ConversationWindow } from "./conversationWindow";
 import StarIcon from '@mui/icons-material/Star';
-import FileTreeDisplay from "./fileTreeDisplay";
-import { EditorContext } from "@/contexts/editor-context";
+
+import { ConversationWindow } from "./ConversationWindow";
+import { FileTreeDisplay } from "./FileTreeDisplay";
 
 export const SideBar = ({ sidebarWidth, setSidebarWidth }) => {
     const theme = useTheme();
@@ -46,11 +45,11 @@ export const SideBar = ({ sidebarWidth, setSidebarWidth }) => {
             lastX = event.clientX;
 
             setSidebarWidth((width) => {
-                const newWidth = parseInt(width.substring(0, width.length - 2)) + deltaX;
+                const newWidth = width + deltaX;
                 if (newWidth < 58) {
-                    return "58px";
+                    return 58;
                 }
-                return newWidth + "px";
+                return newWidth;
             });
 
         };
@@ -67,7 +66,7 @@ export const SideBar = ({ sidebarWidth, setSidebarWidth }) => {
     const setTab = (tab) => {
         if (tab === selectedTab) {
             console.log("Closing tab")
-            setSidebarWidth("50px")
+            setSidebarWidth(50)
             setSelectedTab(null)
             return;
         }
@@ -79,34 +78,34 @@ export const SideBar = ({ sidebarWidth, setSidebarWidth }) => {
             case 0:
                 minWidth = 320;
                 maxWidth = 350;
-                if (parseInt(sidebarWidth.substring(0, sidebarWidth.length - 2)) < minWidth) {
-                    setSidebarWidth(minWidth + "px")
+                if (sidebarWidth < minWidth) {
+                    setSidebarWidth(minWidth)
                 }
-                if (parseInt(sidebarWidth.substring(0, sidebarWidth.length - 2)) > maxWidth) {
-                    setSidebarWidth(maxWidth + "px")
+                if (sidebarWidth > maxWidth) {
+                    setSidebarWidth(maxWidth)
                 }
                 setSelectedTab(0);
                 break;
             case 1:
                 minWidth = 600;
                 maxWidth = 800;
-                if (parseInt(sidebarWidth.substring(0, sidebarWidth.length - 2)) < minWidth) {
-                    setSidebarWidth(minWidth + "px")
+                if (sidebarWidth < minWidth) {
+                    setSidebarWidth(minWidth)
                 }
-                if (parseInt(sidebarWidth.substring(0, sidebarWidth.length - 2)) > maxWidth) {
-                    setSidebarWidth(maxWidth + "px")
+                if (sidebarWidth > maxWidth) {
+                    setSidebarWidth(maxWidth)
                 }
                 setSelectedTab(1);
                 break;
             case 2:
-                if (parseInt(sidebarWidth.substring(0, sidebarWidth.length - 2)) < 300) {
-                    setSidebarWidth("300px")
+                if (sidebarWidth < 300) {
+                    setSidebarWidth(300)
                 }
                 setSelectedTab(2);
                 break;
             case 3:
-                if (parseInt(sidebarWidth.substring(0, sidebarWidth.length - 2)) < 300) {
-                    setSidebarWidth("300px")
+                if (sidebarWidth < 300) {
+                    setSidebarWidth(300)
                 }
                 setSelectedTab(3);
                 break;
@@ -115,31 +114,67 @@ export const SideBar = ({ sidebarWidth, setSidebarWidth }) => {
         }
     }
 
+    const sideBarOuterDivStyle = {
+        width: sidebarWidth + "px",
+        minWidth: "fit-content",
+        height: "100%",
+        backgroundColor: theme.palette.background.paper,
+        position: "relative",
+        borderTopRightRadius: theme.shape.borderRadius,
+        borderBottomRightRadius: theme.shape.borderRadius,
+        overflow: "hidden",
+    }
+
+    const sideBarButtonStripStyle = {
+        position: "absolute",
+        top: "0px",
+        left: "0px",
+        bottom: "0px",
+        width: "50px",
+        backgroundColor: theme.palette.background.default,
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "flex-start",
+        alignItems: "center",
+    }
+
+    const sideBarContentStyle = {
+        position: "absolute",
+        top: "0px",
+        right: "8px",
+        bottom: "0px",
+        width: "calc(100% - 58px)",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "flex-start",
+        alignItems: "center",
+    }
+
+    const sideBarContentInnerWrapperStyle = {
+        width: "100%",
+        height: "100%",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "flex-start",
+        alignItems: "center",
+        color: theme.palette.text.primary,
+        overflow: "hidden",
+    }
+
+    const resizeBarStyle = {
+        width: '8px',
+        height: '100%',
+        zIndex: 2,
+        cursor: 'col-resize',
+        backgroundColor: theme.palette.divider.default,
+        float: "right",
+    }
+
     return (
         <div
-            style={{
-                width: sidebarWidth,
-                minWidth: "fit-content",
-                height: "100%",
-                backgroundColor: theme.palette.background.paper,
-                position: "relative",
-                borderTopRightRadius: theme.shape.borderRadius,
-                borderBottomRightRadius: theme.shape.borderRadius,
-                overflow: "hidden",
-            }}
+            style={sideBarOuterDivStyle}
         >
-            <div style={{
-                position: "absolute",
-                top: "0px",
-                left: "0px",
-                bottom: "0px",
-                width: "50px",
-                backgroundColor: theme.palette.background.default,
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "flex-start",
-                alignItems: "center",
-            }}>
+            <div style={sideBarButtonStripStyle}>
                 <div
                     onMouseEnter={(e) => setHoverIndex(-1)}
                     onMouseLeave={(e) => setHoverIndex(null)}
@@ -178,111 +213,31 @@ export const SideBar = ({ sidebarWidth, setSidebarWidth }) => {
             </div>
             <div
                 className="sideBarContent"
-                style={{
-                    position: "absolute",
-                    top: "0px",
-                    right: "8px",
-                    bottom: "0px",
-                    width: "calc(100% - 58px)",
-                    display: "flex",
-                    flexDirection: "column",
-                    justifyContent: "flex-start",
-                    alignItems: "center",
-                    // backgroundColor: "lime",
-                    // filter: "opacity(0.25)",
-                }}
+                style={sideBarContentStyle}
             >
-                {selectedTab === 0 ? (<>
-                    <div
-                        className="FilesTab"
-                        style={{
-                            width: "100%",
-                            height: "100%",
-                            display: "flex",
-                            flexDirection: "column",
-                            justifyContent: "flex-start",
-                            alignItems: "center",
-                            color: theme.palette.text.primary,
-                            overflow: "hidden",
-                            // backgroundColor: "red",
-                            // filter: "opacity(0.25)",
-                        }}
-                    >
-                        {/* Heirarchy View Component goes here 💭 */}
+                <div
+                    className="FilesTab"
+                    style={sideBarContentInnerWrapperStyle}
+                >
+                    {selectedTab === 0 ? (<>
                         <FileTreeDisplay />
-                    </div>
-                </>) : null}
-                {selectedTab === 1 ? (<>
-                    <div
-                        className="ConversationTab"
-                        style={{
-                            width: "100%",
-                            height: "100%",
-                            display: "flex",
-                            flexDirection: "column",
-                            justifyContent: "flex-start",
-                            alignItems: "center",
-                            color: theme.palette.text.primary,
-                            overflow: "hidden",
-                            // backgroundColor: "blue",
-                            // filter: "opacity(0.25)",
-                        }}
-                    >
-                        {/* Conversation View Component goes here 💭 */}
+                    </>) : null}
+                    {selectedTab === 1 ? (<>
                         <ConversationWindow />
-                    </div>
-                </>) : null}
-                {selectedTab === 2 ? (<>
-                    <div
-                        className="ThemeTab"
-                        style={{
-                            width: "100%",
-                            height: "100%",
-                            display: "flex",
-                            flexDirection: "column",
-                            justifyContent: "flex-start",
-                            alignItems: "center",
-                            color: theme.palette.text.primary,
-                            overflow: "hidden",
-                            // backgroundColor: "green",
-                            // filter: "opacity(0.25)",
-                        }}
-                    >
+                    </>) : null}
+                    {selectedTab === 2 ? (<>
                         {/* Theme View Component goes here 💭 */}
                         <Typography variant="h6">Theme<br /> WIP <br /> Component goes here</Typography>
-                    </div>
-                </>) : null}
-                {selectedTab === 3 ? (<>
-                    <div
-                        className="SettingsTab"
-                        style={{
-                            width: "100%",
-                            height: "100%",
-                            display: "flex",
-                            flexDirection: "column",
-                            justifyContent: "flex-start",
-                            alignItems: "center",
-                            color: theme.palette.text.primary,
-                            overflow: "hidden",
-                            // backgroundColor: "yellow",
-                            // filter: "opacity(0.25)",
-                        }}
-                    >
+                    </>) : null}
+                    {selectedTab === 3 ? (<>
                         {/* Settings View Component goes here 💭 */}
                         <Typography variant="h6">Settings<br /> WIP <br /> Component goes here</Typography>
-                    </div>
-                </>) : null}
+                    </>) : null}
+                </div>
             </div>
             <div
                 onMouseDown={(event) => handleMouseDown(event)}
-                style={{
-                    width: '8px',
-                    height: '100%',
-                    zIndex: 2,
-                    cursor: 'col-resize',
-                    backgroundColor: theme.palette.divider.default,
-                    float: "right",
-                }}></div>
+                style={resizeBarStyle}></div>
         </div>
     );
 }

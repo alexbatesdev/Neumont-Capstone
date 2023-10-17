@@ -4,7 +4,9 @@ import React from 'react';
 import { ThemeProvider, useTheme } from '@mui/material';
 import { withThemeFromJSXProvider } from '@storybook/addon-themes';
 import { theme } from '../thatOneStuffFolderUsuallyCalledUtils/themes'; // import your theme from where it is defined
-import { SideBar } from './sideBar';
+import { SideBar } from './SideBar';
+import { EditorContextProvider } from '@/contexts/editor-context';
+import "../reset.css"
 
 // Assistant-generated code starts
 // This is your Storybook metadata for the component
@@ -24,9 +26,12 @@ export default {
 
 // Define a template for your stories
 const Template = (args) => {
+    const [sidebarWidth, setSidebarWidth] = React.useState(330);
     return (
         <div style={{ height: '650px' }}>
-            <SideBar {...args} />
+            <EditorContextProvider>
+                <SideBar {...args} sidebarWidth={sidebarWidth} setSidebarWidth={setSidebarWidth} />
+            </EditorContextProvider>
         </div>
     );
 };

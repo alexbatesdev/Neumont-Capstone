@@ -1,4 +1,5 @@
 import React, { useState, useCallback, useRef, useEffect, cloneElement } from 'react';
+
 import { useTheme } from '@mui/material/styles';
 
 export const ResizableViewsHorizontal = ({ children }) => {
@@ -103,54 +104,57 @@ export const ResizableViewsHorizontal = ({ children }) => {
     }, [columns]);
     // Assistant-generated code ends here
 
+    const outerWrapperStyle = {
+        width: '100%',
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'flex-start',
+        alignItems: 'flex-start',
+        backgroundColor: theme.palette.background.default,
+        borderRadius: theme.shape.borderRadius,
+    }
 
+    const columnStyle = (column) => {
+        return {
+            overflow: 'hidden',
+            borderRadius: theme.shape.borderRadius,
+            backgroundColor: theme.palette.background.paper,
+            height: '100%',
+            width: `calc(((${containerWidth}px - ((${columns.length} - 1) * 8px)) / ${columns.length}) - ${column.offset}px)`
+        }
+    }
+
+    const dividerStyle = {
+        width: '8px',
+        height: '100%',
+        zIndex: 1,
+        cursor: 'col-resize',
+        backgroundColor: theme.palette.divider.default,
+        borderRadius: theme.shape.borderRadius,
+    }
+
+    const dragShieldStyle = {
+        width: "300px",
+        height: "100px",
+        position: "absolute",
+        zIndex: 100,
+        transform: "translate(-50%, -50%)",
+    }
 
     return (<div
         ref={containerRef}
-        style={{
-            width: '100%',
-            height: '100%',
-            display: 'flex',
-            flexDirection: 'row',
-            justifyContent: 'flex-start',
-            alignItems: 'flex-start',
-            backgroundColor: theme.palette.background.default,
-            borderRadius: theme.shape.borderRadius,
-            // padding: '5px',
-        }}>
+        style={outerWrapperStyle}>
         {columns.map((column, index) => {
             return (<>
-                <div key={index + "-column"} style={{
-                    overflow: 'hidden',
-                    // border: `1px solid ${theme.palette.divider.default}`,
-                    borderRadius: theme.shape.borderRadius,
-                    // position: 'relative',
-                    backgroundColor: theme.palette.background.paper,
-                    height: '100%',
-                    width: `calc(((${containerWidth}px - ((${columns.length} - 1) * 8px)) / ${columns.length}) - ${column.offset}px)`
-                }}>
+                <div key={index + "-column"} style={columnStyle(column)}>
                     {cloneElement(column.component, { style: { width: '100%', height: '100%' } })}
                 </div>
                 {index < columns.length - 1 ? <div
                     key={index + "-divider"}
                     onMouseDown={(event) => handleMouseDown(event, index)}
-                    style={{
-                        width: '8px',
-                        height: '100%',
-                        // margin: '0 3px',
-                        zIndex: 1,
-                        cursor: 'col-resize',
-                        backgroundColor: theme.palette.divider.default,
-                        borderRadius: theme.shape.borderRadius,
-                    }}></div> : null}
-                {isDragging && <div ref={dragShieldRef} style={{
-                    width: "300px",
-                    height: "100px",
-                    position: "absolute",
-                    // backgroundColor: "red",
-                    zIndex: 100,
-                    transform: "translate(-50%, -50%)",
-                }}></div>}
+                    style={dividerStyle}></div> : null}
+                {isDragging && <div ref={dragShieldRef} style={dragShieldStyle}></div>}
             </>)
         })}
 
@@ -159,6 +163,8 @@ export const ResizableViewsHorizontal = ({ children }) => {
 
 // Delineator /////////////////////////////////////////////////// Delineator /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+// This component still uses columns for the variables because I simply gave gpt the previous component and asked it to turn it sideways
+// It didn't get it all the way right, but I was easily able to fix it
 export const ResizableViewsVertical = ({ children }) => {
     const theme = useTheme();
     const containerRef = useRef(null);
@@ -244,36 +250,60 @@ export const ResizableViewsVertical = ({ children }) => {
     }, [columns]);
     // Assistant-generated code ends here
 
+    const outerWrapperStyle = {
+        width: '100%',
+        height: 'calc(100%)',
+        display: 'flex',
+        // Change flexDirection to column for vertical orientation
+        flexDirection: 'column',
+        justifyContent: 'flex-start',
+        alignItems: 'flex-start',
+        backgroundColor: theme.palette.background.default,
+        borderRadius: theme.shape.borderRadius,
+    }
+
+    const columnStyle = (column) => {
+        return {
+            overflow: 'hidden',
+            borderRadius: theme.shape.borderRadius,
+            position: 'relative',
+            backgroundColor: theme.palette.background.paper,
+            width: 'calc(100%)',
+            // Change from width to height for vertical orientation
+            height: `calc(((${containerHeight}px - ((${columns.length} - 1) * 8px)) / ${columns.length}) - ${column.offset}px)`,
+
+        }
+    }
+
+    const dividerStyle = {
+        // Change from width to height for vertical orientation
+        height: '8px',
+        width: '100%',
+        zIndex: 1,
+        // Change cursor to 'row-resize' for vertical orientation
+        cursor: 'row-resize',
+        backgroundColor: theme.palette.divider.default,
+        borderRadius: theme.shape.borderRadius,
+    }
+
+    const dragShieldStyle = {
+        width: "100px",
+        height: "300px",
+        position: "absolute",
+        zIndex: 100,
+        transform: "translate(-50%, -50%)",
+    }
+
     return (
         <div
             ref={containerRef}
-            style={{
-                width: '100%',
-                height: 'calc(100%)',
-                display: 'flex',
-                // Change flexDirection to column for vertical orientation
-                flexDirection: 'column',
-                justifyContent: 'flex-start',
-                alignItems: 'flex-start',
-                backgroundColor: theme.palette.background.default,
-                borderRadius: theme.shape.borderRadius,
-                // padding: '5px',
-            }}
+            style={outerWrapperStyle}
         >
             {columns.map((column, index) => (
                 <>
                     <div
                         key={index + "-column"}
-                        style={{
-                            overflow: 'hidden',
-                            // border: `1px solid ${theme.palette.divider.default}`,
-                            borderRadius: theme.shape.borderRadius,
-                            position: 'relative',
-                            backgroundColor: theme.palette.background.paper,
-                            width: 'calc(100%)',
-                            // Change from width to height for vertical orientation
-                            height: `calc(((${containerHeight}px - ((${columns.length} - 1) * 8px)) / ${columns.length}) - ${column.offset}px)`,
-                        }}
+                        style={columnStyle(column)}
                     >
                         {cloneElement(column.component, { style: { width: '100%', height: '100%' } })}
                     </div>
@@ -281,26 +311,10 @@ export const ResizableViewsVertical = ({ children }) => {
                         <div
                             key={index + "-divider"}
                             onMouseDown={(event) => handleMouseDown(event, index)}
-                            style={{
-                                // Change from width to height for vertical orientation
-                                height: '8px',
-                                width: '100%',
-                                zIndex: 1,
-                                // Change cursor to 'row-resize' for vertical orientation
-                                cursor: 'row-resize',
-                                backgroundColor: theme.palette.divider.default,
-                                borderRadius: theme.shape.borderRadius,
-                            }}
+                            style={dividerStyle}
                         ></div>
                     ) : null}
-                    {isDragging && <div ref={dragShieldRef} style={{
-                        width: "100px",
-                        height: "300px",
-                        position: "absolute",
-                        // backgroundColor: "red",
-                        zIndex: 100,
-                        transform: "translate(-50%, -50%)",
-                    }}></div>}
+                    {isDragging && <div ref={dragShieldRef} style={dragShieldStyle}></div>}
                 </>
             ))}
         </div>

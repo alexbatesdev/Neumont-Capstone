@@ -1,14 +1,18 @@
 import React from "react";
-import { ConversationWindow } from "@/components/ConversationWindow";
-import { theme } from "../thatOneStuffFolderUsuallyCalledUtils/themes";
+
 import { withThemeFromJSXProvider } from "@storybook/addon-themes";
+
 import { ThemeProvider } from "@mui/material";
+
 import "../reset.css"
+
 import { EditorContextProvider } from "@/contexts/editor-context";
+import { CodeEditor } from "@/components/CodeEditor";
+import { theme } from "../thatOneStuffFolderUsuallyCalledUtils/themes";
 
 export default {
-    title: "Components/ConversationWindow",
-    component: ConversationWindow,
+    title: "Components/CodeEditor",
+    component: CodeEditor,
     decorators: [
         withThemeFromJSXProvider({
             themes: {
@@ -23,11 +27,11 @@ export default {
 const Template = (args) => {
     return (
         <EditorContextProvider>
-            <ConversationWindow {...args} />
+            <div style={{ height: "650px" }}>
+                <CodeEditor {...args} />
+            </div>
         </EditorContextProvider>
     )
 }
-export const Default = Template.bind({});
-Default.args = {
 
-};
+export const Default = Template.bind({});

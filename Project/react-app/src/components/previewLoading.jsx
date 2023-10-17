@@ -1,6 +1,8 @@
 import React from "react";
+
 import { Typography, CircularProgress } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
+
 import AnimatedDots from "./AnimatedDotsByGPT";
 
 export const PreviewLoading = ({ webContainerStatus }) => {

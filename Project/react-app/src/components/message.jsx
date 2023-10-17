@@ -1,9 +1,12 @@
 import React from 'react'
+
 import { useTheme } from '@mui/material/styles';
 import { Box, Typography, Button } from '@mui/material';
+
 import SyntaxHighlighter from "react-syntax-highlighter";
 import { atelierCaveDark } from "react-syntax-highlighter/dist/cjs/styles/hljs";
-import { CodeSnippetButtonBar } from './codeSnippetButtonBar';
+
+import { CodeSnippetButtonBar } from './CodeSnippetButtonBar';
 
 const handleDisplayCodeSnippet = (message) => {
     const segments = [];
@@ -42,31 +45,43 @@ export const Message = ({ message, index }) => {
         color = theme.palette.primary.main;
     }
 
+    const messageWrapperStyle = {
+        alignSelf: "flex-start",
+        display: "flex",
+        flexDirection: "row",
+        width: "100%",
+        alignItems: "flex-end",
+        justifyContent: message.role == "assistant" ? "flex-end" : "flex-start",
+    }
+
+    const messageBubbleStyle = {
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "flex-start",
+        alignItems: "flex-start",
+        marginTop: "8px",
+        padding: "10px",
+        maxWidth: "calc(100% - 50px)",
+        width: "fit-content",
+        color: message.role == "assistant" ? "black" : "white",
+        borderRadius: "10px",
+        borderBottomRightRadius: message.role == "user" ? "10px" : "0",
+        borderBottomLeftRadius: message.role == "assistant" ? "10px" : "0",
+        backgroundColor: message.role == "assistant" ? color : theme.palette.tertiary.main,
+        alignSelf: message.role == "assistant" ? "flex-end" : "flex-start",
+    }
+
+    const SyntaxHighlighterStyle = {
+        borderBottomLeftRadius: "10px",
+        borderBottomRightRadius: "10px",
+        overflowX: "auto",
+        maxWidth: "calc(100% - 16px)",
+        marginTop: "0",
+    }
+
     return (
-        <Box key={index + "GPT"} sx={{
-            alignSelf: "flex-start",
-            display: "flex",
-            flexDirection: "row",
-            width: "100%",
-            alignItems: "flex-end",
-            justifyContent: message.role == "assistant" ? "flex-end" : "flex-start",
-        }}>
-            <Box key={index} sx={{
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "flex-start",
-                alignItems: "flex-start",
-                marginTop: "8px",
-                padding: "10px",
-                maxWidth: "calc(100% - 50px)",
-                width: "fit-content",
-                color: message.role == "assistant" ? "black" : "white",
-                borderRadius: "10px",
-                borderBottomRightRadius: message.role == "user" ? "10px" : "0",
-                borderBottomLeftRadius: message.role == "assistant" ? "10px" : "0",
-                backgroundColor: message.role == "assistant" ? color : theme.palette.tertiary.main,
-                alignSelf: message.role == "assistant" ? "flex-end" : "flex-start",
-            }}>
+        <Box key={index + "GPT"} sx={messageWrapperStyle}>
+            <Box key={index} sx={messageBubbleStyle}>
                 {handleDisplayCodeSnippet(message.content).map((segment, index) => {
                     switch (segment.type) {
                         case 'text':
@@ -81,12 +96,7 @@ export const Message = ({ message, index }) => {
                                 <SyntaxHighlighter
                                     language={segment.language}
                                     showLineNumbers
-                                    customStyle={{
-                                        borderBottomLeftRadius: "10px",
-                                        borderBottomRightRadius: "10px",
-                                        overflowX: "auto",
-                                        maxWidth: "calc(100% - 16px)",
-                                    }}
+                                    customStyle={SyntaxHighlighterStyle}
                                     style={atelierCaveDark}
                                 >
                                     {segment.content}

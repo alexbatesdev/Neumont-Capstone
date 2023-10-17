@@ -1,54 +1,60 @@
-import React, { useEffect, useState } from 'react'
-import { PreviewComponent } from '@/components/reactPreview'
-import { CodeEditor } from '@/components/codeEditor'
-import { ResizableViewsHorizontal, ResizableViewsVertical } from '@/components/resizableViews'
-import { SideBar } from '@/components/sideBar'
-import { useTheme } from '@mui/material/styles';
-import { EditorContextProvider } from '@/contexts/editor-context'
-import Terminal from '@/components/terminal'
+import React from 'react'
+
 import dynamic from 'next/dynamic'
 
+import { useTheme } from '@mui/material/styles';
+
+import { ResizableViewsHorizontal, ResizableViewsVertical } from '@/components/ResizableViews'
+import { EditorContextProvider } from '@/contexts/editor-context'
+import { WebContainerTerminal } from '@/components/WebContainerTerminal'
+import { WebContainerFrame } from '@/components/WebContainerFrame'
+import { CodeEditor } from '@/components/CodeEditor'
+import { SideBar } from '@/components/SideBar'
+
 //Might be unnecessary
-const WebContainerTerminalContextProvider = dynamic(
-    () => import('@/contexts/webContainerTerminalContext').then((mod) => mod.WebContainerTerminalContextProvider),
+const WebContainerContextProvider = dynamic(
+    () => import('@/contexts/webContainerContext').then((mod) => mod.WebContainerContextProvider),
     { ssr: false }
 )
 
 export default function Home() {
     const theme = useTheme();
 
-    const [sidebarWidth, setSidebarWidth] = React.useState("300px");
+    const [sidebarWidth, setSidebarWidth] = React.useState(330);
+
+    const pageWrapperStyles = {
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'flex-start',
+        alignItems: 'flex-start',
+        minWidth: '100vw',
+        minHeight: '100vh',
+        backgroundColor: theme.palette.background.default,
+        overflow: 'hidden',
+        position: 'relative',
+    }
+
+    const topBarStyles = {
+        width: '100%',
+        maxWidth: '100vw',
+        height: '50px',
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'flex-start',
+        alignItems: 'center',
+        backgroundColor: theme.palette.background.default,
+    }
 
 
     return (
         <EditorContextProvider>
             <div
-                className='pageWrapper' // I might reuse this
-                style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    justifyContent: 'flex-start',
-                    alignItems: 'flex-start',
-                    minWidth: '100vw',
-                    minHeight: '100vh',
-                    backgroundColor: theme.palette.background.default,
-                    overflow: 'hidden',
-                    position: 'relative',
-                }}>
+                className='pageWrapper'
+                style={pageWrapperStyles}>
                 <div
                     className='topBar'
-                    style={{
-                        width: '100%',
-                        maxWidth: '100vw',
-                        height: '50px',
-                        display: 'flex',
-                        flexDirection: 'row',
-                        justifyContent: 'flex-start',
-                        alignItems: 'center',
-                        backgroundColor: theme.palette.background.default,
-                    }}
+                    style={topBarStyles}
                 >
-
                 </div>
                 <div
                     style={{
@@ -61,17 +67,17 @@ export default function Home() {
                     }}>
                     <SideBar sidebarWidth={sidebarWidth} setSidebarWidth={setSidebarWidth} />
                     <div style={{
-                        width: `calc(100% - ${sidebarWidth})`,
+                        width: `calc(100% - ${sidebarWidth}px)`,
                         height: '100%',
                     }}>
                         <ResizableViewsHorizontal>
                             <CodeEditor />
-                            <WebContainerTerminalContextProvider>
+                            <WebContainerContextProvider>
                                 <ResizableViewsVertical>
-                                    <PreviewComponent />
-                                    <Terminal />
+                                    <WebContainerFrame />
+                                    <WebContainerTerminal />
                                 </ResizableViewsVertical>
-                            </WebContainerTerminalContextProvider>
+                            </WebContainerContextProvider>
                         </ResizableViewsHorizontal>
                     </div>
                 </div>

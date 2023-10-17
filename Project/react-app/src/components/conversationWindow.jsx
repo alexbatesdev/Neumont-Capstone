@@ -1,12 +1,12 @@
-import React, { useEffect, useState, useRef, useContext } from "react";
-// import common tags from material ui
-import { Card, Typography, Box, Button, TextField } from "@mui/material";
-import Head from "next/head";
+import React, { useEffect, useState, useRef } from "react";
+
+import { Typography, Box, Button, TextField } from "@mui/material";
 import { useTheme } from '@mui/material/styles';
 import CircularProgress from "@mui/material/CircularProgress";
-import { Message } from "./message";
 import ArrowRightIcon from '@mui/icons-material/ArrowRight';
+
 import { useMessageHistory } from "@/contexts/editor-context";
+import { Message } from "./Message";
 
 const trimMessages = (messages) => {
     let newMessages = [];
@@ -20,26 +20,11 @@ const trimMessages = (messages) => {
 }
 
 
-// Refactor so the messageHistory state is stored in the parent component
-// This component should still be the one making api calls and updating the state (with the parent component passing down the state and the function to update it as props) 💭
 export const ConversationWindow = () => {
     const { messageHistory, setMessageHistory } = useMessageHistory();
-    // const [messageHistory, setMessageHistory] = useState([
-    //     {
-    //         role: "assistant",
-    //         content: "Hello, I'm GPT-3.5 Turbo. How can I help you today?",
-    //         model: "gpt-3.5-turbo-0613"
-    //     },
-    //     {
-    //         role: "user",
-    //         content: "I want to create a peepohpoo.",
-    //     }
-    // ]);
     const [messageField, setMessageField] = useState("");
-    // const [messages, setMessages] = useState([]);
     const messageBoxRef = useRef(null);
     const theme = useTheme();
-    // Will use later while waiting for api response 💭
     const [isLoading, setIsLoading] = useState(false);
     const [modelIsGPT4, setModelIsGPT4] = useState(false); //True if GPT-4, False if GPT-3.5 Turbo
 
@@ -53,8 +38,6 @@ export const ConversationWindow = () => {
         }
     };
 
-    // Refactor so the messageHistory state is stored in the parent component
-    // This component should still be the one making api calls and updating the state 💭
     const handleSendMessage = () => {
         if (messageField.length == 0) {
             return;
@@ -105,7 +88,7 @@ export const ConversationWindow = () => {
                 }
                 return;
             } else if (command == "refactor") {
-                // Refactor a component
+                // Refactor a component 💭
                 // I don't know how I want to do this yet
                 // I could have the user input their code
                 // But I think it should probably be a filename
@@ -116,7 +99,7 @@ export const ConversationWindow = () => {
                 function_call = "generate_component_code";
             }
         }
-        return;
+        // return; //💭🐢 Don't forget to remove this return statement!! 💭🐢
 
         const body = {
             messages: trimMessages(newMessages),
@@ -129,7 +112,7 @@ export const ConversationWindow = () => {
         console.log(body);
         console.log(JSON.stringify(body));
         setIsLoading(true);
-        // Needs a try catch block just in case 💭
+
         // Send message to backend
         const URL = "http://localhost:8000/prompt"
         fetch(URL, {
@@ -155,7 +138,23 @@ export const ConversationWindow = () => {
                 return [...prevMessages, message_back]
             });
             setIsLoading(false);
+        }).catch((error) => {
+
+            console.log(error);
+
+            const message_back = {
+                role: "assistant",
+                content: "An error occured, please try again.",
+                model: body.model,
+            };
+
+            setMessageHistory((prevMessages) => {
+                return [...prevMessages, message_back]
+            });
+
+            setIsLoading(false);
         });
+
     };
 
     const scrollToBottom = () => {
@@ -168,106 +167,142 @@ export const ConversationWindow = () => {
         scrollToBottom();
     }, [messageHistory]);
 
+    const wrapperStyle = {
+        height: "100%",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "flex-start",
+        alignItems: "flex-start",
+        zIndex: 1,
+        backgroundColor: theme.palette.background.paper,
+        width: "100%",
+        minWidth: "375px"
+    }
+
+    const topBannerStyle = {
+        width: "calc(100% - 2rem)",
+        borderBottom: `2px solid ${theme.palette.divider.default}`,
+        padding: "1rem",
+        display: "flex",
+        flexDirection: "row",
+        justifyContent: "flex-start",
+        alignItems: "center",
+    }
+
+    const iconStyle = {
+        width: 56,
+        height: 56,
+        aspectRatio: "1/1",
+        display: "inline-block",
+        borderRadius: "50px",
+        marginRight: "1rem",
+        backgroundColor: "grey",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundImage: "url(http://localhost:3001/proxy-image?url=https://upload.wikimedia.org/wikipedia/commons/0/04/ChatGPT_logo.svg)",
+        filter: modelIsGPT4 ? "invert(1) brightness(1.3) contrast(3) hue-rotate(275deg) brightness(1.2)" : "invert(1) brightness(1.3) contrast(1.3) hue-rotate(171deg) brightness(1.2)",
+    }
+
+    const modelToggleStyle = {
+        fontSize: "1.5rem",
+        marginLeft: "auto",
+        width: "150px",
+        color: "black",
+        borderRadius: "10px",
+    }
+
+    const messageBoxStyle = {
+        padding: "1rem",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "flex-start",
+        alignItems: "flex-start",
+        overflowY: "auto",
+        overflowX: "hidden",
+        width: "calc(100% - 2rem)",
+        flexGrow: 1,
+    }
+
+    const loadingMessageStyle = {
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "flex-start",
+        alignItems: "flex-start",
+        marginTop: "8px",
+        padding: "10px",
+        maxWidth: "300px",
+        width: "fit-content",
+        color: "black",
+        borderRadius: "10px",
+        borderBottomRightRadius: "0",
+        backgroundColor: modelIsGPT4 ? theme.palette.secondary.main : theme.palette.primary.main,
+        alignSelf: "flex-end"
+    }
+
+    const bottomBarStyle = {
+        width: "calc(100% - 2rem)",
+        borderTop: `2px solid ${theme.palette.divider.default}`,
+        padding: "1rem",
+        display: "flex",
+        flexDirection: "row",
+        justifyContent: "flex-start",
+        alignItems: "center",
+    }
+
+    const submitButtonStyle = {
+        marginLeft: "1rem",
+        borderRadius: "10px",
+        height: "calc(100%)",
+        width: "50px"
+    }
+
     return (<>
-        {/* Might want to swap a lot of divs to Boxes for consistency 💭 */}
-        <Box sx={{
-            height: "100%",
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "flex-start",
-            alignItems: "flex-start",
-            zIndex: 1,
-            backgroundColor: theme.palette.background.paper,
-            width: "100%",
-            minWidth: "375px"
-        }}>
-            <Box sx={{
-                width: "calc(100% - 2rem)",
-                borderBottom: `2px solid ${theme.palette.divider.default}`,
-                padding: "1rem",
-                display: "flex",
-                flexDirection: "row",
-                justifyContent: "flex-start",
-                alignItems: "center",
-            }}>
-                <Box sx={{
-                    width: 56,
-                    height: 56,
-                    aspectRatio: "1/1",
-                    display: "inline-block",
-                    borderRadius: "50px",
-                    marginRight: "1rem",
-                    backgroundColor: "grey",
-                    backgroundSize: "cover",
-                    backgroundPosition: "center",
-                    backgroundImage: "url(http://localhost:3001/proxy-image?url=https://upload.wikimedia.org/wikipedia/commons/0/04/ChatGPT_logo.svg)",
-                    filter: modelIsGPT4 ? "invert(1) brightness(1.3) contrast(3) hue-rotate(275deg) brightness(1.2)" : "invert(1) brightness(1.3) contrast(1.3) hue-rotate(171deg) brightness(1.2)",
-                }}> </Box>
-                <Typography variant="h5" sx={{ display: "inline-block", color: theme.palette.text.primary }}>
+        <Box sx={wrapperStyle}>
+            <Box sx={topBannerStyle}>
+                <Box sx={iconStyle}> </Box>
+                <Typography variant="h5"
+                    sx={{
+                        display: "inline-block",
+                        color: theme.palette.text.primary
+                    }}
+                >
                     GPT - Chat
                 </Typography>
                 <Button
                     variant="contained"
                     color={modelIsGPT4 ? "secondary" : "primary"}
                     onClick={() => { setModelIsGPT4(!modelIsGPT4) }}
-                    sx={{
-                        fontSize: "1.5rem",
-                        marginLeft: "auto",
-                        width: "150px",
-                        color: "black"
-                    }}>
+                    sx={modelToggleStyle}>
                     {modelIsGPT4 ? "GPT-4" : "GPT-3.5"}
                 </Button>
             </Box>
-            <Box ref={messageBoxRef} sx={{
-                padding: "1rem",
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "flex-start",
-                alignItems: "flex-start",
-                overflowY: "auto",
-                overflowX: "hidden",
-                width: "calc(100% - 2rem)",
-                flexGrow: 1,
-            }}>
+            <Box ref={messageBoxRef} sx={messageBoxStyle}>
                 {messageHistory.map((message, index) => {
                     return (
                         <Message key={"Message-" + index} message={message} />
                     );
                 })}
-                {isLoading && <Box sx={{
-                    display: "flex",
-                    flexDirection: "column",
-                    justifyContent: "flex-start",
-                    alignItems: "flex-start",
-                    marginTop: "8px",
-                    padding: "10px",
-                    maxWidth: "300px",
-                    width: "fit-content",
-                    color: "black",
-                    borderRadius: theme.shape.borderRadius,
-                    borderBottomRightRadius: "0",
-                    backgroundColor: modelIsGPT4 ? theme.palette.secondary.main : theme.palette.primary.main,
-                    alignSelf: "flex-end"
-                }}><CircularProgress color="common" /></Box>
+                {isLoading && <Box sx={loadingMessageStyle}><CircularProgress color="common" /></Box>
                 }
             </Box>
-            <Box sx={{
-                width: "calc(100% - 2rem)",
-                borderTop: `2px solid ${theme.palette.divider.default}`,
-                padding: "1rem",
-                display: "flex",
-                flexDirection: "row",
-                justifyContent: "flex-start",
-                alignItems: "center",
-            }}>
-                <TextField sx={{ flexGrow: 1 }} multiline color="tertiary" label="Message" variant="outlined" value={messageField} onChange={handleMessageFieldChange} onKeyDown={handleKeyDown} />
-                <Button variant="contained" color="tertiary" onClick={handleSendMessage} sx={{
-                    fontSize: "2rem",
-                    marginLeft: "1rem",
-                }}>
-                    {/* Might need to increase the size 💭 */}
-                    <ArrowRightIcon />
+            <Box sx={bottomBarStyle}>
+                <TextField
+                    sx={{ flexGrow: 1 }}
+                    ultiline
+                    color="tertiary"
+                    label="Message"
+                    variant="outlined"
+                    value={messageField}
+                    onChange={handleMessageFieldChange}
+                    onKeyDown={handleKeyDown}
+                />
+                <Button
+                    variant="contained"
+                    color="tertiary"
+                    onClick={handleSendMessage}
+                    sx={submitButtonStyle}
+                >
+                    <ArrowRightIcon fontSize="large" />
                 </Button>
             </Box>
         </Box >

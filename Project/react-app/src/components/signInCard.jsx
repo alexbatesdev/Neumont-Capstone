@@ -1,8 +1,10 @@
 import React, { useState } from "react";
-// import common tags from material ui
-import { Avatar, Card, CardContent, CardHeader, Typography, Box, Button, TextField } from "@mui/material";
-import { useTheme } from '@mui/material/styles';
+
 import Link from "next/link";
+
+import { Card, Typography, Button, TextField } from "@mui/material";
+import { useTheme } from '@mui/material/styles';
+
 
 export const SignInCard = ({ }) => {
     const [email, setEmail] = useState("");
@@ -54,17 +56,21 @@ export const SignInCard = ({ }) => {
             })
     }
 
+    const outerCardStyle = {
+        width: "300px",
+        padding: 2,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "flex-start",
+        flexDirection: "column",
+        backgroundColor: theme.palette.background.paper,
+        borderRadius: "5px",
+    }
+
+    const textFieldStyle = { width: "80%", marginBottom: "1rem" }
 
     return (<>
-        <Card sx={{
-            width: "300px",
-            padding: 2,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "flex-start",
-            flexDirection: "column",
-            backgroundColor: theme.palette.background.paper
-        }}>
+        <Card sx={outerCardStyle}>
             <Link href="/" style={{
                 textDecoration: "none",
                 color: theme.palette.text.primary
@@ -75,13 +81,56 @@ export const SignInCard = ({ }) => {
                     cursor: "pointer",
                 }}>Webbie</Typography>
             </Link>
-            <Typography variant="h5" sx={{ fontWeight: "bold", marginBottom: "1rem" }}>Sign In</Typography>
-            <TextField sx={{ width: "80%", marginBottom: "1rem" }} color="tertiary" placeholder="Email" size="small" value={email} onChange={handleEmailChange} />
-            <TextField sx={{ width: "80%", marginBottom: "1rem" }} color="tertiary" placeholder="Password" size="small" type="password" value={password} onChange={handlePasswordChange} />
+            <Typography variant="h5"
+                sx={{
+                    fontWeight: "bold",
+                    marginBottom: "1rem"
+                }}
+            >
+                Sign In
+            </Typography>
+            <TextField
+                sx={textFieldStyle}
+                color="tertiary"
+                placeholder="Email"
+                size="small"
+                value={email}
+                onChange={handleEmailChange}
+            />
+            <TextField
+                sx={textFieldStyle}
+                color="tertiary"
+                placeholder="Password"
+                size="small"
+                type="password"
+                value={password}
+                onChange={handlePasswordChange}
+            />
 
-            <Button variant="contained" sx={{ marginBottom: "1rem", width: "50%" }} color="tertiary" onClick={handleSignIn}>Sign In</Button>
+            <Button
+                variant="contained"
+                sx={{
+                    marginBottom: "1rem",
+                    width: "50%",
+                    borderRadius: "5px"
+                }}
+                color="tertiary"
+                onClick={handleSignIn}
+            >
+                Sign In
+            </Button>
             {error && <Typography variant="body1" color={"error"} sx={{ marginBottom: "1rem" }}>Invalid login credentials</Typography>}
-            <Button variant="contained" color="primary" size="small" href="/sign-up">Sign Up</Button>
+            <Button
+                variant="contained"
+                color="primary"
+                size="small"
+                href="/sign-up"
+                sx={{
+                    borderRadius: "5px"
+                }}
+            >
+                Sign Up
+            </Button>
 
         </Card>
     </>)

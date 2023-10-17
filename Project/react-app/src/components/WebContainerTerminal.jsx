@@ -1,22 +1,20 @@
-import { useTerminal } from "@/contexts/webContainerTerminalContext";
-import React, { useContext } from "react";
+import React from "react";
+
 import "xterm/css/xterm.css";
 
-//Possibly stretch addons
-//https://github.com/xtermjs/xterm.js/tree/master/addons/xterm-addon-image
-//https://github.com/xtermjs/xterm.js/tree/master/addons/xterm-addon-web-links
+import { useTerminal } from "@/contexts/webContainerContext";
 
-const Terminal = () => {
-    const { terminal_instance, setTerminal_instance, terminal_extras } = useTerminal();
+export const WebContainerTerminal = () => {
+    const { terminal_instance, setTerminal_instance, fitAddon } = useTerminal();
     const terminalRef = React.useRef(null);
 
     React.useEffect(() => {
         let resizeObserver;
         if (terminal_instance) {
             terminal_instance.open(terminalRef.current);
-            terminal_extras.fitAddon.fit();
+            fitAddon.fit();
             resizeObserver = new ResizeObserver((entries) => {
-                terminal_extras.fitAddon.fit();
+                fitAddon.fit();
             });
             resizeObserver.observe(terminalRef.current);
         }
@@ -32,6 +30,13 @@ const Terminal = () => {
         };
     }, [terminal_instance]);
 
+    const terminalStyle = {
+        backgroundColor: terminal_instance ? terminal_instance.options.theme.background : "black",
+        padding: "5px",
+        height: "calc(100% - 10px)",
+        width: "calc(100% - 10px)",
+    }
+
     return (<>
         <style>
             {`
@@ -40,13 +45,6 @@ const Terminal = () => {
             }
             `}
         </style>
-        <div ref={terminalRef} style={{
-            backgroundColor: terminal_extras.terminalBackground,
-            padding: "5px",
-            height: "calc(100% - 10px)",
-            width: "calc(100% - 10px)",
-        }} />
+        <div ref={terminalRef} style={terminalStyle} />
     </>);
 }
-
-export default Terminal;

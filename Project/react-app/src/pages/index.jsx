@@ -1,4 +1,5 @@
 import React from 'react'
+
 import Head from 'next/head'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -58,8 +59,8 @@ export default function Home() {
         <Typography variant="h1">Webbie</Typography>
         <Image src="/spider.png" width={150} height={150} />
         <Typography variant="h4">An <span style={{ color: theme.palette.primary.main }}>AI</span> powered web development tool</Typography>
-        <Link href="/editor"><Button variant="contained" color="primary">Try it out</Button></Link>
-        <Link href="/sign-in"><Button variant="contained" color="tertiary" sx={{ color: theme.palette.common.black }}>Sign In</Button></Link>
+        <Link href="/editor"><Button variant="contained" color="primary" sx={{ borderRadius: "5px" }}>Try it out</Button></Link>
+        <Link href="/sign-in"><Button variant="contained" color="tertiary" sx={{ borderRadius: "5px", color: theme.palette.common.black }}>Sign In</Button></Link>
       </main>
     </>
   )

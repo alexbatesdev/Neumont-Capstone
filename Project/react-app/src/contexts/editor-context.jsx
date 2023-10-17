@@ -1,4 +1,5 @@
 import React, { createContext, useState, useContext } from "react";
+
 import reactFileTemplate from '@/thatOneStuffFolderUsuallyCalledUtils/reactFileTemplate'
 
 export const EditorContext = createContext({
@@ -13,8 +14,10 @@ export const EditorContext = createContext({
     setOpenFilePaths: () => { },
     openFilePathIndex: 0,
     setOpenFilePathIndex: () => { },
-    lastClicked: null,
-    setLastClicked: () => { },
+    highlightedPath: null,
+    setHighlightedPath: () => { },
+    expandedPaths: [],
+    setExpandedPaths: () => { },
     //File Operations
     fileOperations: {},
     //The web container duh
@@ -207,9 +210,11 @@ export const EditorContextProvider = ({
 
     const [openFilePathIndex, setOpenFilePathIndex] = useState(0);
 
-    const [lastClicked, setLastClicked] = React.useState(null);
+    const [highlightedPath, setHighlightedPath] = React.useState(null);
 
     const [projectSettings, setProjectSettings] = useState({});
+
+    const [expandedPaths, setExpandedPaths] = useState([]);
 
 
     return (
@@ -223,8 +228,10 @@ export const EditorContextProvider = ({
                 setOpenFilePaths,
                 openFilePathIndex,
                 setOpenFilePathIndex,
-                lastClicked,
-                setLastClicked,
+                highlightedPath,
+                setHighlightedPath,
+                expandedPaths,
+                setExpandedPaths,
                 fileOperations,
                 webContainer,
                 setWebContainer,
@@ -259,8 +266,8 @@ export const useFiles = () => {
 }
 
 export const useFilePaths = () => {
-    const { openFilePaths, setOpenFilePaths, openFilePathIndex, setOpenFilePathIndex, lastClicked, setLastClicked } = useEditorContext();
-    return { openFilePaths, setOpenFilePaths, openFilePathIndex, setOpenFilePathIndex, lastClicked, setLastClicked };
+    const { openFilePaths, setOpenFilePaths, openFilePathIndex, setOpenFilePathIndex, highlightedPath, setHighlightedPath, expandedPaths, setExpandedPaths } = useEditorContext();
+    return { openFilePaths, setOpenFilePaths, openFilePathIndex, setOpenFilePathIndex, highlightedPath, setHighlightedPath, expandedPaths, setExpandedPaths };
 }
 
 export const useWebContainer = () => {

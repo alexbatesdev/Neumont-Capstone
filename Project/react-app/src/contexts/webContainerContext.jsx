@@ -1,10 +1,13 @@
 import React, { createContext, useState, useContext, useEffect } from "react";
-import { useFiles, useWebContainer } from "./editor-context";
-import { WebContainer } from '@webcontainer/api';
+
 import { useTheme } from "@mui/material";
 
-const WebContainerTerminalContext = createContext({
-    terminal_extras: null,
+import { WebContainer } from '@webcontainer/api';
+
+import { useFiles, useWebContainer } from "./editor-context";
+
+const WebContainerContext = createContext({
+    fitAddon: null,
     terminal_instance: null,
     setTerminal_instance: () => { },
     webContainer: null,
@@ -15,7 +18,7 @@ const WebContainerTerminalContext = createContext({
     setWebContainerURL: () => { },
 });
 
-export const WebContainerTerminalContextProvider = ({ children }) => {
+export const WebContainerContextProvider = ({ children }) => {
     const theme = useTheme();
 
     const { webContainer, setWebContainer } = useWebContainer();
@@ -61,16 +64,10 @@ export const WebContainerTerminalContextProvider = ({ children }) => {
         importDynamic();
     }, []);
 
-    const terminal_extras = {
-        fitAddon,
-        terminalForeground,
-        terminalBackground,
-    }
-
     return (
-        <WebContainerTerminalContext.Provider
+        <WebContainerContext.Provider
             value={{
-                terminal_extras,
+                fitAddon,
                 terminal_instance,
                 setTerminal_instance,
                 webContainer,
@@ -82,17 +79,17 @@ export const WebContainerTerminalContextProvider = ({ children }) => {
             }}
         >
             {children}
-        </WebContainerTerminalContext.Provider>
+        </WebContainerContext.Provider>
     );
 }
 
 export const useTerminal = () => {
-    const { terminal_extras, terminal_instance, setTerminal_instance } = useContext(WebContainerTerminalContext);
-    return { terminal_extras, terminal_instance, setTerminal_instance };
+    const { fitAddon, terminal_instance, setTerminal_instance } = useContext(WebContainerContext);
+    return { fitAddon, terminal_instance, setTerminal_instance };
 }
 
-export const useWebContainerAndTerminalContext = () => {
-    const context = useContext(WebContainerTerminalContext);
+export const useWebContainerContext = () => {
+    const context = useContext(WebContainerContext);
     if (context === undefined) {
         throw new Error(
             "useWebContainerTerminalContext must be used within a WebContainerTerminalContextProvider"
@@ -122,14 +119,13 @@ const setupWebContainer = async (
     }
 
 
-    setIsStartingServer(2);
+    setWebContainerStatus(2);
     await runServer(webContainerInstance, setWebContainerURL);
 
     await startShell(webContainerInstance, terminal_instance);
 }
 
 const installDependencies = async (webContainerInstance, terminal_instance) => {
-    //Instead of using npx to initialize a new react project I should just mount the files from our project then install dependencies 💭
     const installProcess = await webContainerInstance.spawn('pnpm', ['install']);
     installProcess.output.pipeTo(
         new WritableStream({

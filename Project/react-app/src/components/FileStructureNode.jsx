@@ -1,22 +1,19 @@
 import React, { useState } from 'react';
+
 import { useTheme } from '@mui/material/styles'; // Import useTheme from Material-UI
-import { EditorContext, useEditorContext } from '@/contexts/editor-context';
 import { Typography } from '@mui/material';
-import FolderIcon from '@mui/icons-material/Folder';
-import FolderOpenIcon from '@mui/icons-material/FolderOpen';
-import CodeIcon from '@mui/icons-material/Code';
 import Collapse from '@mui/material/Collapse';
-import Fade from '@mui/material/Fade';
+
+import { useFilePaths } from '@/contexts/editor-context';
 import { FileNodeIcon } from './FileNodeIcon';
 
 // This is an assistant-generated boilerplate for a React functional component.
 // You can customize this component by adding your own props, state, and logic.
 
-function FileStructureNode({ currentNodeTree, path, setLastClicked, lastClicked, depth = 0 }) {
+function FileStructureNode({ currentNodeTree, path, depth = 0 }) {
     const theme = useTheme(); // Use the Material-UI useTheme hook
     const [isHovered, setIsHovered] = useState(false);
-    const [isExpanded, setIsExpanded] = useState(false);
-    const { setOpenFilePaths, openFilePaths, setOpenFilePathIndex } = useEditorContext();
+    const { setOpenFilePaths, openFilePaths, setOpenFilePathIndex, highlightedPath, setHighlightedPath, expandedPaths, setExpandedPaths } = useFilePaths();
     if (currentNodeTree == undefined) {
         console.log("Current Node Tree is undefined")
         return;
@@ -35,15 +32,25 @@ function FileStructureNode({ currentNodeTree, path, setLastClicked, lastClicked,
         alignItems: 'center',
         gap: '5px',
         width: '100%',
-        backgroundColor: (isHovered || path == lastClicked) ? theme.palette.background.default : 'transparent',
+        backgroundColor: (isHovered || path == highlightedPath) ? theme.palette.background.default : 'transparent',
         paddingLeft: `${(depth * 10) + 10}px`,
         paddingTop: '3px',
         paddingBottom: '3px',
     }
 
     const handleClick = () => {
-        setIsExpanded(!isExpanded)
-        setLastClicked(path)
+        if (expandedPaths.includes(path)) {
+            setExpandedPaths((prevExpandedPaths) => {
+                const newExpandedPaths = [...prevExpandedPaths]
+                newExpandedPaths.splice(newExpandedPaths.indexOf(path), 1)
+                return newExpandedPaths
+            })
+        } else {
+            setExpandedPaths((prevExpandedPaths) => {
+                return [...prevExpandedPaths, path]
+            })
+        }
+        setHighlightedPath(path)
     }
 
     // console.log(currentNodeTree.)
@@ -81,13 +88,13 @@ function FileStructureNode({ currentNodeTree, path, setLastClicked, lastClicked,
                     onMouseLeave={() => setIsHovered(false)}
                     onClick={handleClick}
                     style={rowStyle}>
-                    <FileNodeIcon filename={displayName} isFolder={true} isOpen={isExpanded} />
+                    <FileNodeIcon filename={displayName} isFolder={true} isOpen={expandedPaths.includes(path)} />
                     <Typography variant='body1' style={typographyStyle}>
                         {displayName}
                     </Typography>
                 </div >
                 <Collapse
-                    in={isExpanded}
+                    in={expandedPaths.includes(path)}
                     timeout={200}
                     sx={{
                         width: '100%',
@@ -99,7 +106,7 @@ function FileStructureNode({ currentNodeTree, path, setLastClicked, lastClicked,
                         }
                         return (
                             <>
-                                <FileStructureNode key={key + "-" + index} currentNodeTree={node} depth={depth + 1} path={path + "/" + key} setLastClicked={setLastClicked} lastClicked={lastClicked} />
+                                <FileStructureNode key={key + "-" + index} currentNodeTree={node} depth={depth + 1} path={path + "/" + key} />
                             </>
                         );
                     })}
@@ -117,6 +124,12 @@ function FileStructureNode({ currentNodeTree, path, setLastClicked, lastClicked,
                 onMouseLeave={() => setIsHovered(false)}
                 onClick={handleClick}
                 onDoubleClick={() => {
+
+                    if (openFilePaths.includes(path)) {
+                        setOpenFilePathIndex(openFilePaths.indexOf(path))
+                        return;
+                    }
+
                     setOpenFilePaths((prevOpenFilePaths) => {
                         return [...prevOpenFilePaths, path]
                     })

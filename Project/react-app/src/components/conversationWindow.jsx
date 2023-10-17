@@ -6,7 +6,7 @@ import { useTheme } from '@mui/material/styles';
 import CircularProgress from "@mui/material/CircularProgress";
 import { Message } from "./message";
 import ArrowRightIcon from '@mui/icons-material/ArrowRight';
-import { EditorContext } from "@/contexts/editor-context";
+import { EditorContext, useEditorContext } from "@/contexts/editor-context";
 
 const trimMessages = (messages) => {
     let newMessages = [];
@@ -23,7 +23,18 @@ const trimMessages = (messages) => {
 // Refactor so the messageHistory state is stored in the parent component
 // This component should still be the one making api calls and updating the state (with the parent component passing down the state and the function to update it as props) 💭
 export const ConversationWindow = () => {
-    const { messageHistory, setMessageHistory } = useContext(EditorContext);
+    const { messageHistory, setMessageHistory } = useEditorContext();
+    // const [messageHistory, setMessageHistory] = useState([
+    //     {
+    //         role: "assistant",
+    //         content: "Hello, I'm GPT-3.5 Turbo. How can I help you today?",
+    //         model: "gpt-3.5-turbo-0613"
+    //     },
+    //     {
+    //         role: "user",
+    //         content: "I want to create a peepohpoo.",
+    //     }
+    // ]);
     const [messageField, setMessageField] = useState("");
     // const [messages, setMessages] = useState([]);
     const messageBoxRef = useRef(null);
@@ -105,6 +116,7 @@ export const ConversationWindow = () => {
                 function_call = "generate_component_code";
             }
         }
+        return;
 
         const body = {
             messages: trimMessages(newMessages),
@@ -220,7 +232,7 @@ export const ConversationWindow = () => {
             }}>
                 {messageHistory.map((message, index) => {
                     return (
-                        <Message key={index} message={message} />
+                        <Message key={"Message-" + index} message={message} />
                     );
                 })}
                 {isLoading && <Box sx={{

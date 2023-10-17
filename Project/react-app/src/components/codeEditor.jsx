@@ -3,12 +3,12 @@ import { Box, Typography, Button } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import Editor, { DiffEditor, useMonaco, loader } from '@monaco-editor/react';
 import { monaco_spooky, monaco_night_owl } from '@/thatOneStuffFolderUsuallyCalledUtils/themes'
-import { EditorContext } from '@/contexts/editor-context';
+import { useEditorContext } from '@/contexts/editor-context';
 import CloseIcon from '@mui/icons-material/Close';
 
 export const CodeEditor = () => {
     const theme = useTheme();
-    const { openFilePaths, setOpenFilePaths, openFilePathIndex, setOpenFilePathIndex, files, setFiles, fileOperations, webContainer, setLastClicked } = useContext(EditorContext)
+    const { openFilePaths, setOpenFilePaths, openFilePathIndex, setOpenFilePathIndex, files, setFiles, fileOperations, webContainer, setLastClicked } = useEditorContext();
     const handleMonacoWillMount = (monaco) => {
         monaco.editor.defineTheme('spooky', monaco_spooky)
         monaco.editor.defineTheme('night-owl', monaco_night_owl)
@@ -108,6 +108,7 @@ export const CodeEditor = () => {
             }}>
                 {openFilePaths && openFilePaths.map((file, index) => {
                     return (<div
+                        key={openFilePaths[index]}
                         onMouseEnter={() => setHoverIndex(index)}
                         onMouseLeave={() => setHoverIndex(null)}
                         onClick={() => {

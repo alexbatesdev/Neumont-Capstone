@@ -174,13 +174,13 @@ export default function Home() {
         writeFile: (fileTree, path, contents) => {
             fileTraverse(fileTree, path.split("/"), setFile, [contents]);
         },
-        addDirectory: (path) => {
+        addDirectory: (fileTree, path) => {
             fileTraverse(fileTree, path.split("/"), addDirectory);
         },
-        deleteFile: (path) => {
+        deleteFile: (fileTree, path) => {
             fileTraverse(fileTree, path.split("/"), deleteFile);
         },
-        deleteDirectory: (path) => {
+        deleteDirectory: (fileTree, path) => {
             fileTraverse(fileTree, path.split("/"), deleteDirectory);
         },
         getFileContents: (path) => {
@@ -211,8 +211,6 @@ export default function Home() {
     const [sidebarWidth, setSidebarWidth] = React.useState("300px");
 
     const [projectSettings, setProjectSettings] = useState({});
-
-    const terminalRef = React.useRef(null);
 
     useEffect(() => {
         console.log("Files changed")

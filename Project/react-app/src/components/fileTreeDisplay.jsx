@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useTheme } from '@mui/material/styles'; // Import useTheme from Material-UI
-import { EditorContext } from '@/contexts/editor-context';
+import { EditorContext, useEditorContext } from '@/contexts/editor-context';
 import FileStructureNode from './fileNode';
 import { Typography } from '@mui/material';
 import RefreshIcon from '@mui/icons-material/Refresh';
@@ -8,7 +8,7 @@ import RefreshIcon from '@mui/icons-material/Refresh';
 
 const FileTreeDisplay = () => {
     const theme = useTheme();
-    const { files, setFiles, lastClicked, setLastClicked, fileOperations } = React.useContext(EditorContext);
+    const { files, setFiles, lastClicked, setLastClicked, fileOperations } = useEditorContext();
 
 
     let fileKeys = Object.keys(files)
@@ -115,7 +115,7 @@ const FileTreeDisplay = () => {
                 }
                 return (
                     <>
-                        <FileStructureNode currentNodeTree={node} path={"./" + key} setLastClicked={setLastClicked} lastClicked={lastClicked} />
+                        <FileStructureNode key={key + "-" + index} currentNodeTree={node} path={"./" + key} setLastClicked={setLastClicked} lastClicked={lastClicked} />
                     </>
                 );
             })}

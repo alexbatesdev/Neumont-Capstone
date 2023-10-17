@@ -7,7 +7,6 @@ import React, { useContext } from "react";
 //https://github.com/xtermjs/xterm.js/tree/master/addons/xterm-addon-web-links
 
 const Terminal = ({ terminal_instance, fitAddon, background }) => {
-    const { webContainer } = useContext(EditorContext);
     const terminalRef = React.useRef(null);
 
     React.useEffect(() => {

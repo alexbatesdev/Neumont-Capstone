@@ -3,13 +3,13 @@ import { Box, FormControl, FormHelperText, Input, InputLabel, TextField, Typogra
 import { useTheme } from '@mui/material/styles';
 import { WebContainer } from '@webcontainer/api';
 import { PreviewLoading } from './previewLoading';
-import { EditorContext } from '@/contexts/editor-context';
+import { EditorContext, useEditorContext } from '@/contexts/editor-context';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 
 export const PreviewComponent = ({ terminal_instance }) => {
     const theme = useTheme();
-    const { files, setFiles, webContainer, setWebContainer, fileOperations } = useContext(EditorContext)
+    const { files, setFiles, webContainer, setWebContainer, fileOperations } = useEditorContext();
     const [isLoading, setIsLoading] = React.useState(true);
     const [isInstallingDependencies, setIsInstallingDependencies] = React.useState(false);
     const [isStartingServer, setIsStartingServer] = React.useState(false);

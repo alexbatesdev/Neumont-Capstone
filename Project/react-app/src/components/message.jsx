@@ -61,8 +61,9 @@ export const Message = ({ message, index }) => {
                 maxWidth: "calc(100% - 50px)",
                 width: "fit-content",
                 color: message.role == "assistant" ? "black" : "white",
-                borderRadius: theme.shape.borderRadius,
-                borderBottomRightRadius: "0",
+                borderRadius: "10px",
+                borderBottomRightRadius: message.role == "user" ? "10px" : "0",
+                borderBottomLeftRadius: message.role == "assistant" ? "10px" : "0",
                 backgroundColor: message.role == "assistant" ? color : theme.palette.tertiary.main,
                 alignSelf: message.role == "assistant" ? "flex-end" : "flex-start",
             }}>
@@ -75,15 +76,14 @@ export const Message = ({ message, index }) => {
                                 </Typography>
                             );
                         case 'code':
-                            return (<>
+                            return (<React.Fragment key={index}>
                                 <CodeSnippetButtonBar segment={segment} />
                                 <SyntaxHighlighter
-                                    key={index}
                                     language={segment.language}
                                     showLineNumbers
                                     customStyle={{
-                                        borderBottomLeftRadius: theme.shape.borderRadius,
-                                        borderBottomRightRadius: theme.shape.borderRadius,
+                                        borderBottomLeftRadius: "10px",
+                                        borderBottomRightRadius: "10px",
                                         overflowX: "auto",
                                         maxWidth: "calc(100% - 16px)",
                                     }}
@@ -91,7 +91,7 @@ export const Message = ({ message, index }) => {
                                 >
                                     {segment.content}
                                 </SyntaxHighlighter>
-                            </>);
+                            </React.Fragment>);
                         default:
                             return null;
                     }

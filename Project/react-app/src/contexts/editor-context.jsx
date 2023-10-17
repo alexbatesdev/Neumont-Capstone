@@ -69,3 +69,13 @@ export const EditorContextProvider = ({
         </EditorContext.Provider>
     );
 }
+
+export const useEditorContext = () => {
+    const context = React.useContext(EditorContext);
+    if (context === undefined) {
+        throw new Error(
+            "useEditorContext must be used within a EditorContextProvider"
+        );
+    }
+    return context;
+};

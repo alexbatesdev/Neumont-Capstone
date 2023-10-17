@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useTheme } from '@mui/material/styles'; // Import useTheme from Material-UI
-import { EditorContext } from '@/contexts/editor-context';
+import { EditorContext, useEditorContext } from '@/contexts/editor-context';
 import { Typography } from '@mui/material';
 import FolderIcon from '@mui/icons-material/Folder';
 import FolderOpenIcon from '@mui/icons-material/FolderOpen';
@@ -14,10 +14,9 @@ import { FileNodeIcon } from './FileNodeIcon';
 
 function FileStructureNode({ currentNodeTree, path, setLastClicked, lastClicked, depth = 0 }) {
     const theme = useTheme(); // Use the Material-UI useTheme hook
-    const { files } = React.useContext(EditorContext);
     const [isHovered, setIsHovered] = useState(false);
     const [isExpanded, setIsExpanded] = useState(false);
-    const { setOpenFilePaths, openFilePaths, setOpenFilePathIndex, openFilePathIndex } = React.useContext(EditorContext);
+    const { setOpenFilePaths, openFilePaths, setOpenFilePathIndex } = useEditorContext();
     if (currentNodeTree == undefined) {
         console.log("Current Node Tree is undefined")
         return;
@@ -100,7 +99,7 @@ function FileStructureNode({ currentNodeTree, path, setLastClicked, lastClicked,
                         }
                         return (
                             <>
-                                <FileStructureNode currentNodeTree={node} depth={depth + 1} path={path + "/" + key} setLastClicked={setLastClicked} lastClicked={lastClicked} />
+                                <FileStructureNode key={key + "-" + index} currentNodeTree={node} depth={depth + 1} path={path + "/" + key} setLastClicked={setLastClicked} lastClicked={lastClicked} />
                             </>
                         );
                     })}

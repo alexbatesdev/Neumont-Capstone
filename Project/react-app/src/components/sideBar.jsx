@@ -77,8 +77,8 @@ export const SideBar = ({ sidebarWidth, setSidebarWidth }) => {
 
         switch (tab) {
             case 0:
-                minWidth = 300;
-                maxWidth = 330;
+                minWidth = 320;
+                maxWidth = 350;
                 if (parseInt(sidebarWidth.substring(0, sidebarWidth.length - 2)) < minWidth) {
                     setSidebarWidth(minWidth + "px")
                 }

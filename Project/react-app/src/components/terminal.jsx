@@ -1,34 +1,36 @@
-import { EditorContext } from "@/contexts/editor-context";
-import { Button } from "@mui/material";
+import { useTerminal } from "@/contexts/webContainerTerminalContext";
 import React, { useContext } from "react";
+import "xterm/css/xterm.css";
 
 //Possibly stretch addons
 //https://github.com/xtermjs/xterm.js/tree/master/addons/xterm-addon-image
 //https://github.com/xtermjs/xterm.js/tree/master/addons/xterm-addon-web-links
 
-const Terminal = ({ terminal_instance, fitAddon, background }) => {
+const Terminal = () => {
+    const { terminal_instance, setTerminal_instance, terminal_extras } = useTerminal();
     const terminalRef = React.useRef(null);
 
     React.useEffect(() => {
-        terminal_instance.open(terminalRef.current);
-        fitAddon.fit();
+        let resizeObserver;
+        if (terminal_instance) {
+            terminal_instance.open(terminalRef.current);
+            terminal_extras.fitAddon.fit();
+            resizeObserver = new ResizeObserver((entries) => {
+                terminal_extras.fitAddon.fit();
+            });
+            resizeObserver.observe(terminalRef.current);
+        }
 
 
         return () => {
-            terminal_instance.dispose();
+            if (terminal_instance) {
+                terminal_instance.dispose();
+            }
+            if (resizeObserver) {
+                resizeObserver.disconnect();
+            }
         };
-    }, []);
-
-
-    React.useEffect(() => {
-        const resizeObserver = new ResizeObserver((entries) => {
-            fitAddon.fit();
-        });
-        resizeObserver.observe(terminalRef.current);
-        return () => {
-            resizeObserver.disconnect();
-        };
-    }, []);
+    }, [terminal_instance]);
 
     return (<>
         <style>
@@ -39,7 +41,7 @@ const Terminal = ({ terminal_instance, fitAddon, background }) => {
             `}
         </style>
         <div ref={terminalRef} style={{
-            backgroundColor: background,
+            backgroundColor: terminal_extras.terminalBackground,
             padding: "5px",
             height: "calc(100% - 10px)",
             width: "calc(100% - 10px)",

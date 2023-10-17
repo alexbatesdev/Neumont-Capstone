@@ -3,7 +3,7 @@ import { Typography, CircularProgress } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import AnimatedDots from "./AnimatedDotsByGPT";
 
-export const PreviewLoading = ({ isInstallingDependencies, isStartingServer }) => {
+export const PreviewLoading = ({ webContainerStatus }) => {
     const theme = useTheme();
     return (<>
         <div style={{
@@ -17,13 +17,13 @@ export const PreviewLoading = ({ isInstallingDependencies, isStartingServer }) =
         }}>
             <CircularProgress color="secondary" />
             <Typography variant='h6' color="text.primary" style={{ marginTop: '10px' }}>
-                {!isInstallingDependencies && !isStartingServer ? (<>
+                {webContainerStatus != 1 && webContainerStatus != 2 ? (<>
                     Loading<AnimatedDots />
                 </>) : null}
-                {isInstallingDependencies ? (<>
+                {webContainerStatus == 1 ? (<>
                     Installing dependencies<AnimatedDots />
                 </>) : null}
-                {isStartingServer ? (<>
+                {webContainerStatus == 2 ? (<>
                     Starting server<AnimatedDots />
                 </>) : null}
             </Typography>

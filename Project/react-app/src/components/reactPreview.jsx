@@ -3,94 +3,23 @@ import { Box, FormControl, FormHelperText, Input, InputLabel, TextField, Typogra
 import { useTheme } from '@mui/material/styles';
 import { WebContainer } from '@webcontainer/api';
 import { PreviewLoading } from './previewLoading';
-import { useFiles, useWebContainer } from '@/contexts/editor-context';
+import { useFiles } from '@/contexts/editor-context';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
+import { useWebContainerAndTerminalContext } from '@/contexts/webContainerTerminalContext';
 
 export const PreviewComponent = ({ terminal_instance }) => {
     const theme = useTheme();
     const { files, setFiles, fileOperations } = useFiles();
-    const { webContainer, setWebContainer } = useWebContainer();
-    const [isLoading, setIsLoading] = React.useState(true);
-    const [isInstallingDependencies, setIsInstallingDependencies] = React.useState(false);
-    const [isStartingServer, setIsStartingServer] = React.useState(false);
-    const [preview, setPreview] = React.useState(null);
+    const { webContainer, setWebContainer, webContainerURL, setWebContainerURL, webContainerStatus, setWebContainerStatus } = useWebContainerAndTerminalContext();
 
 
     useEffect(async () => {
         // Use pnpm to install dependencies 💭
-        const webContainerInstance = await WebContainer.boot({
-            workdirName: 'react-app'
-        });
-        webContainerInstance.mount(files)
-        setWebContainer(webContainerInstance);
-
-        setIsInstallingDependencies(true);
-        const exitCode = await installDependencies(webContainerInstance);
-        if (exitCode !== 0) {
-            throw new Error('Installation failed');
-        }
-        setIsInstallingDependencies(false);
-
-        setIsStartingServer(true);
-        await runServer(webContainerInstance);
-
-        await startShell(webContainerInstance, terminal_instance);
-
         return () => {
-            webContainerInstance.unmount();
+            webContainer.unmount();
         }
     }, [])
-
-    const installDependencies = async (webContainerInstance) => {
-        //Instead of using npx to initialize a new react project I should just mount the files from our project then install dependencies 💭
-        const installProcess = await webContainerInstance.spawn('pnpm', ['install']);
-        installProcess.output.pipeTo(
-            new WritableStream({
-                write(data) {
-                    // console.log(data);
-                    if (terminal_instance) terminal_instance.write(data);
-                },
-            })
-        )
-        return installProcess.exit;
-    }
-
-    const runServer = async (webContainerInstance) => {
-        const startProcess = await webContainerInstance.spawn('npm', ['start']);
-        startProcess.output.pipeTo(
-            new WritableStream({
-                write(data) {
-                    console.log(data);
-                    // console.log(terminal_instance)
-                    // if (terminal_instance) terminal_instance.write(data);
-                },
-            })
-        )
-        webContainerInstance.on('server-ready', (port, url) => {
-            console.log(url)
-            setPreview(url);
-        });
-    }
-
-    const startShell = async (webContainerInstance, terminal) => {
-        const shellProcess = await webContainerInstance.spawn('jsh')
-        shellProcess.output.pipeTo(
-            new WritableStream({
-                write(data) {
-                    console.log(data);
-                    terminal.write(data);
-                },
-            })
-        )
-
-        const shellInput = shellProcess.input.getWriter();
-        terminal.onData((data) => {
-            shellInput.write(data);
-        });
-
-        return shellProcess;
-    }
 
     const buttonStyle = {
         fontSize: "1rem",
@@ -136,9 +65,9 @@ export const PreviewComponent = ({ terminal_instance }) => {
                 transform: "translate(-50%, -50%)",
                 zIndex: 1,
             }}>
-                <PreviewLoading isInstallingDependencies={isInstallingDependencies} isStartingServer={isStartingServer} />
+                <PreviewLoading webContainerStatus={webContainerStatus} />
             </div>
-            {isLoading ? null : (<>
+            {webContainerStatus != null ? null : (<>
                 <div style={{
                     height: '30px',
                     width: '100%',
@@ -166,7 +95,7 @@ export const PreviewComponent = ({ terminal_instance }) => {
                             target.style.animation = '';
                         }, 600);
 
-                        setPreview((prevPrev) => {
+                        setWebContainerURL((prevPrev) => {
                             if (prevPrev === null) {
                                 return null;
                             }
@@ -174,7 +103,7 @@ export const PreviewComponent = ({ terminal_instance }) => {
                         })
                     }} />
 
-                    <Input disableUnderline value={preview} variant="standard" sx={{
+                    <Input disableUnderline value={webContainerURL} variant="standard" sx={{
                         flexGrow: 1,
                         height: 'calc(100% - 10px)',
                         backgroundColor: theme.palette.utilBar.secondary,
@@ -184,7 +113,7 @@ export const PreviewComponent = ({ terminal_instance }) => {
                     }} />
 
                     <OpenInNewIcon style={buttonStyle} onClick={() => {
-                        window.open(preview, '_blank');
+                        window.open(webContainerURL, '_blank');
                     }} />
                 </div>
             </>)}
@@ -195,9 +124,10 @@ export const PreviewComponent = ({ terminal_instance }) => {
                 borderBottomLeftRadius: theme.shape.borderRadius,
                 borderBottomRightRadius: theme.shape.borderRadius,
                 zIndex: 2,
-            }} src={preview} onLoad={() => {
-                setIsStartingServer(false);
-                setIsLoading(false)
+            }} src={webContainerURL} onLoad={() => {
+                // setIsStartingServer(false);
+                // setIsLoading(false)
+                setWebContainerStatus(null);
                 const asyncFunc = async () => {
                     const fileTree = await fileOperations.getFileTree()
                     setFiles(fileTree);

@@ -1,17 +1,16 @@
 import React, { useState, useCallback, useRef, useEffect, cloneElement } from 'react';
 import { useTheme } from '@mui/material/styles';
 
-export const ResizableViewsHorizontal = ({ items }) => {
+export const ResizableViewsHorizontal = ({ children }) => {
     const theme = useTheme();
     const containerRef = useRef(null);
     const [containerWidth, setContainerWidth] = useState(0); //assistant generated code
     const [isDragging, setIsDragging] = useState(false);
     const dragShieldRef = useRef(null);
 
-    const initialColumns = items.map((item, index) => {
+    const initialColumns = React.Children.toArray(children).map((child, index) => {
         return {
-            id: item.slot,
-            component: item.component,
+            component: child,
             offset: 0,
         }
     });
@@ -121,7 +120,7 @@ export const ResizableViewsHorizontal = ({ items }) => {
         }}>
         {columns.map((column, index) => {
             return (<>
-                <div key={column.id + "-column"} style={{
+                <div key={index + "-column"} style={{
                     overflow: 'hidden',
                     // border: `1px solid ${theme.palette.divider.default}`,
                     borderRadius: theme.shape.borderRadius,
@@ -133,7 +132,7 @@ export const ResizableViewsHorizontal = ({ items }) => {
                     {cloneElement(column.component, { style: { width: '100%', height: '100%' } })}
                 </div>
                 {index < columns.length - 1 ? <div
-                    key={column.id + "-divider"}
+                    key={index + "-divider"}
                     onMouseDown={(event) => handleMouseDown(event, index)}
                     style={{
                         width: '8px',
@@ -160,7 +159,7 @@ export const ResizableViewsHorizontal = ({ items }) => {
 
 // Delineator /////////////////////////////////////////////////// Delineator /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-export const ResizableViewsVertical = ({ items }) => {
+export const ResizableViewsVertical = ({ children }) => {
     const theme = useTheme();
     const containerRef = useRef(null);
 
@@ -169,12 +168,11 @@ export const ResizableViewsVertical = ({ items }) => {
     const [containerHeight, setContainerHeight] = useState(0);
     // Assistant-generated code ends here
 
-    const initialColumns = items.map((item, index) => {
+    const initialColumns = React.Children.toArray(children).map((child, index) => {
         return {
-            id: item.slot,
-            component: item.component,
+            component: child,
             offset: 0,
-        };
+        }
     });
 
     const [columns, setColumns] = useState(initialColumns);
@@ -265,7 +263,7 @@ export const ResizableViewsVertical = ({ items }) => {
             {columns.map((column, index) => (
                 <>
                     <div
-                        key={column.id + "-column"}
+                        key={index + "-column"}
                         style={{
                             overflow: 'hidden',
                             // border: `1px solid ${theme.palette.divider.default}`,
@@ -281,7 +279,7 @@ export const ResizableViewsVertical = ({ items }) => {
                     </div>
                     {index < columns.length - 1 ? (
                         <div
-                            key={column.id + "-divider"}
+                            key={index + "-divider"}
                             onMouseDown={(event) => handleMouseDown(event, index)}
                             style={{
                                 // Change from width to height for vertical orientation

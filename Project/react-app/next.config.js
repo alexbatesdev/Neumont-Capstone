@@ -19,8 +19,8 @@ const nextConfig = {
         ],
       },
       {
-        // Apply these headers to all routes in your application.
-        source: '/:path*',
+        // Apply these headers to the index route.
+        source: '/',
         headers: [
           {
             key: 'Cross-Origin-Embedder-Policy',

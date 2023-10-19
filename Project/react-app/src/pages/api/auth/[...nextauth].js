@@ -40,6 +40,7 @@ export const authOptions = {
             // Technically during, but after the user submits their credentials
             // This lets us check if the user is allowed to sign in, as well as move extra data to or from the backend
             // For Oauth users this means grabbing backend data or making a new backend account
+            console.log("Sign In Callback")
             console.log(user)
             console.log(account)
             console.log(profile)
@@ -48,6 +49,7 @@ export const authOptions = {
         },
         async jwt({ token, user, account, profile, isNewUser }) {
             // stuff go here
+            console.log("JWT Callback")
             console.log(token)
             console.log(user)
             console.log(account)
@@ -57,7 +59,7 @@ export const authOptions = {
             return token
         },
         async session(session, token) {
-            session.accessToken = token.accessToken;
+            // session.accessToken = token.accessToken;
             return session;
         }
     },
@@ -70,8 +72,5 @@ export const authOptions = {
     //     newUser: '/auth/new-user' // New users will be directed here on first sign in (leave the property out if not of interest)
     // }
 }
-
-console.log(process.env.GITHUB_ID)
-console.log(process.env.GITHUB_SECRET)
 
 export default NextAuth(authOptions)

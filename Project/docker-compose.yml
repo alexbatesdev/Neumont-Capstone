@@ -15,6 +15,23 @@ services:
   #   build: ./react-app
   #   ports:
   #     - "3000:3000"
+  auth-api:
+    image: auth-api
+    build: ./auth-api
+    volumes:
+      - ./auth-api:/app
+    ports:
+      - "8001:8000"
+  auth-db:
+    image: mongo:latest
+    container_name: auth-db
+    ports:
+      - "27017:27017"
+    volumes:
+      - /var/lib/mongo
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=secret
   image-proxy:
     # This was made entirely by gpt
     image: image-proxy-by-gpt

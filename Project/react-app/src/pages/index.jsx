@@ -5,10 +5,13 @@ import Image from 'next/image'
 import Link from 'next/link'
 
 import { Button, Typography, useTheme } from '@mui/material'
+import { signOut, useSession } from 'next-auth/react'
 
 
 export default function Home() {
   const theme = useTheme()
+  const session = useSession()
+  console.log(session)
   return (
     <>
       <Head>
@@ -60,7 +63,8 @@ export default function Home() {
         <Image src="/spider.png" width={150} height={150} />
         <Typography variant="h4">An <span style={{ color: theme.palette.primary.main }}>AI</span> powered web development tool</Typography>
         <Link href="/editor"><Button variant="contained" color="primary" sx={{ borderRadius: "5px" }}>Try it out</Button></Link>
-        <Link href="/sign-in"><Button variant="contained" color="tertiary" sx={{ borderRadius: "5px", color: theme.palette.common.black }}>Sign In</Button></Link>
+        {session.data ? <Button onClick={() => { signOut() }}>Sign Out</Button> :
+          <Link href="/sign-in"><Button variant="contained" color="tertiary" sx={{ borderRadius: "5px", color: theme.palette.common.black }}>Sign In</Button></Link>}
       </main>
     </>
   )

@@ -3,10 +3,12 @@ import React from 'react'
 import Head from 'next/head'
 
 import { Typography, useTheme } from '@mui/material'
+import { useSession } from 'next-auth/react';
 
 
 export function OneComponentTemplate({ children, title }) {
     const theme = useTheme();
+    const session = useSession();
 
     const outerWrapperStyle = {
         color: theme.palette.text.primary,
@@ -74,7 +76,7 @@ export function OneComponentTemplate({ children, title }) {
             <main style={outerWrapperStyle}>
 
                 <Typography variant="h5"
-                    onClick={() => { window.history.back() }}
+                    onClick={() => { window.location.href = (session.data ? "/dashboard" : "/") }}
                     onMouseOver={(e) => { e.target.style.backgroundColor = theme.palette.divider.default }}
                     onMouseOut={(e) => { e.target.style.backgroundColor = theme.palette.background.paper }}
                     sx={backStyle}>

@@ -18,6 +18,20 @@ const nextConfig = {
           },
         ],
       },
+      {
+        // Apply these headers to all routes in your application.
+        source: '/:path*',
+        headers: [
+          {
+            key: 'Cross-Origin-Embedder-Policy',
+            value: 'require-corp',
+          },
+          {
+            key: 'Cross-Origin-Opener-Policy',
+            value: 'same-origin',
+          },
+        ],
+      }
     ];
   },
   // GPT generated config

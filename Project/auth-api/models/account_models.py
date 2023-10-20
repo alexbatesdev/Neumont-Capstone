@@ -56,7 +56,6 @@ class AccountOut(BaseModel):
 
 
 class Account(AccountOut, Document):
-    account_id: Optional[uuid.UUID] = Field(default_factory=uuid.uuid4)
     password: Optional[str]
     # Accounts with verified emails and multiple oauth methods will be merged
     oauth_accounts: Optional[List[OAuthAccount]] = Field([])

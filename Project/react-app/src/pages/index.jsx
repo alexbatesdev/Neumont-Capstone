@@ -11,7 +11,6 @@ import { signOut, useSession } from 'next-auth/react'
 export default function Home() {
   const theme = useTheme()
   const session = useSession()
-  console.log(session)
   return (
     <>
       <Head>

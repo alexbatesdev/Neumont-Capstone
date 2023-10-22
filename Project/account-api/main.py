@@ -3,6 +3,7 @@ from typing import Annotated
 # Fastapi stuff
 from fastapi import FastAPI, Depends, HTTPException, status, Body
 from fastapi.middleware.cors import CORSMiddleware
+from contextlib import asynccontextmanager
 
 # Auth stuff
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
@@ -13,12 +14,11 @@ from jose import JWTError, jwt
 
 # DB stuff
 from motor.motor_asyncio import AsyncIOMotorClient
-from contextlib import asynccontextmanager
 from beanie import init_beanie
 
 # Type stuff
 from pydantic import BaseModel, EmailStr
-import uuid
+from uuid import UUID
 import json
 from models.account_models import (
     Account,
@@ -26,7 +26,6 @@ from models.account_models import (
     AccountOut,
     OAuthAccount,
     AccountAuth,
-    AccountNewPassword,
 )
 from datetime import timedelta, datetime
 
@@ -37,10 +36,10 @@ from decouple import config
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Start
-    client = AsyncIOMotorClient("mongodb://admin:secret@auth-db:27017")
+    client = AsyncIOMotorClient("mongodb://admin:secret@account-db:27017")
     await init_beanie(
-        database=client.auth,
-        document_models=[Account],  # I need models before I can init beanie 💭
+        database=client.account,
+        document_models=[Account],
     )
     yield
     # Stop
@@ -150,6 +149,12 @@ async def get_current_active_user(
 # ------------------------- Endpoints -------------------------------------------------------
 
 
+@app.post("/verify_token")
+async def verify_token(token: Token):
+    user = await get_current_user(token.access_token)
+    return AccountOut(**user.model_dump())
+
+
 # Response of this endpoint must be json
 @app.post("/auth")
 async def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]):
@@ -221,16 +226,26 @@ async def new_user(account: AccountIn):
 
     # Send verification email 💭
 
-    # Maybe instead of returning the account return a redirect url to the login page 💭
-    # Failure can redirect to the register page with an error message
-    output = AccountOut(**newAccount.model_dump())
-    return output
+    return {"redirect": "/sign-in"}
 
 
 # get user by email
 @app.get("/by_email/{email}")
 async def get_user_by_email(email: EmailStr):
     account = await Account.find_one({"email": email})
+    if account is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Account not found",
+        )
+    return AccountOut(**account.dict())
+
+
+# Entirely untested 😎
+# get user by id
+@app.get("/by_id/{account_id}")
+async def get_user_by_id(account_id: UUID):
+    account = await Account.find_one({"account_id": account_id})
     if account is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -285,29 +300,109 @@ async def oauth_account_exists(oauth_id: str):
 # Endpoints TODO:
 
 
+# entirelly untested 😎
 # - verify email
 @app.get("/verify_email/{JW_token_probably}")
 async def verify_email(JW_token_probably: str):
     pass
 
 
+# entirelly untested 😎
 # - change password
 @app.post("/change_password")
-async def change_password(credentials: AccountNewPassword):
-    pass
+async def change_password(
+    credentials: AccountAuth,
+    current_user: Annotated[Account, Depends(get_current_user)],
+):
+    if credentials.password != current_user.password:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Passwords don't match",
+        )
+    if (current_user.password != get_password_hash(credentials.password)) and (
+        current_user.password is not None
+    ):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Incorrect password",
+        )
+    current_user.password = get_password_hash(credentials.password)
+    await current_user.save()
+    return {"success": True}
 
 
+# entirelly untested 😎
 # - change name
 @app.post("/change_name")
-async def change_name(new_name: str):
-    pass
+async def change_name(
+    new_name: str, current_user: Annotated[Account, Depends(get_current_user)]
+):
+    current_user.name = new_name
+    await current_user.save()
+    return {"success": True}
 
 
+# entirelly untested 😎
 # - deactivate account
 @app.delete("/deactivate/{account_id}")
-async def deactivate_account(account_id: str):
+async def deactivate_account(
+    account_id: str, current_user: Annotated[Account, Depends(get_current_user)]
+):
     # if account_id is None:
     #    Delete logged in account
     # else:
     #    Make sure the user is an admin, then delete the account
-    pass
+    if (current_user.account_id != account_id) and (current_user.is_admin is False):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="You are not authorized to deactivate this account",
+        )
+    else:
+        account = await Account.find_one({"account_id": account_id})
+        if account is None:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Account not found",
+            )
+        account.isDeactivated = True
+        await account.save()
+        return {"success": True}
+
+
+# - add project to account
+@app.post("/add_project_reference/{project_id}")
+async def add_project(
+    current_user: Annotated[Account, Depends(get_current_user)], project_id: str
+):
+    if project_id is None:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Project id required",
+        )
+    if project_id in current_user.projects:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Project already added",
+        )
+    current_user.projects.append(project_id)
+    await current_user.save()
+    return {"project_list": current_user.projects}
+
+
+@app.delete("/remove_project_reference/{project_id}")
+async def remove_project(
+    current_user: Annotated[Account, Depends(get_current_user)], project_id: str
+):
+    if project_id is None:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Project id required",
+        )
+    if project_id not in current_user.projects:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Project not in project list",
+        )
+    current_user.projects.remove(project_id)
+    await current_user.save()
+    return {"project_list": current_user.projects}

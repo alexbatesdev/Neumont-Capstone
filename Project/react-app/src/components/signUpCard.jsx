@@ -9,18 +9,12 @@ import { useTheme } from '@mui/material/styles';
 export const SignUpCard = ({ }) => {
     const [error, setError] = useState(null);
     const [name, setName] = useState("");
-    const [age, setAge] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const theme = useTheme();
 
     const handleNameChange = (e) => {
         setName(e.target.value);
-    }
-
-    const handleAgeChange = (e) => {
-        if (isNaN(e.target.value)) return;
-        setAge(e.target.value);
     }
 
     const handleEmailChange = (e) => {
@@ -33,7 +27,7 @@ export const SignUpCard = ({ }) => {
 
     const handleSignUp = () => {
         //Variables to change: 💭
-        const URL = "http://localhost:5041/auth/register";
+        const URL = process.env.NEXT_PUBLIC_ACCOUNT_API_URL + "/register";
 
         if (name.length < 1) return setError("Name is required");
         if (email.length < 1) return setError("Email is required");
@@ -41,8 +35,7 @@ export const SignUpCard = ({ }) => {
         if (email.indexOf(".") < 0) return setError("Email is invalid");
         // Require a password of complexity 8 characters, 1 uppercase, 1 lowercase, 1 number, 1 special character 💭
         if (password.length < 1) return setError("Password is required");
-
-
+        if (password.length < 8) return setError("Password must be at least 8 characters long");
 
         const response = fetch(URL, {
             method: "POST",
@@ -56,8 +49,8 @@ export const SignUpCard = ({ }) => {
             })
         }).then(res => res.json()).then(data => {
             console.log(data);
-            if (data.user != null) {
-                window.location.href = "/sign-in";
+            if (data.redirect != null) {
+                window.location.href = data.redirect;
             } else if (data.detail != null) {
                 setError(data.detail);
             }

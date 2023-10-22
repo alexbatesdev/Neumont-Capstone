@@ -15,18 +15,35 @@ services:
   #   build: ./react-app
   #   ports:
   #     - "3000:3000"
-  auth-api:
-    image: auth-api
-    build: ./auth-api
+  account-api:
+    image: account-api
+    build: ./account-api
     volumes:
-      - ./auth-api:/app
+      - ./account-api:/app
     ports:
       - "8001:8000"
-  auth-db:
+  account-db:
     image: mongo:latest
-    container_name: auth-db
+    container_name: account-db
     ports:
       - "27017:27017"
+    volumes:
+      - /var/lib/mongo
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=secret
+  project-api:
+    image: project-api
+    build: ./project-api
+    volumes:
+      - ./project-api:/app
+    ports:
+      - "8002:8000"
+  project-db:
+    image: mongo:latest
+    container_name: project-db
+    ports:
+      - "27018:27017"
     volumes:
       - /var/lib/mongo
     environment:

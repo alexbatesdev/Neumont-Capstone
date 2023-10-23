@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 
 import dynamic from 'next/dynamic'
 
@@ -10,6 +10,9 @@ import { WebContainerTerminal } from '@/components/WebContainerTerminal'
 import { WebContainerFrame } from '@/components/WebContainerFrame'
 import { CodeEditor } from '@/components/CodeEditor'
 import { SideBar } from '@/components/SideBar'
+import { useRouter } from 'next/router';
+import { Typography } from '@mui/material';
+
 
 //Might be unnecessary
 const WebContainerContextProvider = dynamic(
@@ -19,6 +22,10 @@ const WebContainerContextProvider = dynamic(
 
 export default function Home() {
     const theme = useTheme();
+    const router = useRouter();
+
+    const { project_id } = router.query;
+    console.log(project_id);
 
     const [sidebarWidth, setSidebarWidth] = React.useState(330);
 
@@ -45,9 +52,36 @@ export default function Home() {
         backgroundColor: theme.palette.background.default,
     }
 
+    const [loading, setLoading] = React.useState(true);
+
+    const [files, setFiles] = React.useState({});
+
+    useEffect(() => {
+        if (project_id) {
+            const getProject = async () => {
+                const response = await fetch(`${process.env.NEXT_PUBLIC_PROJECT_API_URL}/by_id/${project_id}`)
+                const data = await response.json().then((data) => {
+                    setLoading(false);
+                    return data;
+                })
+                console.log(data)
+                setFiles(data.file_structure)
+            }
+            getProject()
+        }
+    }, [project_id])
+
+    if (loading) {
+        return (
+            <Typography variant="h1">
+                Loading...
+            </Typography>
+        )
+    }
+
 
     return (
-        <EditorContextProvider>
+        <EditorContextProvider files_in={files}>
             <div
                 className='pageWrapper'
                 style={pageWrapperStyles}>
@@ -72,12 +106,14 @@ export default function Home() {
                     }}>
                         <ResizableViewsHorizontal>
                             <CodeEditor />
-                            <WebContainerContextProvider>
-                                <ResizableViewsVertical>
-                                    <WebContainerFrame />
-                                    <WebContainerTerminal />
-                                </ResizableViewsVertical>
-                            </WebContainerContextProvider>
+                            {files && (
+                                <WebContainerContextProvider>
+                                    <ResizableViewsVertical>
+                                        <WebContainerFrame />
+                                        <WebContainerTerminal />
+                                    </ResizableViewsVertical>
+                                </WebContainerContextProvider>
+                            )}
                         </ResizableViewsHorizontal>
                     </div>
                 </div>

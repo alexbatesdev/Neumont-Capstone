@@ -112,13 +112,13 @@ export const ResizableViewsHorizontal = ({ children }) => {
         justifyContent: 'flex-start',
         alignItems: 'flex-start',
         backgroundColor: theme.palette.background.default,
-        borderRadius: theme.shape.borderRadius,
+        borderRadius: "0px",
     }
 
     const columnStyle = (column) => {
         return {
             overflow: 'hidden',
-            borderRadius: theme.shape.borderRadius,
+            borderRadius: "0px",
             backgroundColor: theme.palette.background.paper,
             height: '100%',
             width: `calc(((${containerWidth}px - ((${columns.length} - 1) * 8px)) / ${columns.length}) - ${column.offset}px)`
@@ -130,8 +130,8 @@ export const ResizableViewsHorizontal = ({ children }) => {
         height: '100%',
         zIndex: 1,
         cursor: 'col-resize',
-        backgroundColor: theme.palette.divider.default,
-        borderRadius: theme.shape.borderRadius,
+        backgroundColor: theme.palette.dragBar.default,
+        borderRadius: "0px",
     }
 
     const dragShieldStyle = {
@@ -259,13 +259,13 @@ export const ResizableViewsVertical = ({ children }) => {
         justifyContent: 'flex-start',
         alignItems: 'flex-start',
         backgroundColor: theme.palette.background.default,
-        borderRadius: theme.shape.borderRadius,
+        borderRadius: "0px",
     }
 
     const columnStyle = (column) => {
         return {
             overflow: 'hidden',
-            borderRadius: theme.shape.borderRadius,
+            borderRadius: "0px",
             position: 'relative',
             backgroundColor: theme.palette.background.paper,
             width: 'calc(100%)',
@@ -282,8 +282,8 @@ export const ResizableViewsVertical = ({ children }) => {
         zIndex: 1,
         // Change cursor to 'row-resize' for vertical orientation
         cursor: 'row-resize',
-        backgroundColor: theme.palette.divider.default,
-        borderRadius: theme.shape.borderRadius,
+        backgroundColor: theme.palette.dragBar.default,
+        borderRadius: "0px",
     }
 
     const dragShieldStyle = {

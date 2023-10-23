@@ -12,6 +12,14 @@ export const FileTreeDisplay = () => {
     const theme = useTheme();
     const { files, setFiles, fileOperations } = useFiles();
 
+    if (!files) {
+        return (
+            <Typography>
+                Loading...
+            </Typography>
+        )
+    }
+
 
     let fileKeys = Object.keys(files)
     let fileKeys_folders = []

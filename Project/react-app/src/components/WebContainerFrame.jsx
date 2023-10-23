@@ -57,8 +57,8 @@ export const WebContainerFrame = ({ }) => {
         height: '30px',
         width: '100%',
         backgroundColor: theme.palette.utilBar.default,
-        borderTopLeftRadius: theme.shape.borderRadius,
-        borderTopRightRadius: theme.shape.borderRadius,
+        borderTopLeftRadius: "0px",
+        borderTopRightRadius: "0px",
         zIndex: 2,
         overflow: 'hidden',
         display: 'flex',
@@ -73,7 +73,7 @@ export const WebContainerFrame = ({ }) => {
         height: 'calc(100% - 10px)',
         backgroundColor: theme.palette.utilBar.secondary,
         color: theme.palette.text.primary,
-        borderRadius: theme.shape.borderRadius,
+        borderRadius: "0px",
         padding: '0 5px',
     }
 
@@ -81,8 +81,8 @@ export const WebContainerFrame = ({ }) => {
         width: '100%',
         height: 'calc(100% - 30px)',
         position: 'relative',
-        borderBottomLeftRadius: theme.shape.borderRadius,
-        borderBottomRightRadius: theme.shape.borderRadius,
+        borderBottomLeftRadius: "0px",
+        borderBottomRightRadius: "0px",
         zIndex: 2,
     }
 

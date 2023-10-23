@@ -181,7 +181,7 @@ export const ConversationWindow = () => {
 
     const topBannerStyle = {
         width: "calc(100% - 2rem)",
-        borderBottom: `2px solid ${theme.palette.divider.default}`,
+        borderBottom: `2px solid ${theme.palette.dragBar.default}`,
         padding: "1rem",
         display: "flex",
         flexDirection: "row",
@@ -241,7 +241,7 @@ export const ConversationWindow = () => {
 
     const bottomBarStyle = {
         width: "calc(100% - 2rem)",
-        borderTop: `2px solid ${theme.palette.divider.default}`,
+        borderTop: `2px solid ${theme.palette.dragBar.default}`,
         padding: "1rem",
         display: "flex",
         flexDirection: "row",

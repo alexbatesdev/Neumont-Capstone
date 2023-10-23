@@ -5,8 +5,8 @@ const nextConfig = {
   async headers() {
     return [
       {
-        // Apply these headers to only the /demo route.
-        source: '/editor',
+        // Apply these headers to any children of the editor route
+        source: '/editor/:path*', // :path* is a wildcard
         headers: [
           {
             key: 'Cross-Origin-Embedder-Policy',
@@ -20,7 +20,7 @@ const nextConfig = {
       },
       {
         // Apply these headers to the index route.
-        source: '/',
+        source: '/dashboard',
         headers: [
           {
             key: 'Cross-Origin-Embedder-Policy',

@@ -120,8 +120,8 @@ export const SideBar = ({ sidebarWidth, setSidebarWidth }) => {
         height: "100%",
         backgroundColor: theme.palette.background.paper,
         position: "relative",
-        borderTopRightRadius: theme.shape.borderRadius,
-        borderBottomRightRadius: theme.shape.borderRadius,
+        borderTopRightRadius: "0px",
+        borderBottomRightRadius: "0px",
         overflow: "hidden",
     }
 
@@ -166,7 +166,7 @@ export const SideBar = ({ sidebarWidth, setSidebarWidth }) => {
         height: '100%',
         zIndex: 2,
         cursor: 'col-resize',
-        backgroundColor: theme.palette.divider.default,
+        backgroundColor: theme.palette.dragBar.default,
         float: "right",
     }
 

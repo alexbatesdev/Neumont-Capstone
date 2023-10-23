@@ -3,9 +3,11 @@ import React from "react";
 import "xterm/css/xterm.css";
 
 import { useTerminal } from "@/contexts/webContainerContext";
+import { useFiles } from "@/contexts/editor-context";
 
 export const WebContainerTerminal = () => {
     const { terminal_instance, setTerminal_instance, fitAddon } = useTerminal();
+    const { files, setFiles, fileOperations } = useFiles();
     const terminalRef = React.useRef(null);
 
     React.useEffect(() => {

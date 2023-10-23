@@ -343,6 +343,17 @@ async def change_name(
 
 
 # entirelly untested 😎
+# - change email
+@app.post("/change_email")
+async def change_email(
+    new_email: EmailStr, current_user: Annotated[Account, Depends(get_current_user)]
+):
+    current_user.email = new_email
+    await current_user.save()
+    return {"success": True}
+
+
+# entirelly untested 😎
 # - deactivate account
 @app.delete("/deactivate/{account_id}")
 async def deactivate_account(

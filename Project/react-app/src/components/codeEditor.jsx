@@ -95,8 +95,8 @@ export const CodeEditor = () => {
     const editorTabBarStyle = {
         width: "100%",
         backgroundColor: theme.palette.utilBar.default,
-        borderTopLeftRadius: theme.shape.borderRadius,
-        borderTopRightRadius: theme.shape.borderRadius,
+        borderTopLeftRadius: "0px",
+        borderTopRightRadius: "0px",
         // overflow: "hidden",
         display: "flex",
         flexDirection: "row",
@@ -207,8 +207,8 @@ export const CodeEditor = () => {
         textAlign: "initial",
         width: "100%",
         height: "100%",
-        borderBottomRightRadius: theme.shape.borderRadius,
-        borderBottomLeftRadius: theme.shape.borderRadius,
+        borderBottomRightRadius: "0px",
+        borderBottomLeftRadius: "0px",
         overflow: "hidden",
     }
 

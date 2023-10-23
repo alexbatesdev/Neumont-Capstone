@@ -31,7 +31,9 @@ export const EditorContext = createContext({
 
 export const EditorContextProvider = ({
     children,
+    files_in
 }) => {
+    // Don't forget to remove sample message 💭
     const [messageHistory, setMessageHistory] = useState([{
         role: 'assistant',
         content: "```\n" + "import React from 'react'; \
@@ -138,10 +140,10 @@ export const EditorContextProvider = ({
     }
 
     const getFile = (directory, path) => {
-        // console.log("Getting file")
-        // console.log(directory)
-        // console.log(path)
-        // console.log(directory[path])
+        console.log("Getting file")
+        console.log(directory)
+        console.log(path)
+        console.log(directory[path])
         return directory[path].file.contents;
     }
 
@@ -202,11 +204,11 @@ export const EditorContextProvider = ({
         }
     }
 
-    const [files, setFiles] = useState(reactFileTemplate);
+    const [files, setFiles] = useState(files_in);
 
     const [webContainer, setWebContainer] = useState(null);
 
-    const [openFilePaths, setOpenFilePaths] = useState(["./src/App.js"]);
+    const [openFilePaths, setOpenFilePaths] = useState([]);
 
     const [openFilePathIndex, setOpenFilePathIndex] = useState(0);
 

@@ -32,6 +32,10 @@ export const WebContainerContextProvider = ({ children }) => {
     const terminalForeground = theme.palette.secondary.main;
 
     useEffect(() => {
+        if (!files || files == {}) {
+            console.log("NONONONO")
+            return;
+        }
         const importDynamic = async () => {
             const { Terminal } = await import("xterm");
             const { FitAddon } = await import("xterm-addon-fit");
@@ -49,7 +53,8 @@ export const WebContainerContextProvider = ({ children }) => {
             });
             const fitAddon = new FitAddon();
             terminal_instance.loadAddon(fitAddon);
-
+            console.log("AYAYAYAYA")
+            console.log(files)
             setupWebContainer(
                 files,
                 terminal_instance,

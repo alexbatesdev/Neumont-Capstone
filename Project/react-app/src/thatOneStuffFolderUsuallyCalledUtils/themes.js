@@ -17,7 +17,7 @@ export const theme = createTheme({
             default: '#1C0C3B',
             paper: '#300F62',
         },
-        divider: {
+        dragBar: { //Name it divider and it won't work
             default: '#4C1E91',
         },
         utilBar: {
@@ -25,9 +25,6 @@ export const theme = createTheme({
             secondary: "#30125A",
             icons: "#5C2ADB"
         }
-    },
-    shape: {
-        borderRadius: 0,
     }
 })
 

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 
 import Head from 'next/head'
 import Image from 'next/image'
@@ -7,11 +7,27 @@ import Link from 'next/link'
 import { Button, Typography, useTheme } from '@mui/material'
 import { signOut, useSession } from 'next-auth/react'
 
+import ProjectList from '@/components/ProjectList'
 
 export default function Home() {
     const theme = useTheme()
     const session = useSession()
     console.log(session)
+
+    const [projects, setProjects] = React.useState([])
+
+    useEffect(() => {
+        if (session.data) {
+            const getProjects = async () => {
+                const response = await fetch(`${process.env.NEXT_PUBLIC_PROJECT_API_URL}/by_owner/${session.data.user.account_id}`)
+                const data = await response.json()
+                console.log(data)
+                setProjects(data)
+            }
+            getProjects()
+        }
+    }, [session])
+
     return (
         <>
             <Head>
@@ -59,6 +75,7 @@ export default function Home() {
                     backgroundColor: theme.palette.background.default,
                     animation: 'rotate 120s infinite linear',
                 }}></div>
+                <ProjectList projects={projects} />
             </main>
         </>
     )

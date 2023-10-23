@@ -77,7 +77,7 @@ export function OneComponentTemplate({ children, title }) {
 
                 <Typography variant="h5"
                     onClick={() => { window.location.href = (session.data ? "/dashboard" : "/") }}
-                    onMouseOver={(e) => { e.target.style.backgroundColor = theme.palette.divider.default }}
+                    onMouseOver={(e) => { e.target.style.backgroundColor = theme.palette.dragBar.default }}
                     onMouseOut={(e) => { e.target.style.backgroundColor = theme.palette.background.paper }}
                     sx={backStyle}>
                     Back

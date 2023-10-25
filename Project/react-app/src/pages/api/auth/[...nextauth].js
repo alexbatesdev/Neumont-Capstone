@@ -2,6 +2,7 @@ import NextAuth from "next-auth"
 import GithubProvider from "next-auth/providers/github"
 import CredentialsProvider from "next-auth/providers/credentials"
 import GoogleProvider from "next-auth/providers/google"
+// import jwt from 'jsonwebtoken'
 
 export const authOptions = {
     providers: [
@@ -70,7 +71,6 @@ export const authOptions = {
                         console.log("Failed to login: no user")
                         return null
                     }
-
                     return { user, token }
 
                 } catch (error) {
@@ -102,15 +102,19 @@ export const authOptions = {
             // console.log(profile)
             // console.log(isNewUser)
 
+
+
             if (user) {
-                token.user = user.user
+                token = user;
             }
 
             return token
         },
         async session({ session, token }) {
             // console.log("Session Callback")
-            session.user = token.user
+            const { user, ...access_token } = token;
+            session.user = user
+            session.token = access_token.token
             return session;
         }
     },

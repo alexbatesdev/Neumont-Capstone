@@ -1,5 +1,7 @@
-# Assistant generated code starts
-
+# These models were made with AI assistance
+# I had already been working with the data in the frontend
+# so I asked the AI to generate the models for me based on the data
+# It was unable to make the Directory model properly, so I had to make that one myself
 from pydantic import BaseModel, Field, root_validator, RootModel
 from typing import Dict, Union, Any, Type, Optional
 from beanie import Document
@@ -35,7 +37,6 @@ class ProjectCreate(BaseModel):
     project_name: str = Field(default="New Project", max_length=100)
     project_description: str = Field(default="A new project", max_length=500)
     creation_date: datetime = Field(default_factory=datetime.now)
-    last_modified_date: datetime = Field(default_factory=datetime.now)
     is_private: bool = Field(default=False)
 
 
@@ -43,6 +44,6 @@ class ProjectMetadata(ProjectCreate, Document):
     project_id: uuid.UUID = Field(default_factory=uuid.uuid4)
     project_owner: str
     file_structure: Optional[Directory] = Field(default=Directory({}))
-
-
-# Assistant generated code ends
+    last_modified_date: datetime = Field(default_factory=datetime.now)
+    # I should add a field for collaborators here 💭
+    # You can only save a project if you're the owner or a collaborator

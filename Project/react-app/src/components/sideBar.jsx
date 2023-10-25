@@ -196,13 +196,13 @@ export const SideBar = ({ sidebarWidth, setSidebarWidth }) => {
                     style={iconDivStyle(hoverIndex == 1 || selectedTab == 1)}>
                     <StarIcon />
                 </div>
-                <div
+                {/* <div
                     onMouseEnter={(e) => setHoverIndex(2)}
                     onMouseLeave={(e) => setHoverIndex(null)}
                     onClick={() => setTab(2)}
                     style={iconDivStyle(hoverIndex == 2 || selectedTab == 2)}>
                     <PaletteIcon />
-                </div>
+                </div> */}
                 <div
                     onMouseEnter={(e) => setHoverIndex(3)}
                     onMouseLeave={(e) => setHoverIndex(null)}

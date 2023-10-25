@@ -247,8 +247,9 @@ export const CodeEditor = () => {
             style={{
                 position: "relative",
                 height: `calc(100% - ${tabBarHeight}px)`,
+                backgroundColor: theme.palette.background.default,
             }}>
-            {openFilePaths && openFilePaths[openFilePathIndex] && (
+            {(openFilePaths && openFilePaths[openFilePathIndex]) ? (
                 <Editor
                     language={resolveExtensionToLanguage(openFilePaths[openFilePathIndex].split('.')[2])}
                     value={fileOperations.getFileContents(openFilePaths[openFilePathIndex])}
@@ -258,7 +259,19 @@ export const CodeEditor = () => {
                     wrapperProps={{
                         style: editorStyle
                     }}
-                />)}
+                />) : (
+                <div style={{
+                    position: "absolute",
+                    top: "50%",
+                    left: "50%",
+                    transform: "translate(-50%,-50%)",
+                    textAlign: "center",
+                }}>
+                    <Typography variant="h4" color="text.primary">
+                        No File Opened
+                    </Typography>
+                </div>
+            )}
         </div>
     </>)
 }

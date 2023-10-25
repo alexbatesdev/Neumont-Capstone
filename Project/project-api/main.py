@@ -116,7 +116,7 @@ async def insert_react_template(
     body_dict["project_owner"] = user["account_id"]
 
     # Depending on how many templates get made this might be a good candidate for a switch statement 💭
-    if template_name.lower() == "react":
+    if template_name.lower() == "basic-react-app":
         body_dict["file_structure"] = Directory(**react_file_template)
     project = ProjectMetadata(**body_dict)
 

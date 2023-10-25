@@ -1,9 +1,10 @@
 import React from "react";
 
-import { Button, Typography, useTheme, Card, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material'
+import { Button, Typography, useTheme, Card, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Modal } from '@mui/material'
 
 import moment from "moment/moment";
 import Link from "next/link";
+import NewProjectForm from "./NewProjectForm";
 
 function formatDate(datetimeString) {
     const formattedDate = moment(datetimeString).format('MMMM Do YYYY, h:mm:ss a');
@@ -11,7 +12,8 @@ function formatDate(datetimeString) {
 }
 
 const ProjectList = ({ projects }) => {
-    const theme = useTheme()
+    const theme = useTheme();
+    const [modalOpen, setModalOpen] = React.useState(false);
 
     return (<>
         <TableContainer component={Card} sx={{ width: "80%", marginTop: "1rem" }}>
@@ -22,7 +24,17 @@ const ProjectList = ({ projects }) => {
                         <TableCell color="primary" align="right">Last Updated</TableCell>
                         <TableCell color="primary" align="right">Created</TableCell>
                         <TableCell color="primary" align="center">
-                            <Button variant="contained" color="primary">Create Project</Button>
+                            <Button variant="contained" color="primary" onClick={() => setModalOpen(true)}>Create Project</Button>
+                            <Modal open={modalOpen} onClose={() => setModalOpen(false)}>
+                                <div style={{
+                                    position: "absolute",
+                                    top: "50%",
+                                    left: "50%",
+                                    transform: "translate(-50%, -50%)",
+                                }}>
+                                    <NewProjectForm setModalOpen={setModalOpen} />
+                                </div>
+                            </Modal>
                         </TableCell>
                     </TableRow>
                 </TableHead>
@@ -43,9 +55,9 @@ const ProjectList = ({ projects }) => {
                             </TableCell>
                             <TableCell align="right" sx={{ display: "flex", flexDirection: "row", justifyContent: "space-evenly" }}>
                                 {/* Edit needs a popup 💭 */}
-                                <Button variant="contained" color="primary">Edit</Button>
+                                <Button variant="contained" color="primary">Share</Button>
                                 <Link href={`/editor/${project.project_id}`}>
-                                    <Button variant="contained" color="tertiary">Open</Button>
+                                    <Button variant="contained" color="tertiary" sx={{ color: theme.palette.text.primary }}>Open</Button>
                                 </Link>
                             </TableCell>
                         </TableRow>

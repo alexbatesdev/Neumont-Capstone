@@ -4,7 +4,7 @@ import { createTheme, ThemeProvider } from '@mui/material'
 export const theme = createTheme({
     palette: {
         mode: 'dark',
-        primary: {
+        primary: { // I do not like, and I want to pivot away from this color scheme
             main: '#3fb59b',
         },
         secondary: {

@@ -37,6 +37,8 @@ class AccountAuth(BaseModel):
 
 class AccountIn(AccountAuth):
     name: str
+    email: EmailStr
+    password: str
 
 
 class AccountOut(BaseModel):
@@ -44,6 +46,8 @@ class AccountOut(BaseModel):
     name: str
     email: EmailStr
     projects: Optional[List[str]] = Field([])
+    projects_shared_with_me: Optional[List[str]] = Field([])
+    my_templates: Optional[List[str]] = Field([])
 
 
 class Account(AccountOut, Document):
@@ -53,3 +57,8 @@ class Account(AccountOut, Document):
     oauth_accounts: Optional[List[OAuthAccount]] = Field([])
     isDeactivated: Optional[bool] = Field(False)
     emailVerified: Optional[bool] = Field(False)
+    isAdmin: Optional[bool] = Field(False)
+
+
+class AccountWithToken(AccountOut):
+    access_token: str

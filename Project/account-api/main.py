@@ -26,11 +26,14 @@ from models.account_models import (
     AccountOut,
     OAuthAccount,
     AccountAuth,
+    AccountWithToken,
 )
 from datetime import timedelta, datetime
 
 # Misc imports
 from decouple import config
+
+import httpx
 
 
 @asynccontextmanager
@@ -135,7 +138,7 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
     user = await Account.find_one({"email": token_data.email})
     if user is None:
         raise credentials_exception
-    return user
+    return AccountWithToken(**user.dict(), access_token=token)
 
 
 async def get_current_active_user(
@@ -144,6 +147,13 @@ async def get_current_active_user(
     if current_user.isDeactivated:
         raise HTTPException(status_code=400, detail="Inactive user")
     return current_user
+
+
+def verify_account_found(account):
+    if not account:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Account not found"
+        )
 
 
 # ------------------------- Endpoints -------------------------------------------------------
@@ -195,20 +205,6 @@ async def read_root():
 # New user
 @app.post("/register")
 async def new_user(account: AccountIn):
-    if (account.email is None) or (account.password is None):
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Email and password required",
-        )
-
-    if account.name is None:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Name required, it doesn't have to be your real name! :D",
-        )
-
-    # Check if account exists
-    # Lookup by email
     accountExist = await Account.find_one({"email": account.email})
     if accountExist is not None:
         raise HTTPException(
@@ -233,11 +229,7 @@ async def new_user(account: AccountIn):
 @app.get("/by_email/{email}")
 async def get_user_by_email(email: EmailStr):
     account = await Account.find_one({"email": email})
-    if account is None:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Account not found",
-        )
+    verify_account_found(account)
     return AccountOut(**account.dict())
 
 
@@ -246,11 +238,7 @@ async def get_user_by_email(email: EmailStr):
 @app.get("/by_id/{account_id}")
 async def get_user_by_id(account_id: UUID):
     account = await Account.find_one({"account_id": account_id})
-    if account is None:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Account not found",
-        )
+    verify_account_found(account)
     return AccountOut(**account.dict())
 
 
@@ -259,11 +247,7 @@ async def get_user_by_id(account_id: UUID):
 @app.get("/by_oauth_id/{oauth_id}")
 async def get_user_by_oauth_id(oauth_id: str):
     account = await Account.find_one({"oauth_accounts.oauth_id": oauth_id})
-    if account is None:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Account not found",
-        )
+    verify_account_found(account)
     return AccountOut(**account.dict())
 
 
@@ -417,3 +401,144 @@ async def remove_project(
     current_user.projects.remove(project_id)
     await current_user.save()
     return {"project_list": current_user.projects}
+
+
+@app.post("/add_collaborator/{project_id}/{collaborator_id}")
+async def add_collaborator(
+    current_user: Annotated[Account, Depends(get_current_user)],
+    project_id: str,
+    collaborator_id: str,
+):
+    collaborator_account = await Account.find_one({"account_id": collaborator_id})
+    if project_id is None:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Project id required",
+        )
+    if collaborator_id is None:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Collaborator id required",
+        )
+    if project_id not in current_user.projects:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Project not in project list",
+        )
+    if project_id in collaborator_account.projects_shared_with_me:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Project already shared with this account",
+        )
+    collaborator_account.projects_shared_with_me.append(project_id)
+    await collaborator_account.save()
+    return {"success": True}
+
+
+@app.post("/remove_collaborator/{project_id}/{collaborator_id}")
+async def remove_collaborator(
+    current_user: Annotated[Account, Depends(get_current_user)],
+    project_id: str,
+    collaborator_id: str,
+):
+    collaborator_account = await Account.find_one({"account_id": collaborator_id})
+    if project_id is None:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Project id required",
+        )
+    if collaborator_id is None:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Collaborator id required",
+        )
+    if project_id not in current_user.projects:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Project not in project list",
+        )
+    if project_id not in collaborator_account.projects_shared_with_me:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Project not shared with this account",
+        )
+    collaborator_account.projects_shared_with_me.remove(project_id)
+    await collaborator_account.save()
+    return {"success": True}
+
+
+@app.delete("/remove_project_shared_with_me/{project_id}")
+async def remove_project_shared_with_me(
+    current_user: Annotated[Account, Depends(get_current_user)], project_id: str
+):
+    if project_id is None:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Project id required",
+        )
+    if project_id not in current_user.projects_shared_with_me:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Project not in project list",
+        )
+    current_user.projects_shared_with_me.remove(project_id)
+
+    try:
+        async with httpx.AsyncClient() as client:
+            await client.post(
+                f"http://{config('PROJECT_API_HOST')}:{config('PROJECT_API_PORT')}/by_id/{project_id}/remove_collaborator/{current_user.account_id}",
+                headers={"Authorization": f"Bearer {current_user.access_token}"},
+            )
+    except:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Unable to remove collaborator from project",
+        )
+
+    try:
+        await current_user.save()
+    except:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Unable to save changes, please contact support. You have been removed from the project, but it will still appear in your project list until resolved.",
+        )
+
+    return {"project_list": current_user.projects_shared_with_me}
+
+
+@app.post("/add_template/{project_id}")
+async def add_template(
+    current_user: Annotated[Account, Depends(get_current_user)], project_id: str
+):
+    if project_id is None:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Project id required",
+        )
+    if project_id in current_user.my_templates:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Project already added",
+        )
+    current_user.my_templates.append(project_id)
+    await current_user.save()
+    return {"template_list": current_user.my_templates}
+
+
+@app.delete("/remove_template/{project_id}")
+async def remove_template(
+    current_user: Annotated[Account, Depends(get_current_user)], project_id: str
+):
+    if project_id is None:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Project id required",
+        )
+    if project_id not in current_user.my_templates:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Project not in template list",
+        )
+    current_user.my_templates.remove(project_id)
+    await current_user.save()
+    return {"template_list": current_user.my_templates}

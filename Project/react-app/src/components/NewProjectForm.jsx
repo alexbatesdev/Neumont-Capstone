@@ -37,7 +37,7 @@ const NewProjectForm = ({ setModalOpen }) => {
         const baseUrl = process.env.NEXT_PUBLIC_PROJECT_API_URL;
         const templatePart = selectedTemplateIndex === 0 || selectedTemplateIndex == null
             ? ""
-            : `/template/${templates[selectedTemplateIndex].toLowerCase()}`;
+            : `/from_template/${templates[selectedTemplateIndex].toLowerCase()}`;
 
         let url = `${baseUrl}/new${templatePart}`;
 

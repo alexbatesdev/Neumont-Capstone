@@ -38,12 +38,12 @@ class ProjectCreate(BaseModel):
     project_description: str = Field(default="A new project", max_length=500)
     creation_date: datetime = Field(default_factory=datetime.now)
     is_private: bool = Field(default=False)
+    is_template: bool = Field(default=False)
 
 
-class ProjectMetadata(ProjectCreate, Document):
+class ProjectData(ProjectCreate, Document):
     project_id: uuid.UUID = Field(default_factory=uuid.uuid4)
     project_owner: str
     file_structure: Optional[Directory] = Field(default=Directory({}))
     last_modified_date: datetime = Field(default_factory=datetime.now)
-    # I should add a field for collaborators here 💭
-    # You can only save a project if you're the owner or a collaborator
+    collaborators: list[str] = Field(default=[])

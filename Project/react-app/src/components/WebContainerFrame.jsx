@@ -14,7 +14,7 @@ export const WebContainerFrame = ({ }) => {
     const { files, setFiles, fileOperations } = useFiles();
     const { webContainer, setWebContainer, webContainerURL, setWebContainerURL, webContainerStatus, setWebContainerStatus } = useWebContainerContext();
 
-    useEffect(async () => {
+    useEffect(() => {
         return () => {
             webContainer.unmount();
         }

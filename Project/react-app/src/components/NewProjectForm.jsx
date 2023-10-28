@@ -3,10 +3,13 @@ import React, { useEffect, useState } from 'react';
 import { Card, Box, Typography, TextField, Button, FormControlLabel, Checkbox, Collapse, IconButton } from '@mui/material';
 import { Scrollbar } from 'react-scrollbars-custom';
 import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/router';
 
 const NewProjectForm = ({ setModalOpen }) => {
     const theme = useTheme();
     const session = useSession();
+    const router = useRouter();
+
     const [projectName, setProjectName] = useState("");
     const [projectDescription, setProjectDescription] = useState("");
     const [expandedDescription, setExpandedDescription] = useState(false);
@@ -75,7 +78,7 @@ const NewProjectForm = ({ setModalOpen }) => {
             if (data.error) {
                 setSubmitError(data.error);
             } else {
-                window.location.href = "/editor/" + data.project_id;
+                router.push("/editor/" + data.project_id)
             }
         }
         ).catch((error) => {

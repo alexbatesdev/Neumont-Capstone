@@ -28,11 +28,6 @@ export const SideBar = ({ sidebarWidth, setSidebarWidth }) => {
         }
     };
 
-    // This will be a function passed down from the editor page
-    const saveProject = () => {
-        console.log("Saving project");
-    }
-
     const handleMouseDown = useCallback((event) => {
         event.preventDefault();
 
@@ -175,13 +170,6 @@ export const SideBar = ({ sidebarWidth, setSidebarWidth }) => {
             style={sideBarOuterDivStyle}
         >
             <div style={sideBarButtonStripStyle}>
-                <div
-                    onMouseEnter={(e) => setHoverIndex(-1)}
-                    onMouseLeave={(e) => setHoverIndex(null)}
-                    onClick={() => saveProject()}
-                    style={iconDivStyle(hoverIndex == -1)}>
-                    <SaveIcon />
-                </div>
                 <div
                     onMouseEnter={(e) => setHoverIndex(0)}
                     onMouseLeave={(e) => setHoverIndex(null)}

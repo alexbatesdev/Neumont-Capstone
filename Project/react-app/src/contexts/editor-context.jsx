@@ -1,4 +1,4 @@
-import React, { createContext, useState, useContext } from "react";
+import React, { createContext, useState, useContext, useEffect } from "react";
 
 import reactFileTemplate from '@/thatOneStuffFolderUsuallyCalledUtils/reactFileTemplate'
 
@@ -24,14 +24,14 @@ export const EditorContext = createContext({
     webContainer: null,
     setWebContainer: () => { },
     //Project Wide settings
-    // projectSettings: {},
-    // setProjectSettings: () => { },
+    projectData: {},
+    setProjectData: () => { },
     //Save might be something a lot of components want to do
 });
 
 export const EditorContextProvider = ({
     children,
-    files_in
+    project_in
 }) => {
     // Don't forget to remove sample message 💭
     const [messageHistory, setMessageHistory] = useState([{
@@ -204,7 +204,9 @@ export const EditorContextProvider = ({
         }
     }
 
-    const [files, setFiles] = useState(files_in);
+
+    const [files, setFiles] = useState(project_in.file_structure);
+
 
     const [webContainer, setWebContainer] = useState(null);
 
@@ -214,7 +216,11 @@ export const EditorContextProvider = ({
 
     const [highlightedPath, setHighlightedPath] = React.useState(null);
 
-    const [projectSettings, setProjectSettings] = useState({});
+    let projectMetaData = project_in;
+    // remove the file_structure from the projectMetaData
+    delete projectMetaData.file_structure;
+
+    const [projectData, setProjectData] = useState(projectMetaData);
 
     const [expandedPaths, setExpandedPaths] = useState([]);
 
@@ -237,8 +243,8 @@ export const EditorContextProvider = ({
                 fileOperations,
                 webContainer,
                 setWebContainer,
-                // projectSettings,
-                // setProjectSettings,
+                projectData,
+                setProjectData,
 
             }}
         >
@@ -275,4 +281,9 @@ export const useFilePaths = () => {
 export const useWebContainer = () => {
     const { webContainer, setWebContainer } = useEditorContext();
     return { webContainer, setWebContainer };
+}
+
+export const useProjectData = () => {
+    const { projectData, setProjectData } = useEditorContext();
+    return { projectData, setProjectData };
 }

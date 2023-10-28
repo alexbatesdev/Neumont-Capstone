@@ -4,14 +4,16 @@ import Link from "next/link";
 
 import { Card, Typography, Button, TextField } from "@mui/material";
 import { useTheme } from '@mui/material/styles';
+import { useRouter } from "next/router";
 
 
 export const SignUpCard = ({ }) => {
+    const theme = useTheme();
+    const router = useRouter();
     const [error, setError] = useState(null);
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const theme = useTheme();
 
     const handleNameChange = (e) => {
         setName(e.target.value);
@@ -50,7 +52,7 @@ export const SignUpCard = ({ }) => {
         }).then(res => res.json()).then(data => {
             console.log(data);
             if (data.redirect != null) {
-                window.location.href = data.redirect;
+                router.push(data.redirect);
             } else if (data.detail != null) {
                 setError(data.detail);
             }

@@ -11,8 +11,6 @@ export default function SignIn() {
     const theme = useTheme();
     const session = useSession();
 
-
-
     return (
         <OneComponentTemplate title="Sign In">
             <SignInCard />

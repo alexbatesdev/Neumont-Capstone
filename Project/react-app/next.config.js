@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: false,
-  // GPT generated config
+  // GPT generated config, me modified
   async headers() {
     return [
       {
@@ -19,7 +19,7 @@ const nextConfig = {
         ],
       },
       {
-        // Apply these headers to the index route.
+        // Apply these headers to the dashboard route.
         source: '/dashboard',
         headers: [
           {

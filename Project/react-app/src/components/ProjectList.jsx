@@ -8,10 +8,9 @@ import NewProjectForm from "./NewProjectForm";
 
 
 
+
 function formatDate(datetimeString) {
-    console.log(datetimeString)
     const formattedDate = moment.utc(datetimeString).local().format("MMMM Do YYYY, h:mm:ss a");
-    console.log(formattedDate)
     return formattedDate;
 }
 

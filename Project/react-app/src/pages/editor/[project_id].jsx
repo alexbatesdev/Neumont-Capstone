@@ -16,7 +16,7 @@ const Editor = dynamic(
 
 export default function Page() {
     const session = useSession();
-    const [files, setFiles] = React.useState({});
+    const [projectData, setProjectData] = React.useState({});
 
     const router = useRouter();
 
@@ -40,12 +40,12 @@ export default function Page() {
                     return data;
                 })
                 console.log(data)
-                setFiles(data.file_structure)
+                setProjectData(data)
             }
             getProject()
         }
     }, [project_id, session])
 
-    return <Editor files_in={files} />
+    return <Editor project_in={projectData} />
     // return <LoadingDisplay fun />
 }

@@ -1,9 +1,10 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 
 import Head from 'next/head'
 
 import { Typography, useTheme } from '@mui/material'
 import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/router';
 
 
 export function OneComponentTemplate({ children, title }) {
@@ -76,7 +77,7 @@ export function OneComponentTemplate({ children, title }) {
             <main style={outerWrapperStyle}>
 
                 <Typography variant="h5"
-                    onClick={() => { window.location.href = (session.data ? "/dashboard" : "/") }}
+                    // onClick={() => { router.push("/") }}
                     onMouseOver={(e) => { e.target.style.backgroundColor = theme.palette.dragBar.default }}
                     onMouseOut={(e) => { e.target.style.backgroundColor = theme.palette.background.paper }}
                     sx={backStyle}>

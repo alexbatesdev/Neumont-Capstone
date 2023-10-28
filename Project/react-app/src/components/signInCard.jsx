@@ -1,19 +1,25 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import Link from "next/link";
 
 import { Card, Typography, Button, TextField } from "@mui/material";
 import { useTheme } from '@mui/material/styles';
 import { signIn, useSession } from "next-auth/react";
+import { useRouter } from "next/router";
 
 
 export const SignInCard = ({ }) => {
     const session = useSession();
+    const router = useRouter();
 
-    if (session.data) {
-        window.location.href = "/dashboard";
-    }
-
+    useEffect(() => {
+        console.log(session)
+        console.log(session.status)
+        if (session.status === 'authenticated') {
+            console.log('authenticated')
+            router.push('/dashboard')
+        }
+    }, [session])
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");

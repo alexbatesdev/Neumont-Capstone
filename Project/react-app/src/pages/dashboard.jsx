@@ -8,10 +8,12 @@ import { Button, Typography, useTheme } from '@mui/material'
 import { signOut, useSession } from 'next-auth/react'
 
 import ProjectList from '@/components/ProjectList'
+import { useRouter } from 'next/router'
 
 export default function Home() {
     const theme = useTheme()
     const session = useSession()
+    const router = useRouter()
     console.log(session)
 
     const [projects, setProjects] = React.useState([])
@@ -30,6 +32,9 @@ export default function Home() {
                 setProjects(data)
             }
             getProjects()
+        }
+        if (session.status === 'unauthenticated') {
+            router.push('/')
         }
     }, [session])
 

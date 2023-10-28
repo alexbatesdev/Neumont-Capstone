@@ -14,7 +14,7 @@ export const FileTreeDisplay = () => {
 
     if (!files) {
         return (
-            <Typography>
+            <Typography sx={{ pl: "10px" }}>
                 Loading...
             </Typography>
         )
@@ -108,7 +108,7 @@ export const FileTreeDisplay = () => {
     return (
         <div style={outerWrapperStyle}>
             <Typography sx={topBannerStyle}>
-                File Explorer - {"Project Name"} {/* Get from backend 💭 */}
+                File Explorer
                 <style>
                     {`
                         @keyframes rotate {
@@ -126,7 +126,7 @@ export const FileTreeDisplay = () => {
                     onClick={handleRefresh}
                 />
             </Typography>
-            {fileKeys.length === 0 && <Typography >No Files to show</Typography>}
+            {fileKeys.length === 0 && <Typography sx={{ pl: "10px" }}>No Files to show</Typography>}
             {fileKeys.map((key, index) => {
                 const node = {
                     [key]: files[key]

@@ -115,10 +115,14 @@ export const authOptions = {
             const { user, ...access_token } = token;
             session.user = user
             session.token = access_token.token
+            // console.log(session)
             return session;
         }
     },
     secret: process.env.NEXTAUTH_SECRET,
+    session: {
+        maxAge: 60 * 60,
+    }
     // pages: { //These are for cutom pages
     //     signIn: '/auth/signin',
     //     signOut: '/auth/signout',

@@ -1,5 +1,5 @@
 import { Stack, Switch, ToggleButton, useTheme } from '@mui/material';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Card, Box, Typography, TextField, Button, FormControlLabel, Checkbox, Collapse, IconButton } from '@mui/material';
 import { Scrollbar } from 'react-scrollbars-custom';
 import { useSession } from 'next-auth/react';
@@ -14,8 +14,24 @@ const NewProjectForm = ({ setModalOpen }) => {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [submitError, setSubmitError] = useState(null);
     const [hoveredIndex, setHoveredIndex] = useState(null);
-    const [templates, setTemplates] = useState(["None", "basic-react-app"]);
+    const [templates, setTemplates] = useState();
     const [selectedTemplateIndex, setSelectedTemplateIndex] = useState(null);
+
+    useEffect(() => {
+        const getTemplates = async () => {
+            const response = await fetch(process.env.NEXT_PUBLIC_PROJECT_API_URL + "/all/templates", {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${session.data.token}`,
+                },
+            });
+            const data = await response.json();
+            console.log(data);
+            setTemplates(data);
+        }
+        getTemplates();
+    }, []);
 
     const listItemStyle = (i) => {
         return {
@@ -35,9 +51,9 @@ const NewProjectForm = ({ setModalOpen }) => {
         // let url = (process.env.NEXT_PUBLIC_PROJECT_API_URL + "/new") + ((selectedTemplateIndex == 0 || selectedTemplateIndex == null) ? "" : ("/template/" + templates[selectedTemplateIndex].toLowerCase()));
         // I wrote ^^this^^ line myself, then I asked GPT to make it more readable. 
         const baseUrl = process.env.NEXT_PUBLIC_PROJECT_API_URL;
-        const templatePart = selectedTemplateIndex === 0 || selectedTemplateIndex == null
+        const templatePart = selectedTemplateIndex === -1 || selectedTemplateIndex == null
             ? ""
-            : `/from_template/${templates[selectedTemplateIndex].toLowerCase()}`;
+            : `/from_template/${templates[selectedTemplateIndex].project_id.toLowerCase()}`;
 
         let url = `${baseUrl}/new${templatePart}`;
 
@@ -52,7 +68,20 @@ const NewProjectForm = ({ setModalOpen }) => {
                 project_description: projectDescription,
                 is_private: isPrivate,
             }),
-        });
+        }).then((response) => {
+            return response.json();
+        }).then((data) => {
+            console.log(data);
+            if (data.error) {
+                setSubmitError(data.error);
+            } else {
+                window.location.href = "/editor/" + data.project_id;
+            }
+        }
+        ).catch((error) => {
+            console.log(error);
+            setSubmitError(error);
+        })
     }
 
     return (
@@ -139,9 +168,18 @@ const NewProjectForm = ({ setModalOpen }) => {
                             width: "100%",
                             paddingLeft: 0,
                         }}>
-
+                            <Typography
+                                key={-1}
+                                variant="body2"
+                                onClick={() => { setSelectedTemplateIndex(-1) }}
+                                onMouseEnter={() => { setHoveredIndex(-1) }}
+                                onMouseLeave={() => { setHoveredIndex(null) }}
+                                sx={listItemStyle(-1)}
+                            >
+                                None
+                            </Typography>
                             {
-                                templates.map((template, i) => (
+                                templates && templates.map((template, i) => (
                                     <Typography
                                         key={i}
                                         variant="body2"
@@ -150,7 +188,7 @@ const NewProjectForm = ({ setModalOpen }) => {
                                         onMouseLeave={() => { setHoveredIndex(null) }}
                                         sx={listItemStyle(i)}
                                     >
-                                        {template}
+                                        {template.project_name}
                                     </Typography>
                                 ))
                             }

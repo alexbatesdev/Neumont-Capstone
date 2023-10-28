@@ -5,7 +5,7 @@ import { useTheme } from '@mui/material/styles';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 
-import { PreviewLoading } from './PreviewLoading';
+import LoadingDisplay from './PreviewLoading';
 import { useFiles } from '@/contexts/editor-context';
 import { useWebContainerContext } from '@/contexts/webContainerContext';
 
@@ -131,7 +131,7 @@ export const WebContainerFrame = ({ }) => {
         </style>
         <Box sx={outerBoxStyle}>
             <div style={loadingWrapperStyle}>
-                <PreviewLoading webContainerStatus={webContainerStatus} />
+                <LoadingDisplay webContainerStatus={webContainerStatus} />
             </div>
             {webContainerStatus != null ? null : (<>
                 <div style={topBarStyle}>

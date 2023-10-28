@@ -6,8 +6,12 @@ import moment from "moment/moment";
 import Link from "next/link";
 import NewProjectForm from "./NewProjectForm";
 
+
+
 function formatDate(datetimeString) {
-    const formattedDate = moment(datetimeString).format('MMMM Do YYYY, h:mm:ss a');
+    console.log(datetimeString)
+    const formattedDate = moment.utc(datetimeString).local().format("MMMM Do YYYY, h:mm:ss a");
+    console.log(formattedDate)
     return formattedDate;
 }
 
@@ -39,7 +43,7 @@ const ProjectList = ({ projects }) => {
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {projects.map((project) => (
+                    {projects && projects.map((project) => (
                         <TableRow
                             key={project.id}
                             sx={{ '&:last-child td, &:last-child th': { border: 0 }, backgroundColor: project.is_private ? theme.palette.background.paper : "None" }}

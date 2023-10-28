@@ -19,7 +19,12 @@ export default function Home() {
     useEffect(() => {
         if (session.data) {
             const getProjects = async () => {
-                const response = await fetch(`${process.env.NEXT_PUBLIC_PROJECT_API_URL}/by_owner/${session.data.user.account_id}`)
+                const response = await fetch(`${process.env.NEXT_PUBLIC_PROJECT_API_URL}/by_owner/${session.data.user.account_id}`, {
+                    method: 'GET',
+                    headers: {
+                        "Authorization": `Bearer ${session.data.token}`
+                    }
+                })
                 const data = await response.json()
                 console.log(data)
                 setProjects(data)

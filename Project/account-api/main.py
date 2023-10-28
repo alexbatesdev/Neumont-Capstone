@@ -21,7 +21,7 @@ from pydantic import BaseModel, EmailStr
 from uuid import UUID
 import json
 from models.account_models import (
-    Account,
+    AccountDB,
     AccountIn,
     AccountOut,
     OAuthAccount,
@@ -39,10 +39,10 @@ import httpx
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Start
-    client = AsyncIOMotorClient("mongodb://admin:secret@account-db:27017")
+    client = AsyncIOMotorClient("mongodb://admin:secret@Account-db:27017")
     await init_beanie(
         database=client.account,
-        document_models=[Account],
+        document_models=[AccountDB],
     )
     yield
     # Stop
@@ -91,7 +91,7 @@ def get_password_hash(password):
 
 
 async def authenticate_user(email: str, password: str):
-    user = await Account.find_one({"email": email})
+    user = await AccountDB.find_one({"email": email})
     if not user:
         return False
     if not verify_password(password, user.password):
@@ -135,22 +135,22 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
         token_data = TokenData(email=email)
     except JWTError:
         raise credentials_exception
-    user = await Account.find_one({"email": token_data.email})
+    user = await AccountDB.find_one({"email": token_data.email})
     if user is None:
         raise credentials_exception
-    return AccountWithToken(**user.dict(), access_token=token)
+    return AccountWithToken(**user.model_dump(), access_token=token)
 
 
 async def get_current_active_user(
-    current_user: Annotated[Account, Depends(get_current_user)]
+    current_user: Annotated[AccountDB, Depends(get_current_user)]
 ):
     if current_user.isDeactivated:
         raise HTTPException(status_code=400, detail="Inactive user")
     return current_user
 
 
-def verify_account_found(account):
-    if not account:
+def verify_account_found(Account):
+    if not Account:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Account not found"
         )
@@ -188,7 +188,7 @@ async def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]):
 
 
 @app.get("/me")
-async def read_groot(current_user: Annotated[Account, Depends(get_current_user)]):
+async def read_groot(current_user: Annotated[AccountDB, Depends(get_current_user)]):
     return {"user": AccountOut(**current_user.model_dump())}
 
 
@@ -204,18 +204,18 @@ async def read_root():
 
 # New user
 @app.post("/register")
-async def new_user(account: AccountIn):
-    accountExist = await Account.find_one({"email": account.email})
+async def new_user(Account: AccountIn):
+    accountExist = await AccountDB.find_one({"email": Account.email})
     if accountExist is not None:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Account already exists",
         )
 
-    account_dict = account.model_dump()
+    account_dict = Account.model_dump()
     account_dict["password"] = get_password_hash(account_dict["password"])
 
-    newAccount = Account(
+    newAccount = AccountDB(
         **account_dict,
     )
     await newAccount.insert()
@@ -228,55 +228,55 @@ async def new_user(account: AccountIn):
 # get user by email
 @app.get("/by_email/{email}")
 async def get_user_by_email(email: EmailStr):
-    account = await Account.find_one({"email": email})
-    verify_account_found(account)
-    return AccountOut(**account.dict())
+    Account = await Account.find_one({"email": email})
+    verify_account_found(Account)
+    return AccountOut(**Account.model_dump())
 
 
 # Entirely untested 😎
 # get user by id
 @app.get("/by_id/{account_id}")
 async def get_user_by_id(account_id: UUID):
-    account = await Account.find_one({"account_id": account_id})
-    verify_account_found(account)
-    return AccountOut(**account.dict())
+    Account = await Account.find_one({"account_id": account_id})
+    verify_account_found(Account)
+    return AccountOut(**Account.model_dump())
 
 
 # Entirely untested 😎
 # get user by Oauth id
 @app.get("/by_oauth_id/{oauth_id}")
 async def get_user_by_oauth_id(oauth_id: str):
-    account = await Account.find_one({"oauth_accounts.oauth_id": oauth_id})
-    verify_account_found(account)
-    return AccountOut(**account.dict())
+    Account = await AccountDB.find_one({"oauth_accounts.oauth_id": oauth_id})
+    verify_account_found(Account)
+    return AccountOut(**Account.model_dump())
 
 
 # Entirely untested 😎
 # create user from oauth info
 @app.post("/new/oauth")
 async def new_oauth_user(oauth_account: OAuthAccount):
-    # Check if account exists
+    # Check if Account exists
     # Lookup by email
 
-    newAccount = Account(
+    newAccount = AccountDB(
         name=oauth_account.name,
         email=oauth_account.email,
         oauth_accounts=[oauth_account],
     )
     await newAccount.insert()
 
-    # Maybe instead of returning the account return a redirect url to the login page 💭
+    # Maybe instead of returning the Account return a redirect url to the login page 💭
     # Failure can redirect to the register page with an error message
     output = AccountOut(**newAccount.model_dump())
     return output
 
 
 # Entirely untested 😎
-# check if oauth account exists
+# check if oauth Account exists
 @app.get("/oauth_exists/{oauth_id}")
 async def oauth_account_exists(oauth_id: str):
-    account = await Account.find_one({"oauth_accounts.oauth_id": oauth_id})
-    if account is None:
+    Account = await AccountDB.find_one({"oauth_accounts.oauth_id": oauth_id})
+    if Account is None:
         return {"exists": False}
     return {"exists": True}
 
@@ -296,7 +296,7 @@ async def verify_email(JW_token_probably: str):
 @app.post("/change_password")
 async def change_password(
     credentials: AccountAuth,
-    current_user: Annotated[Account, Depends(get_current_user)],
+    current_user: Annotated[AccountDB, Depends(get_current_user)],
 ):
     if credentials.password != current_user.password:
         raise HTTPException(
@@ -319,7 +319,7 @@ async def change_password(
 # - change name
 @app.post("/change_name")
 async def change_name(
-    new_name: str, current_user: Annotated[Account, Depends(get_current_user)]
+    new_name: str, current_user: Annotated[AccountDB, Depends(get_current_user)]
 ):
     current_user.name = new_name
     await current_user.save()
@@ -330,7 +330,7 @@ async def change_name(
 # - change email
 @app.post("/change_email")
 async def change_email(
-    new_email: EmailStr, current_user: Annotated[Account, Depends(get_current_user)]
+    new_email: EmailStr, current_user: Annotated[AccountDB, Depends(get_current_user)]
 ):
     current_user.email = new_email
     await current_user.save()
@@ -338,36 +338,32 @@ async def change_email(
 
 
 # entirelly untested 😎
-# - deactivate account
+# - deactivate Account
 @app.delete("/deactivate/{account_id}")
 async def deactivate_account(
-    account_id: str, current_user: Annotated[Account, Depends(get_current_user)]
+    account_id: str, current_user: Annotated[AccountDB, Depends(get_current_user)]
 ):
     # if account_id is None:
-    #    Delete logged in account
+    #    Delete logged in Account
     # else:
-    #    Make sure the user is an admin, then delete the account
+    #    Make sure the user is an admin, then delete the Account
     if (current_user.account_id != account_id) and (current_user.is_admin is False):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="You are not authorized to deactivate this account",
+            detail="You are not authorized to deactivate this Account",
         )
     else:
-        account = await Account.find_one({"account_id": account_id})
-        if account is None:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="Account not found",
-            )
-        account.isDeactivated = True
-        await account.save()
+        Account = await AccountDB.find_one({"account_id": account_id})
+        verify_account_found(Account)
+        Account.isDeactivated = True
+        await Account.save()
         return {"success": True}
 
 
-# - add project to account
+# - add project to Account
 @app.post("/add_project_reference/{project_id}")
 async def add_project(
-    current_user: Annotated[Account, Depends(get_current_user)], project_id: str
+    current_user: Annotated[AccountDB, Depends(get_current_user)], project_id: str
 ):
     if project_id is None:
         raise HTTPException(
@@ -380,13 +376,13 @@ async def add_project(
             detail="Project already added",
         )
     current_user.projects.append(project_id)
-    await current_user.save()
+    await AccountDB(**current_user.model_dump()).save()
     return {"project_list": current_user.projects}
 
 
 @app.delete("/remove_project_reference/{project_id}")
 async def remove_project(
-    current_user: Annotated[Account, Depends(get_current_user)], project_id: str
+    current_user: Annotated[AccountDB, Depends(get_current_user)], project_id: str
 ):
     if project_id is None:
         raise HTTPException(
@@ -405,11 +401,11 @@ async def remove_project(
 
 @app.post("/add_collaborator/{project_id}/{collaborator_id}")
 async def add_collaborator(
-    current_user: Annotated[Account, Depends(get_current_user)],
+    current_user: Annotated[AccountDB, Depends(get_current_user)],
     project_id: str,
     collaborator_id: str,
 ):
-    collaborator_account = await Account.find_one({"account_id": collaborator_id})
+    collaborator_account = await AccountDB.find_one({"account_id": collaborator_id})
     if project_id is None:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -428,7 +424,7 @@ async def add_collaborator(
     if project_id in collaborator_account.projects_shared_with_me:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Project already shared with this account",
+            detail="Project already shared with this Account",
         )
     collaborator_account.projects_shared_with_me.append(project_id)
     await collaborator_account.save()
@@ -437,11 +433,11 @@ async def add_collaborator(
 
 @app.post("/remove_collaborator/{project_id}/{collaborator_id}")
 async def remove_collaborator(
-    current_user: Annotated[Account, Depends(get_current_user)],
+    current_user: Annotated[AccountDB, Depends(get_current_user)],
     project_id: str,
     collaborator_id: str,
 ):
-    collaborator_account = await Account.find_one({"account_id": collaborator_id})
+    collaborator_account = await AccountDB.find_one({"account_id": collaborator_id})
     if project_id is None:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -460,7 +456,7 @@ async def remove_collaborator(
     if project_id not in collaborator_account.projects_shared_with_me:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Project not shared with this account",
+            detail="Project not shared with this Account",
         )
     collaborator_account.projects_shared_with_me.remove(project_id)
     await collaborator_account.save()
@@ -469,7 +465,7 @@ async def remove_collaborator(
 
 @app.delete("/remove_project_shared_with_me/{project_id}")
 async def remove_project_shared_with_me(
-    current_user: Annotated[Account, Depends(get_current_user)], project_id: str
+    current_user: Annotated[AccountDB, Depends(get_current_user)], project_id: str
 ):
     if project_id is None:
         raise HTTPException(
@@ -508,7 +504,7 @@ async def remove_project_shared_with_me(
 
 @app.post("/add_template/{project_id}")
 async def add_template(
-    current_user: Annotated[Account, Depends(get_current_user)], project_id: str
+    current_user: Annotated[AccountDB, Depends(get_current_user)], project_id: str
 ):
     if project_id is None:
         raise HTTPException(
@@ -527,7 +523,7 @@ async def add_template(
 
 @app.delete("/remove_template/{project_id}")
 async def remove_template(
-    current_user: Annotated[Account, Depends(get_current_user)], project_id: str
+    current_user: Annotated[AccountDB, Depends(get_current_user)], project_id: str
 ):
     if project_id is None:
         raise HTTPException(

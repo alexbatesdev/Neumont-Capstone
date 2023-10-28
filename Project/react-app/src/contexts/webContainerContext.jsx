@@ -37,6 +37,8 @@ export const WebContainerContextProvider = ({ children }) => {
             return;
         }
         const importDynamic = async () => {
+            console.log("OOOOOOOOOOOOOOOOOOOOOOOOOO{PHHHHH")
+            console.log(files);
             const { Terminal } = await import("xterm");
             const { FitAddon } = await import("xterm-addon-fit");
             const terminal_instance = new Terminal({
@@ -111,6 +113,7 @@ const setupWebContainer = async (
     setWebContainerStatus,
     setWebContainerURL,
 ) => {
+    console.log("AYAYAYAYA")
     const webContainerInstance = await WebContainer.boot({
         workdirName: 'react-app'
     });

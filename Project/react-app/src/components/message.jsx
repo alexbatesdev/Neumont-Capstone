@@ -40,9 +40,9 @@ export const Message = ({ message, index }) => {
 
     let color = "white";
     if (message.model == "gpt-4-0613") {
-        color = theme.palette.secondary.main;
+        color = "#8d7eff";
     } else if (message.model == "gpt-3.5-turbo-0613") {
-        color = theme.palette.primary.main;
+        color = "#45b288";
     }
 
     const messageWrapperStyle = {

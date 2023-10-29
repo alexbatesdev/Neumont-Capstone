@@ -8,7 +8,8 @@ import PaletteIcon from '@mui/icons-material/Palette';
 import StarIcon from '@mui/icons-material/Star';
 
 import { ConversationWindow } from "./ConversationWindow";
-import { FileTreeDisplay } from "./FileTreeDisplay";
+import FileTreeDisplay from "./FileTreeDisplay";
+import ProjectConfig from "./ProjectConfig";
 
 export const SideBar = ({ sidebarWidth, setSidebarWidth }) => {
     const theme = useTheme();
@@ -218,8 +219,7 @@ export const SideBar = ({ sidebarWidth, setSidebarWidth }) => {
                         <Typography variant="h6">Theme<br /> WIP <br /> Component goes here</Typography>
                     </>) : null}
                     {selectedTab === 3 ? (<>
-                        {/* Settings View Component goes here 💭 */}
-                        <Typography variant="h6">Settings<br /> WIP <br /> Component goes here</Typography>
+                        <ProjectConfig />
                     </>) : null}
                 </div>
             </div>

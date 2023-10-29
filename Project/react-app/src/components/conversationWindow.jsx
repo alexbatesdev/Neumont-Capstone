@@ -1,12 +1,13 @@
 import React, { useEffect, useState, useRef } from "react";
 
 import { Typography, Box, Button, TextField } from "@mui/material";
-import { useTheme } from '@mui/material/styles';
+import { useTheme, createTheme } from '@mui/material/styles';
 import CircularProgress from "@mui/material/CircularProgress";
 import ArrowRightIcon from '@mui/icons-material/ArrowRight';
 
 import { useMessageHistory } from "@/contexts/editor-context";
 import { Message } from "./Message";
+import { ThemeProvider } from "@emotion/react";
 
 const trimMessages = (messages) => {
     let newMessages = [];
@@ -18,6 +19,24 @@ const trimMessages = (messages) => {
     });
     return newMessages;
 }
+
+const modifyThemeColors = (theme, newPrimaryColor, newSecondaryColor) => {
+    console.log(theme);
+    const newTheme = createTheme({
+        palette: {
+            ...theme.palette,
+            primary: {
+                ...theme.palette.primary,
+                main: newPrimaryColor,
+            },
+            secondary: {
+                ...theme.palette.secondary,
+                main: newSecondaryColor,
+            },
+        },
+    });
+    return newTheme;
+};
 
 
 export const ConversationWindow = () => {
@@ -209,6 +228,10 @@ export const ConversationWindow = () => {
         width: "150px",
         color: "black",
         borderRadius: "10px",
+        backgroundColor: modelIsGPT4 ? "#8d7eff" : "#45b288",
+        "&:hover": {
+            backgroundColor: modelIsGPT4 ? "#6556d3" : "#328d69",
+        },
     }
 
     const messageBoxStyle = {
@@ -268,13 +291,15 @@ export const ConversationWindow = () => {
                 >
                     GPT - Chat
                 </Typography>
-                <Button
-                    variant="contained"
-                    color={modelIsGPT4 ? "secondary" : "primary"}
-                    onClick={() => { setModelIsGPT4(!modelIsGPT4) }}
-                    sx={modelToggleStyle}>
-                    {modelIsGPT4 ? "GPT-4" : "GPT-3.5"}
-                </Button>
+                <ThemeProvider theme={() => modifyThemeColors(theme, "#45b288", "#8d7eff")} >
+                    <Button
+                        variant="contained"
+                        // color={modelIsGPT4 ? "secondary" : "primary"}
+                        onClick={() => { setModelIsGPT4(!modelIsGPT4) }}
+                        sx={modelToggleStyle}>
+                        {modelIsGPT4 ? "GPT-4" : "GPT-3.5"}
+                    </Button>
+                </ThemeProvider>
             </Box>
             <Box ref={messageBoxRef} sx={messageBoxStyle}>
                 {messageHistory.map((message, index) => {

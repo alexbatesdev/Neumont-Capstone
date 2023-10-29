@@ -1,23 +1,26 @@
+import React from 'react'
 import { createTheme, ThemeProvider } from '@mui/material'
+const outlinedInputClasses = require('@mui/material/OutlinedInput').outlinedInputClasses;
 
 // https://coolors.co/3fb59b-8d7eff-364ee0-1c0c3b-300f62-4c1e91-30125a-140523
 export const theme = createTheme({
     palette: {
         mode: 'dark',
-        primary: { // I do not like, and I want to pivot away from this color scheme
-            main: '#3fb59b',
+        primary: {
+            main: '#8d7eff',  // Was secondary color
         },
         secondary: {
-            main: '#8d7eff',
+            main: '#ffb447',  // New secondary color (a warm orange)
         },
         tertiary: {
-            main: '#364ee0',
+            main: '#56cbf9',  // New tertiary color (a bright cyan)
         },
         background: {
             default: '#1C0C3B',
             paper: '#300F62',
+            alternate: '#280958'
         },
-        dragBar: { //Name it divider and it won't work
+        dragBar: {
             default: '#4C1E91',
         },
         utilBar: {
@@ -25,8 +28,76 @@ export const theme = createTheme({
             secondary: "#30125A",
             icons: "#5C2ADB"
         }
-    }
-})
+    },
+    components: {
+        MuiTextField: {
+            styleOverrides: {
+                root: {
+                    '--TextField-brandBorderColor': '#1C0C3B',
+                    '--TextField-brandBorderHoverColor': '#8d7eff',
+                    '--TextField-brandBorderFocusedColor': '#8d7eff',
+                    '& label.Mui-focused': {
+                        color: 'var(--TextField-brandBorderFocusedColor)',
+                    },
+                },
+            },
+        },
+        MuiOutlinedInput: {
+            styleOverrides: {
+                notchedOutline: {
+                    borderColor: 'var(--TextField-brandBorderColor)',
+                },
+                root: {
+                    [`&:hover .${outlinedInputClasses.notchedOutline}`]: {
+                        borderColor: 'var(--TextField-brandBorderHoverColor)',
+                    },
+                    [`&.Mui-focused .${outlinedInputClasses.notchedOutline}`]: {
+                        borderColor: 'var(--TextField-brandBorderFocusedColor)',
+                    },
+                },
+            },
+        },
+        MuiFilledInput: {
+            styleOverrides: {
+                root: {
+                    '&:before, &:after': {
+                        borderBottom: '2px solid var(--TextField-brandBorderColor)',
+                    },
+                    '&:hover:not(.Mui-disabled, .Mui-error):before': {
+                        borderBottom: '2px solid var(--TextField-brandBorderHoverColor)',
+                    },
+                    '&.Mui-focused:after': {
+                        borderBottom: '2px solid var(--TextField-brandBorderFocusedColor)',
+                    },
+                    backgroundColor: '#280958',
+                    '&:hover': {
+                        backgroundColor: '#1C0C3B',
+                    },
+                    '&.Mui-focused': {
+                        backgroundColor: '#1C0C3B'
+                    },
+                },
+            },
+        },
+        MuiInput: {
+            styleOverrides: {
+                root: {
+                    '&:before': {
+                        borderBottom: '2px solid var(--TextField-brandBorderColor)',
+                    },
+                    '&:hover:not(.Mui-disabled, .Mui-error):before': {
+                        borderBottom: '2px solid var(--TextField-brandBorderHoverColor)',
+                    },
+                    '&.Mui-focused:after': {
+                        borderBottom: '2px solid var(--TextField-brandBorderFocusedColor)',
+                    },
+                },
+            },
+        },
+    },
+});
+// End of code
+
 
 export const monaco_spooky = {
     "base": "vs-dark",

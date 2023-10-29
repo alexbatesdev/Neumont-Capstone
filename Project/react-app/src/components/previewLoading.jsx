@@ -100,7 +100,7 @@ const LoadingDisplay = ({ webContainerStatus, fun }) => {
             inset: 0,
             backgroundColor: theme.palette.background.paper,
         }}>
-            <CircularProgress color="secondary" disableShrink />
+            <CircularProgress disableShrink />
             <Typography variant='h6' color="text.primary" style={{ marginTop: '10px', textWrap: "nowrap" }}>
                 {loadingMessage}<AnimatedDots />
             </Typography>

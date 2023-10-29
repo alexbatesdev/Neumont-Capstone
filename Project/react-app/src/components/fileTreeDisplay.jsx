@@ -8,7 +8,7 @@ import { useFiles } from '@/contexts/editor-context';
 import FileStructureNode from './FileStructureNode';
 
 
-export const FileTreeDisplay = () => {
+const FileTreeDisplay = () => {
     const theme = useTheme();
     const { files, setFiles, fileOperations } = useFiles();
 
@@ -140,3 +140,5 @@ export const FileTreeDisplay = () => {
         </div>
     );
 }
+
+export default FileTreeDisplay;

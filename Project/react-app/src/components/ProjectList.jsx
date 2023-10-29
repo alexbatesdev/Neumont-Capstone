@@ -27,7 +27,7 @@ const ProjectList = ({ projects }) => {
                         <TableCell color="primary" align="right">Last Updated</TableCell>
                         <TableCell color="primary" align="right">Created</TableCell>
                         <TableCell color="primary" align="center">
-                            <Button variant="contained" color="primary" onClick={() => setModalOpen(true)}>Create Project</Button>
+                            <Button variant="contained" color="tertiary" onClick={() => setModalOpen(true)}>Create Project</Button>
                             <Modal open={modalOpen} onClose={() => setModalOpen(false)}>
                                 <div style={{
                                     position: "absolute",
@@ -58,9 +58,9 @@ const ProjectList = ({ projects }) => {
                             </TableCell>
                             <TableCell align="right" sx={{ display: "flex", flexDirection: "row", justifyContent: "space-evenly" }}>
                                 {/* Edit needs a popup 💭 */}
-                                <Button variant="contained" color="primary">Share</Button>
+                                <Button variant="contained" color="secondary">Share</Button>
                                 <Link href={`/editor/${project.project_id}`}>
-                                    <Button variant="contained" color="tertiary" sx={{ color: theme.palette.text.primary }}>Open</Button>
+                                    <Button variant="contained" color="primary" sx={{ color: theme.palette.text.primary }}>Open</Button>
                                 </Link>
                             </TableCell>
                         </TableRow>

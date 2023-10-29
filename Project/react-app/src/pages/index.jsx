@@ -86,7 +86,11 @@ export default function Home() {
         </Typography>
         <Image src="/spider.png" width={150} height={150} alt='spider logo, but not like spiderman' />
         <Typography variant="h4">Webbie the web <span style={{ color: theme.palette.primary.main }}>IDE</span></Typography>
-        <Link href="/editor"><Button variant="contained" color="primary" sx={{ borderRadius: "5px" }}>Try it out</Button></Link>
+        <Link href="/dashboard">
+          <Button variant="contained" color="primary" sx={{ borderRadius: "5px" }}>
+            Dashboard
+          </Button>
+        </Link>
         {session.data ? <Button onClick={() => { signOut() }}>Sign Out</Button> :
           <Link href="/sign-in"><Button variant="contained" color="tertiary" sx={{ borderRadius: "5px", color: theme.palette.common.black }}>Sign In</Button></Link>}
       </main >

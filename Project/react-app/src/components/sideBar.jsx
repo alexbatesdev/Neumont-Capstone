@@ -61,7 +61,7 @@ export const SideBar = ({ sidebarWidth, setSidebarWidth }) => {
 
     const setTab = (tab) => {
         if (tab === selectedTab) {
-            console.log("Closing tab")
+            //console.log("Closing tab")
             setSidebarWidth(50)
             setSelectedTab(null)
             return;

@@ -67,21 +67,21 @@ export const ResizableViewsHorizontal = ({ children }) => {
             // Calculate deltaX as the difference between the current and last clientX
             const deltaX = event.clientX - lastX;
             const totalDeltaX = event.clientX - startX;
-            console.log("totalDeltaX")
-            console.log(totalDeltaX)
+            //console.log("totalDeltaX")
+            //console.log(totalDeltaX)
 
             // Update lastX for the next move event
             lastX = event.clientX;
 
-            console.log("deltaX")
-            console.log(deltaX);
+            //console.log("deltaX")
+            //console.log(deltaX);
 
             // Human Addition
             // Update the drag shield
             dragShieldRef.current.style.left = `${event.clientX}px`;
-            console.log("event.clientX")
+            //console.log("event.clientX")
             dragShieldRef.current.style.top = `${event.clientY}px`;
-            console.log("event.clientY")
+            //console.log("event.clientY")
 
             // Update the columns offsets based on deltaX
             setColumns((cols) => {
@@ -227,9 +227,9 @@ export const ResizableViewsVertical = ({ children }) => {
             // Human Addition
             // Update the drag shield
             dragShieldRef.current.style.left = `${event.clientX}px`;
-            console.log("event.clientX");
+            //console.log("event.clientX");
             dragShieldRef.current.style.top = `${event.clientY}px`;
-            console.log("event.clientY");
+            //console.log("event.clientY");
 
             setColumns((cols) => {
                 const newCols = [...cols];

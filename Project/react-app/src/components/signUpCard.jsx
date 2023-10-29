@@ -50,7 +50,7 @@ export const SignUpCard = ({ }) => {
                 name,
             })
         }).then(res => res.json()).then(data => {
-            console.log(data);
+            //console.log(data);
             if (data.redirect != null) {
                 router.push(data.redirect);
             } else if (data.detail != null) {

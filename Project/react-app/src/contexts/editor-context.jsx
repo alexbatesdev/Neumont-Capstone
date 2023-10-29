@@ -37,6 +37,7 @@ export const EditorContextProvider = ({
     children,
     project_in
 }) => {
+    //console.log(project_in)
     const session = useSession();
     // Don't forget to remove sample message 💭
     const [messageHistory, setMessageHistory] = useState([{
@@ -75,7 +76,7 @@ export const EditorContextProvider = ({
 
     const [highlightedPath, setHighlightedPath] = React.useState(null);
 
-    let projectMetaData = project_in;
+    let projectMetaData = { ...project_in };
     // remove the file_structure from the projectMetaData
     delete projectMetaData.file_structure;
 
@@ -88,7 +89,7 @@ export const EditorContextProvider = ({
             ...projectData,
             file_structure: files,
         }
-        console.log(body)
+        //console.log(body)
 
 
         const response = await fetch(`${process.env.NEXT_PUBLIC_PROJECT_API_URL}/by_id/${projectMetaData.project_id}`, {

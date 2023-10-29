@@ -10,9 +10,6 @@ import { signOut, useSession } from 'next-auth/react'
 import TopBar from '@/components/TopBar'
 import TopBarButton from '@/components/TopBarButton'
 
-import SaveIcon from '@mui/icons-material/Save';
-import AltRouteIcon from '@mui/icons-material/AltRoute';
-import ShareIcon from '@mui/icons-material/Share';
 import { SignUpCard } from '@/components/signUpCard'
 import { SignInCard } from '@/components/signInCard'
 
@@ -67,24 +64,7 @@ export default function SignIn() {
 
 
             <TopBar alternate showAccount={false} titleText={"Webbie"}>
-                {/* <TopBarButton
-                    Icon={SaveIcon}
-                    text={"Save"}
-                    // onClick={saveProject}
-                    buttonIndex={1}
-                /> */}
-                {/* <TopBarButton
-                    Icon={AltRouteIcon}
-                    text={"Fork"}
-                    // onClick={forkProject}
-                    buttonIndex={2}
-                /> */}
-                {/* <TopBarButton
-                    Icon={ShareIcon}
-                    text={"Share"}
-                    // onClick={shareProject}
-                    buttonIndex={3}
-                /> */}
+
             </TopBar>
             <div style={{
                 flexGrow: 1,

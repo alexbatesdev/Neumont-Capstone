@@ -23,11 +23,11 @@ export const CodeEditor = () => {
 
     const handleEditorChange = (value, event) => {
         // Can get the value like this
-        console.log(value)
+        // console.log(value)
 
         setFiles((prevFiles) => {
             const newFiles = { ...prevFiles }
-            console.log(openFilePaths[0].filepath)
+            // console.log(openFilePaths[0].filepath)
             fileOperations.writeFile(newFiles, openFilePaths[openFilePathIndex], value)
             const doAsyncTask = async () => {
                 if (webContainer && webContainer.fs) await webContainer.fs.writeFile(openFilePaths[openFilePathIndex], value)
@@ -132,13 +132,13 @@ export const CodeEditor = () => {
         const fullPathArrayMinusFileName = openFilePaths[index].split('/').slice(0, -1).join('/')
         fullPathArrayMinusFileName.split('/').forEach((path, index) => {
             if (path == ".") return;
-            console.log(path)
+            //console.log(path)
             let output = "."
             for (let i = 1; i <= index; i++) {
                 output += "/" + fullPathArrayMinusFileName.split('/')[i]
             }
-            console.log(!expandedPaths.includes(output))
-            console.log(expandedPaths)
+            //console.log(!expandedPaths.includes(output))
+            //console.log(expandedPaths)
             if (!expandedPaths.includes(output)) {
                 setExpandedPaths((prevExpandedPaths) => {
                     return [...prevExpandedPaths, output]
@@ -181,17 +181,18 @@ export const CodeEditor = () => {
     }
 
     const handleChangeHighlight = () => {
+        if (openFilePaths.length == 0) return;
         // Iterates through the path and opens any closed directories on the way
         const fullPathArrayMinusFileName = openFilePaths[openFilePathIndex].split('/').slice(0, -1).join('/')
         fullPathArrayMinusFileName.split('/').forEach((path, index) => {
             if (path == ".") return;
-            console.log(path)
+            //console.log(path)
             let output = "."
             for (let i = 1; i <= index; i++) {
                 output += "/" + fullPathArrayMinusFileName.split('/')[i]
             }
-            console.log(!expandedPaths.includes(output))
-            console.log(expandedPaths)
+            //console.log(!expandedPaths.includes(output))
+            //console.log(expandedPaths)
             if (!expandedPaths.includes(output)) {
                 setExpandedPaths((prevExpandedPaths) => {
                     return [...prevExpandedPaths, output]

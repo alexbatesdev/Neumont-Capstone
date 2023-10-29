@@ -92,7 +92,7 @@ const ProjectConfig = () => {
                 is_private: newIsPrivate,
                 collaborators: newCollaborators,
             }
-            console.log(output);
+            //console.log(output);
             saveData(output);
             return output;
         })
@@ -105,13 +105,13 @@ const ProjectConfig = () => {
                 },
                 body: JSON.stringify(data),
             }).then((response) => {
-                console.log(response);
+                //console.log(response);
                 // if (response.ok) // Create a toast 💭🍞
                 return response.json();
             }).then((data) => {
-                console.log(data);
+                //console.log(data);
             }).catch((error) => {
-                console.log(error);
+                //console.log(error);
                 alert("oops")
             })
         }

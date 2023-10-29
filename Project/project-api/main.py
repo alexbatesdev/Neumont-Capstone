@@ -310,6 +310,8 @@ async def get_project(project_id: UUID, user: AccountWithToken = Depends(verify_
     verify_collaborator(project, user)
 
     verify_item_found(project)
+    print("-------------------------------------------")
+    print(project)
     return project
 
 

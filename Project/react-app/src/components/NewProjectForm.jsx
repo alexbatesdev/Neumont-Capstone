@@ -30,7 +30,7 @@ const NewProjectForm = ({ setModalOpen }) => {
                 },
             });
             const data = await response.json();
-            console.log(data);
+            //console.log(data);
             setTemplates(data);
         }
         getTemplates();
@@ -74,7 +74,7 @@ const NewProjectForm = ({ setModalOpen }) => {
         }).then((response) => {
             return response.json();
         }).then((data) => {
-            console.log(data);
+            //console.log(data);
             if (data.error) {
                 setSubmitError(data.error);
             } else {
@@ -82,7 +82,7 @@ const NewProjectForm = ({ setModalOpen }) => {
             }
         }
         ).catch((error) => {
-            console.log(error);
+            //console.log(error);
             setSubmitError(error);
         })
     }

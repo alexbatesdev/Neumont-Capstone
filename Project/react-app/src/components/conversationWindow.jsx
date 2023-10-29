@@ -21,7 +21,7 @@ const trimMessages = (messages) => {
 }
 
 const modifyThemeColors = (theme, newPrimaryColor, newSecondaryColor) => {
-    console.log(theme);
+    //console.log(theme);
     const newTheme = createTheme({
         palette: {
             ...theme.palette,
@@ -94,16 +94,16 @@ export const ConversationWindow = () => {
                     return;
                 } else if (command_args[0] == "add") {
                     // Set a contextual state variable to include the preimport code
-                    console.log("adding: " + command_args.slice(1).join(" "));
+                    //console.log("adding: " + command_args.slice(1).join(" "));
                 } else if (command_args[0] == "remove") {
                     // Set a contextual state variable to remove the preimport code
-                    console.log("removing: " + command_args.slice(1).join(" "));
+                    //console.log("removing: " + command_args.slice(1).join(" "));
                 } else if (command_args[0] == "clear") {
                     // Set a contextual state variable to clear the preimport code
-                    console.log("clearing");
+                    //console.log("clearing");
                 } else if (command_args[0] == "list") {
                     // Return a list of the preimport code entries
-                    console.log("listing");
+                    //console.log("listing");
                 }
                 return;
             } else if (command == "refactor") {
@@ -128,8 +128,8 @@ export const ConversationWindow = () => {
             model: modelIsGPT4 ? "gpt-4-0613" : "gpt-3.5-turbo-0613",
             function: function_call,
         }
-        console.log(body);
-        console.log(JSON.stringify(body));
+        //console.log(body);
+        //console.log(JSON.stringify(body));
         setIsLoading(true);
 
         // Send message to backend
@@ -143,7 +143,7 @@ export const ConversationWindow = () => {
         }).then((response) => {
             return response.json();
         }).then((data) => {
-            console.log(data);
+            //console.log(data);
             let content = data.agentResponse;
 
             const message_back = {
@@ -159,7 +159,7 @@ export const ConversationWindow = () => {
             setIsLoading(false);
         }).catch((error) => {
 
-            console.log(error);
+            //console.log(error);
 
             const message_back = {
                 role: "assistant",

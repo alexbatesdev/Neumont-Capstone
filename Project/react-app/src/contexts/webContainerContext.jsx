@@ -30,15 +30,17 @@ export const WebContainerContextProvider = ({ children }) => {
     const [fitAddon, setFitAddon] = useState();
     const terminalBackground = theme.palette.utilBar.default;
     const terminalForeground = theme.palette.primary.main;
+    const [dynamicImportDone, setDynamicImportDone] = useState(false);
 
     useEffect(() => {
+        ////console.log(files)
         if (!files || files == {}) {
-            console.log("NONONONO")
+            //console.log("NONONONO")
             return;
         }
         const importDynamic = async () => {
-            console.log("OOOOOOOOOOOOOOOOOOOOOOOOOO{PHHHHH")
-            console.log(files);
+            //console.log("OOOOOOOOOOOOOOOOOOOOOOOOOO{PHHHHH")
+            //console.log(files);
             const { Terminal } = await import("xterm");
             const { FitAddon } = await import("xterm-addon-fit");
             const terminal_instance = new Terminal({
@@ -55,8 +57,8 @@ export const WebContainerContextProvider = ({ children }) => {
             });
             const fitAddon = new FitAddon();
             terminal_instance.loadAddon(fitAddon);
-            console.log("AYAYAYAYA")
-            console.log(files)
+            //console.log("AYAYAYAYA")
+            //console.log(files)
             setupWebContainer(
                 files,
                 terminal_instance,
@@ -68,8 +70,11 @@ export const WebContainerContextProvider = ({ children }) => {
             setFitAddon(fitAddon);
             setTerminal_instance(terminal_instance);
         }
-        importDynamic();
-    }, []);
+        if (!dynamicImportDone) {
+            importDynamic();
+            setDynamicImportDone(true);
+        }
+    }, [files]);
 
     return (
         <WebContainerContext.Provider
@@ -113,13 +118,13 @@ const setupWebContainer = async (
     setWebContainerStatus,
     setWebContainerURL,
 ) => {
-    console.log("AYAYAYAYA")
+    //console.log("AYAYAYAYA")
     const webContainerInstance = await WebContainer.boot({
         workdirName: 'react-app'
     });
-    console.log("Post create");
+    //console.log("Post create");
     webContainerInstance.mount(files)
-    console.log("Post mount");
+    //console.log("Post mount");
     setWebContainer(webContainerInstance);
 
     setWebContainerStatus(1)
@@ -136,12 +141,12 @@ const setupWebContainer = async (
 }
 
 const installDependencies = async (webContainerInstance, terminal_instance) => {
-    console.log("Installing dependencies");
+    //console.log("Installing dependencies");
     const installProcess = await webContainerInstance.spawn('pnpm', ['install']);
     installProcess.output.pipeTo(
         new WritableStream({
             write(data) {
-                console.log(data);
+                //console.log(data);
                 terminal_instance.write(data);
             },
         })
@@ -150,16 +155,16 @@ const installDependencies = async (webContainerInstance, terminal_instance) => {
 }
 
 const runServer = async (webContainerInstance, setWebContainerURL) => {
-    console.log("Running server");
+    //console.log("Running server");
     const startProcess = await webContainerInstance.spawn('npm', ['start']);
     webContainerInstance.on('server-ready', (port, url) => {
         setWebContainerURL(url);
-        console.log(url)
+        //console.log(url)
     });
 }
 
 const startShell = async (webContainerInstance, terminal_instance) => {
-    console.log("Starting shell");
+    //console.log("Starting shell");
     const shellProcess = await webContainerInstance.spawn('jsh')
     shellProcess.output.pipeTo(
         new WritableStream({

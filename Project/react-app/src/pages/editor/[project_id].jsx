@@ -4,6 +4,7 @@ import LoadingDisplay from '@/components/PreviewLoading';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
 
+import { EditorContextProvider } from '@/contexts/editor-context';
 
 const Editor = dynamic(
     () => import('@/ClientSidePages/Editor'),
@@ -16,7 +17,8 @@ const Editor = dynamic(
 
 export default function Page() {
     const session = useSession();
-    const [projectData, setProjectData] = React.useState({});
+    const [projData, setProjData] = React.useState({});
+    const [loading, setLoading] = React.useState(true);
 
     // If the user isn't the owner or a collaborator, redirect them to the "view/[project_id]" page
     // Or swap out the components for a read only version of the editor
@@ -30,25 +32,37 @@ export default function Page() {
     //If the editor is rendered before the files are loaded, it may crash
     //We'll see
     useEffect(() => {
-        if (project_id && session.data) {
+        if (session.data) {
             const getProject = async () => {
-                console.log(session.data)
+                //console.log(session.data)
                 const response = await fetch(`${process.env.NEXT_PUBLIC_PROJECT_API_URL}/by_id/${project_id}`, {
                     method: 'GET',
                     headers: {
                         "Authorization": `Bearer ${session.data.token}`,
                     }
+                }).then(res => {
+                    //console.log(res)
+                    return res.json()
+                }).then(data => {
+                    //console.log(data)
+                    setProjData(data)
+                    setLoading(false)
+                }).catch(err => {
+                    //console.log(err)
+                    alert("oops")
                 })
-                const data = await response.json().then((data) => {
-                    return data;
-                })
-                console.log(data)
-                setProjectData(data)
+
             }
             getProject()
         }
-    }, [project_id, session])
+    }, [session])
 
-    return <Editor project_in={projectData} />
+    return (<>
+        {!loading ? (
+            <EditorContextProvider project_in={projData}>
+                <Editor />
+            </EditorContextProvider>
+        ) : <LoadingDisplay fun />}
+    </>)
     // return <LoadingDisplay fun />
 }

@@ -33,14 +33,6 @@ const TopBar = ({ children, titleText, alternate = false, showAccount = true }) 
         router.back();
     }
 
-    const forkProject = () => {
-        console.log("Forking project");
-    }
-
-    const shareProject = () => {
-        console.log("Sharing project");
-    }
-
     return (<>
         <div
             className='topBar'

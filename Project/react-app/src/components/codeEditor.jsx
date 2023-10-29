@@ -30,7 +30,7 @@ export const CodeEditor = () => {
             console.log(openFilePaths[0].filepath)
             fileOperations.writeFile(newFiles, openFilePaths[openFilePathIndex], value)
             const doAsyncTask = async () => {
-                await webContainer.fs.writeFile(openFilePaths[openFilePathIndex], value)
+                if (webContainer && webContainer.fs) await webContainer.fs.writeFile(openFilePaths[openFilePathIndex], value)
             }
             doAsyncTask();
             return newFiles
@@ -252,7 +252,7 @@ export const CodeEditor = () => {
             {(openFilePaths && openFilePaths[openFilePathIndex]) ? (
                 <Editor
                     language={resolveExtensionToLanguage(openFilePaths[openFilePathIndex].split('.')[2])}
-                    value={fileOperations.getFileContents(openFilePaths[openFilePathIndex])}
+                    value={fileOperations.getFileContents(files, openFilePaths[openFilePathIndex])}
                     theme={'spooky'}
                     beforeMount={handleMonacoWillMount}
                     onChange={handleEditorChange}

@@ -228,6 +228,54 @@ async def insert_react_template(
     return project
 
 
+# fork a project
+@app.post("/fork/{project_id}")
+async def fork_project(
+    body: ProjectCreate,
+    project_id: UUID,
+    user: AccountWithToken = Depends(verify_token),
+):
+    body_dict = body.model_dump()
+
+    body_dict["project_owner"] = user.account_id
+
+    template = await ProjectDataDB.find_one({"project_id": project_id})
+    verify_item_found(template)
+
+    body_dict["file_structure"] = template.file_structure
+    project = ProjectDataDB(**body_dict)
+
+    try:
+        async with httpx.AsyncClient() as client:
+            await client.post(
+                # I should be future proofing like this more, also another technical debt relief round will be getting old hardcoded URLs 💭
+                f"http://{config('ACCOUNT_API_HOST')}:{config('ACCOUNT_API_PORT')}/add_project_reference/{str(project.project_id)}",
+                headers={"Authorization": f"Bearer {user.access_token}"},
+            )
+    except Exception as e:
+        print(e)
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="The project could not be created",
+        )
+
+    try:
+        await project.insert()
+    except Exception as e:
+        print(e)
+        async with httpx.AsyncClient() as client:
+            await client.post(
+                # I should be future proofing like this more, also another technical debt relief round will be getting old hardcoded URLs 💭
+                f"http://{config('ACCOUNT_API_HOST')}:{config('ACCOUNT_API_PORT')}/remove_project_reference/{str(project.project_id)}"
+            )
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="The project could not be created",
+        )
+
+    return project
+
+
 # get all projects
 @app.get("/all")
 async def get_all_projects(user: AccountWithToken = Depends(verify_token)):
@@ -337,6 +385,49 @@ async def update_project(
     return project
 
 
+# update project metadata
+@app.patch("/by_id/{project_id}/projectData")
+async def update_project_metadata(
+    project_id: UUID,
+    body: ProjectDataDB,
+    user: AccountWithToken = Depends(verify_token),
+):
+    if project_id != body.project_id:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="The project id in the url does not match the project id in the request body",
+        )
+    project = await ProjectDataDB.find_one({"project_id": project_id})
+    verify_item_found(project)
+    if project.project_id != body.project_id:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="The project you are trying to edit does not match the project id in the request body",
+        )
+    if project.project_owner != body.project_owner:
+        # This one could technically be merged with the next if statement, but I think it's better to keep them separate for readability
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="You do not have permission to edit this project",
+        )
+    verify_collaborator(project, user)
+
+    # project.project_id = body.project_id # Doesn't actually ever get changed
+    # project.project_owner = body.project_owner # Doesn't actually ever get changed
+    # project.creation_date = body.creation_date # Doesn't actually ever get changed
+    project.project_name = body.project_name
+    project.project_description = body.project_description
+    project.is_private = body.is_private
+    # project.file_structure = body.file_structure
+    project.is_private = body.is_private
+    project.is_template = body.is_template
+    project.collaborators = body.collaborators
+
+    project.last_modified_date = datetime.now()
+    await project.replace()
+    return project
+
+
 # update project name
 @app.patch("/by_id/{project_id}/new_name/{new_name}")
 async def update_project_name(
@@ -373,8 +464,8 @@ async def update_project_description(
             detail="The new description is the same as the old description",
         )
 
-    project.last_modified_date = datetime.now()
     project.project_description = new_description
+    project.last_modified_date = datetime.now()
     await project.replace()
     return project
 

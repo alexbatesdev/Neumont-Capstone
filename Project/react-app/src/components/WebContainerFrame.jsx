@@ -16,7 +16,8 @@ export const WebContainerFrame = ({ }) => {
 
     useEffect(() => {
         return () => {
-            webContainer.unmount();
+            if (webContainer)
+                webContainer.teardown();
         }
     }, [])
 
@@ -110,7 +111,8 @@ export const WebContainerFrame = ({ }) => {
     const handleIFrameLoad = () => {
         setWebContainerStatus(null);
         const asyncFunc = async () => {
-            const fileTree = await fileOperations.getFileTree()
+            console.log(webContainer)
+            const fileTree = await fileOperations.getFileTree(webContainer)
             setFiles(fileTree);
         }
         asyncFunc();

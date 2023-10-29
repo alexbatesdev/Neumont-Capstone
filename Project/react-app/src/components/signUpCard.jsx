@@ -2,7 +2,7 @@ import React, { useState } from "react";
 
 import Link from "next/link";
 
-import { Card, Typography, Button, TextField } from "@mui/material";
+import { Card, Typography, Button, TextField, Box } from "@mui/material";
 import { useTheme } from '@mui/material/styles';
 import { useRouter } from "next/router";
 
@@ -74,17 +74,7 @@ export const SignUpCard = ({ }) => {
     const textFieldStyle = { width: "80%", marginBottom: "1rem" }
 
     return (<>
-        <Card sx={outerCardStyle}>
-            <Link href="/" style={{
-                textDecoration: "none",
-                color: theme.palette.text.primary
-            }}>
-                <Typography variant="h4" sx={{
-                    fontWeight: "bold",
-                    marginBottom: "1rem",
-                    cursor: "pointer",
-                }}>Webbie</Typography>
-            </Link>
+        <Box sx={outerCardStyle}>
             <Typography
                 variant="h5"
                 sx={{
@@ -97,6 +87,7 @@ export const SignUpCard = ({ }) => {
             {error && (<Typography variant="body1" color={"error"} sx={{ marginBottom: "1rem" }}>{error}</Typography>)}
             <TextField
                 sx={textFieldStyle}
+                variant="filled"
                 placeholder="Name"
                 size="small"
                 value={name}
@@ -104,6 +95,7 @@ export const SignUpCard = ({ }) => {
             />
             <TextField
                 sx={textFieldStyle}
+                variant="filled"
                 placeholder="Email"
                 size="small"
                 value={email}
@@ -112,6 +104,7 @@ export const SignUpCard = ({ }) => {
             />
             <TextField
                 sx={textFieldStyle}
+                variant="filled"
                 placeholder="Password"
                 type="password"
                 size="small"
@@ -130,18 +123,6 @@ export const SignUpCard = ({ }) => {
             >
                 Sign Up
             </Button>
-            <Button
-                variant="contained"
-                color="tertiary"
-                size="small"
-                sx={{
-                    marginTop: 1,
-                    borderRadius: "5px"
-                }}
-                href="/sign-in"
-            >
-                Sign In
-            </Button>
-        </Card>
+        </Box>
     </>)
 }

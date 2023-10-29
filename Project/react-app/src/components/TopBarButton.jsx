@@ -3,11 +3,14 @@
 import React, { useState } from 'react';
 import { Collapse, Typography } from '@mui/material';
 import { useTheme } from '@mui/material';
+import { useTopBarContext } from '@/contexts/topbar-hover-context';
 
-function TopBarButton({ hoverIndex, setHoverIndex, Icon, text, onClick, buttonIndex, inReverse = false, alwaysOpen = false, openWidth = 50 }) {
+function TopBarButton({ Icon, text, onClick, buttonIndex, inReverse = false, alwaysOpen = false, openWidth = 50 }) {
     const theme = useTheme();
+    const { hoverIndex, setHoverIndex, alternate } = useTopBarContext();
 
     const iconDivStyle = (isHovering = false) => {
+        const hoverBG = (isHovering) => isHovering ? theme.palette.background.paper : theme.palette.background.default;
         return {
             minWidth: "50px",
             height: "50px",
@@ -15,8 +18,18 @@ function TopBarButton({ hoverIndex, setHoverIndex, Icon, text, onClick, buttonIn
             flexDirection: "row",
             justifyContent: "center",
             alignItems: "center",
-            backgroundColor: isHovering ? theme.palette.background.paper : theme.palette.background.default,
+            backgroundColor: alternate ? hoverBG(!isHovering) : hoverBG(isHovering),
             color: theme.palette.text.primary,
+        }
+    };
+
+    const collapseStyle = (isHovering = false) => {
+        const hoverBG = (isHovering) => isHovering ? theme.palette.background.paper : theme.palette.background.default;
+        return {
+            color: theme.palette.text.primary,
+            backgroundColor: alternate ? hoverBG(!isHovering) : hoverBG(isHovering),
+            height: '50px',
+            position: "relative"
         }
     };
 
@@ -26,12 +39,7 @@ function TopBarButton({ hoverIndex, setHoverIndex, Icon, text, onClick, buttonIn
                 <Collapse
                     in={(hoverIndex == buttonIndex) || alwaysOpen}
                     orientation='horizontal'
-                    style={{
-                        color: theme.palette.text.primary,
-                        backgroundColor: (hoverIndex == buttonIndex) ? theme.palette.background.paper : theme.palette.background.default,
-                        height: '50px',
-                        position: "relative"
-                    }}
+                    style={collapseStyle(hoverIndex == buttonIndex)}
                 >
                     <div
                         onMouseEnter={() => setHoverIndex(buttonIndex)}
@@ -46,6 +54,7 @@ function TopBarButton({ hoverIndex, setHoverIndex, Icon, text, onClick, buttonIn
                                 left: "50%",
                                 top: "50%",
                                 transform: "translate(calc(-50% + 20%), -50%)",
+                                userSelect: "none",
                             }}
                         >
                             {text}
@@ -65,12 +74,7 @@ function TopBarButton({ hoverIndex, setHoverIndex, Icon, text, onClick, buttonIn
                 <Collapse
                     in={(hoverIndex == buttonIndex) || alwaysOpen}
                     orientation='horizontal'
-                    style={{
-                        color: theme.palette.text.primary,
-                        backgroundColor: (hoverIndex == buttonIndex) ? theme.palette.background.paper : theme.palette.background.default,
-                        height: '50px',
-                        position: "relative"
-                    }}
+                    style={collapseStyle(hoverIndex == buttonIndex)}
                 >
                     <div
                         onMouseEnter={() => setHoverIndex(buttonIndex)}
@@ -85,6 +89,7 @@ function TopBarButton({ hoverIndex, setHoverIndex, Icon, text, onClick, buttonIn
                                 left: "50%",
                                 top: "50%",
                                 transform: "translate(calc(-50% - 20%), -50%)",
+                                userSelect: "none",
                             }}
                         >
                             {text}

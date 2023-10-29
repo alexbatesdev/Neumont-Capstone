@@ -92,7 +92,7 @@ export default function Home() {
           </Button>
         </Link>
         {session.data ? <Button onClick={() => { signOut() }}>Sign Out</Button> :
-          <Link href="/sign-in"><Button variant="contained" color="tertiary" sx={{ borderRadius: "5px", color: theme.palette.common.black }}>Sign In</Button></Link>}
+          <Link href="/access"><Button variant="contained" color="tertiary" sx={{ borderRadius: "5px", color: theme.palette.common.black }}>Sign In</Button></Link>}
       </main >
     </>
   )

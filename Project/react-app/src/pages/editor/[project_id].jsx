@@ -18,6 +18,9 @@ export default function Page() {
     const session = useSession();
     const [projectData, setProjectData] = React.useState({});
 
+    // If the user isn't the owner or a collaborator, redirect them to the "view/[project_id]" page
+    // Or swap out the components for a read only version of the editor
+
     const router = useRouter();
 
     const { project_id } = router.query;

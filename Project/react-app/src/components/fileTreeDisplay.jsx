@@ -6,11 +6,13 @@ import RefreshIcon from '@mui/icons-material/Refresh';
 
 import { useFiles } from '@/contexts/editor-context';
 import FileStructureNode from './FileStructureNode';
+import { useWebContainerContext } from '@/contexts/webContainerContext';
 
 
 const FileTreeDisplay = () => {
     const theme = useTheme();
     const { files, setFiles, fileOperations } = useFiles();
+    const { webContainer } = useWebContainerContext();
 
     if (!files) {
         return (
@@ -99,7 +101,7 @@ const FileTreeDisplay = () => {
             target.style.animation = '';
         }, 600);
         const asyncFunc = async () => {
-            const fileTree = await fileOperations.getFileTree()
+            const fileTree = await fileOperations.getFileTree(webContainer)
             setFiles(fileTree);
         }
         asyncFunc();

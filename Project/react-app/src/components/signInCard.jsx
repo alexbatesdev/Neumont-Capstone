@@ -2,25 +2,14 @@ import React, { useEffect, useState } from "react";
 
 import Link from "next/link";
 
-import { Card, Typography, Button, TextField } from "@mui/material";
+import { Card, Typography, Button, TextField, Box, Divider } from "@mui/material";
 import { useTheme } from '@mui/material/styles';
 import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 
 
 export const SignInCard = ({ }) => {
-    const session = useSession();
     const router = useRouter();
-
-    useEffect(() => {
-        console.log(session)
-        console.log(session.status)
-        if (session.status === 'authenticated') {
-            console.log('authenticated')
-            router.push('/dashboard')
-        }
-    }, [session])
-
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState(false);
@@ -38,15 +27,22 @@ export const SignInCard = ({ }) => {
             email: email,
             password: password,
             redirect: false,
+        }).then(res => {
+            if (res.error) {
+                setError(true);
+            } else {
+                router.push("/dashboard");
+            }
         });
     }
 
-    const handleOAuthSignIn = async () => {
-        const signInResponse = await signIn("google");
+    const handleOAuthSignIn = async (providerString) => {
+        const signInResponse = await signIn(providerString);
     }
 
     const outerCardStyle = {
-        width: "300px",
+        width: "400px",
+        // height: "600px",
         padding: 2,
         display: "flex",
         alignItems: "center",
@@ -54,22 +50,15 @@ export const SignInCard = ({ }) => {
         flexDirection: "column",
         backgroundColor: theme.palette.background.paper,
         borderRadius: "5px",
+        gap: "1rem",
+        position: "relative",
+        top: "-7%",
     }
 
-    const textFieldStyle = { width: "80%", marginBottom: "1rem" }
+    const textFieldStyle = { width: "80%" }
 
     return (<>
-        <Card sx={outerCardStyle}>
-            <Link href="/" style={{
-                textDecoration: "none",
-                color: theme.palette.text.primary
-            }}>
-                <Typography variant="h4" sx={{
-                    fontWeight: "bold",
-                    marginBottom: "1rem",
-                    cursor: "pointer",
-                }}>Webbie</Typography>
-            </Link>
+        <Box sx={outerCardStyle}>
             <Typography variant="h5"
                 sx={{
                     fontWeight: "bold",
@@ -78,8 +67,12 @@ export const SignInCard = ({ }) => {
             >
                 Sign In
             </Typography>
+            <Divider sx={{ width: "80%" }}>
+                <Typography variant="body1" sx={{ padding: "0 1rem" }}>with credentials</Typography>
+            </Divider>
             <TextField
                 sx={textFieldStyle}
+                variant="filled"
                 color="tertiary"
                 placeholder="Email"
                 size="small"
@@ -88,6 +81,7 @@ export const SignInCard = ({ }) => {
             />
             <TextField
                 sx={textFieldStyle}
+                variant="filled"
                 color="tertiary"
                 placeholder="Password"
                 size="small"
@@ -99,40 +93,40 @@ export const SignInCard = ({ }) => {
             <Button
                 variant="contained"
                 sx={{
-                    marginBottom: "1rem",
                     width: "50%",
                     borderRadius: "5px"
                 }}
-                color="tertiary"
+                color="primary"
                 onClick={handleSignIn}
             >
                 Sign In
             </Button>
+            <Divider sx={{ width: "80%" }}>
+                <Typography variant="body1" sx={{ padding: "0 1rem" }}>or OAuth</Typography>
+            </Divider>
             <Button
                 variant="contained"
                 sx={{
-                    marginBottom: "1rem",
                     width: "50%",
                     borderRadius: "5px"
                 }}
-                color="tertiary"
-                onClick={handleOAuthSignIn}
+                color="secondary"
+                onClick={() => handleOAuthSignIn("google")}
             >
                 Sign In with Google
             </Button>
-            {error && <Typography variant="body1" color={"error"} sx={{ marginBottom: "1rem" }}>Invalid login credentials</Typography>}
             <Button
                 variant="contained"
-                color="primary"
-                size="small"
-                href="/sign-up"
                 sx={{
+                    width: "50%",
                     borderRadius: "5px"
                 }}
+                color="secondary"
+                onClick={() => handleOAuthSignIn("github")}
             >
-                Sign Up
+                Sign In with Github
             </Button>
-
-        </Card>
+            {error && <Typography variant="body1" color={"error"}>Invalid login credentials</Typography>}
+        </Box>
     </>)
 }

@@ -29,7 +29,7 @@ export const WebContainerContextProvider = ({ children }) => {
     const [terminal_instance, setTerminal_instance] = useState();
     const [fitAddon, setFitAddon] = useState();
     const terminalBackground = theme.palette.utilBar.default;
-    const terminalForeground = theme.palette.secondary.main;
+    const terminalForeground = theme.palette.primary.main;
 
     useEffect(() => {
         if (!files || files == {}) {
@@ -117,7 +117,9 @@ const setupWebContainer = async (
     const webContainerInstance = await WebContainer.boot({
         workdirName: 'react-app'
     });
+    console.log("Post create");
     webContainerInstance.mount(files)
+    console.log("Post mount");
     setWebContainer(webContainerInstance);
 
     setWebContainerStatus(1)
@@ -134,6 +136,7 @@ const setupWebContainer = async (
 }
 
 const installDependencies = async (webContainerInstance, terminal_instance) => {
+    console.log("Installing dependencies");
     const installProcess = await webContainerInstance.spawn('pnpm', ['install']);
     installProcess.output.pipeTo(
         new WritableStream({
@@ -147,6 +150,7 @@ const installDependencies = async (webContainerInstance, terminal_instance) => {
 }
 
 const runServer = async (webContainerInstance, setWebContainerURL) => {
+    console.log("Running server");
     const startProcess = await webContainerInstance.spawn('npm', ['start']);
     webContainerInstance.on('server-ready', (port, url) => {
         setWebContainerURL(url);
@@ -155,6 +159,7 @@ const runServer = async (webContainerInstance, setWebContainerURL) => {
 }
 
 const startShell = async (webContainerInstance, terminal_instance) => {
+    console.log("Starting shell");
     const shellProcess = await webContainerInstance.spawn('jsh')
     shellProcess.output.pipeTo(
         new WritableStream({

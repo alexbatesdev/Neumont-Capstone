@@ -22,6 +22,10 @@ const config = {
       ...config.resolve.alias,
       '@': path.resolve(__dirname, "../src/"),
     };
+    config.resolve.fallback = {
+      ...config.resolve.fallback,
+      zlib: false,
+    };
     return config;
   },
 };

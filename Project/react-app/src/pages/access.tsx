@@ -85,6 +85,7 @@ export default function SignIn() {
                     justifyContent: 'center',
                     alignItems: 'center',
                     overflow: 'hidden',
+                    // @ts-ignore //This is my own addition added to the theme object
                     outline: "2px solid " + theme.palette.dragBar.default,
                     // outlineOffset: "-2px",
                     zIndex: 1,

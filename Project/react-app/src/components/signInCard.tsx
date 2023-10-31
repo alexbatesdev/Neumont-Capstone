@@ -7,6 +7,7 @@ import { useTheme } from '@mui/material/styles';
 import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 
+import { GithubLoginButton, GoogleLoginButton } from 'react-social-login-buttons'
 
 export const SignInCard = ({ }) => {
     const router = useRouter();
@@ -14,11 +15,11 @@ export const SignInCard = ({ }) => {
     const [password, setPassword] = useState("");
     const [error, setError] = useState(false);
     const theme = useTheme();
-    const handleEmailChange = (e) => {
+    const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setEmail(e.target.value);
     }
 
-    const handlePasswordChange = (e) => {
+    const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setPassword(e.target.value);
     }
 
@@ -28,7 +29,7 @@ export const SignInCard = ({ }) => {
             password: password,
             redirect: false,
         }).then(res => {
-            if (res.error) {
+            if (res!.error) {
                 setError(true);
             } else {
                 router.push("/dashboard");
@@ -36,7 +37,7 @@ export const SignInCard = ({ }) => {
         });
     }
 
-    const handleOAuthSignIn = async (providerString) => {
+    const handleOAuthSignIn = async (providerString: string) => {
         const signInResponse = await signIn(providerString);
     }
 
@@ -73,6 +74,7 @@ export const SignInCard = ({ }) => {
             <TextField
                 sx={textFieldStyle}
                 variant="filled"
+                // @ts-ignore //This is my own addition added to the theme object
                 color="tertiary"
                 placeholder="Email"
                 size="small"
@@ -82,6 +84,7 @@ export const SignInCard = ({ }) => {
             <TextField
                 sx={textFieldStyle}
                 variant="filled"
+                // @ts-ignore //This is my own addition added to the theme object
                 color="tertiary"
                 placeholder="Password"
                 size="small"
@@ -104,28 +107,8 @@ export const SignInCard = ({ }) => {
             <Divider sx={{ width: "80%" }}>
                 <Typography variant="body1" sx={{ padding: "0 1rem" }}>or OAuth</Typography>
             </Divider>
-            <Button
-                variant="contained"
-                sx={{
-                    width: "50%",
-                    borderRadius: "5px"
-                }}
-                color="secondary"
-                onClick={() => handleOAuthSignIn("google")}
-            >
-                Sign In with Google
-            </Button>
-            <Button
-                variant="contained"
-                sx={{
-                    width: "50%",
-                    borderRadius: "5px"
-                }}
-                color="secondary"
-                onClick={() => handleOAuthSignIn("github")}
-            >
-                Sign In with Github
-            </Button>
+            <GoogleLoginButton onClick={() => handleOAuthSignIn("google")} />
+            <GithubLoginButton onClick={() => handleOAuthSignIn("github")} />
             {error && <Typography variant="body1" color={"error"}>Invalid login credentials</Typography>}
         </Box>
     </>)

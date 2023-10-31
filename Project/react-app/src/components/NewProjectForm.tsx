@@ -5,7 +5,11 @@ import { Scrollbar } from 'react-scrollbars-custom';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
 
-const NewProjectForm = ({ setModalOpen }) => {
+type newProjectType = {
+    setModalOpen: (value: boolean) => void;
+}
+
+const NewProjectForm = ({ setModalOpen }: newProjectType) => {
     const theme = useTheme();
     const session = useSession();
     const router = useRouter();
@@ -26,6 +30,7 @@ const NewProjectForm = ({ setModalOpen }) => {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
+                    //@ts-ignore //Executive decision to ignore type shenanigans until accounst are 100% figured out (might not happen and that's ok) 🐢
                     Authorization: `Bearer ${session.data.token}`,
                 },
             });
@@ -47,7 +52,7 @@ const NewProjectForm = ({ setModalOpen }) => {
         }
     }
 
-    const handleCreateProject = (event) => {
+    const handleCreateProject = (event: Event) => {
         setIsSubmitting(true);
         setSubmitError(null);
 

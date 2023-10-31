@@ -11,10 +11,17 @@ import ShareIcon from '@mui/icons-material/Share';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { TopBarContextProvider } from "@/contexts/topbar-hover-context";
 
-const TopBar = ({ children, titleText, alternate = false, showAccount = true }) => {
+type TopBarProps = {
+    children?: React.ReactNode;
+    titleText: string;
+    alternate?: boolean;
+    showAccount?: boolean;
+}
+
+const TopBar = ({ children, titleText, alternate = false, showAccount = true }: TopBarProps) => {
     const theme = useTheme();
     const router = useRouter();
-    const [hoverIndex, setHoverIndex] = useState(null);
+    const [hoverIndex, setHoverIndex] = useState<null | number>(null);
     const { saveProject } = useEditorContext();
 
 
@@ -27,7 +34,7 @@ const TopBar = ({ children, titleText, alternate = false, showAccount = true }) 
         justifyContent: 'space-between',
         alignItems: 'center',
         backgroundColor: alternate ? theme.palette.background.paper : theme.palette.background.default,
-    }
+    } as React.CSSProperties;
 
     const handleBack = () => {
         router.back();
@@ -68,8 +75,6 @@ const TopBar = ({ children, titleText, alternate = false, showAccount = true }) 
                 }}>
                     {showAccount &&
                         <TopBarButton
-                            hoverIndex={hoverIndex}
-                            setHoverIndex={setHoverIndex}
                             Icon={AccountCircleIcon}
                             text={"Account"}
                             onClick={() => { alert("Account") }}

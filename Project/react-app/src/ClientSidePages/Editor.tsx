@@ -39,13 +39,13 @@ export default function Editor() {
         backgroundColor: theme.palette.background.default,
         overflow: 'hidden',
         position: 'relative',
-    }
+    } as React.CSSProperties;
 
     useEffect(() => {
-        const handleBeforeUnload = (event) => {
+        const handleBeforeUnload = (event: Event) => {
             event.preventDefault();
             // Most browsers require setting a return value
-            event.returnValue = '';
+            // event.returnValue = '';
         };
 
         window.addEventListener('beforeunload', handleBeforeUnload);
@@ -68,7 +68,7 @@ export default function Editor() {
         <div
             className='pageWrapper'
             style={pageWrapperStyles}>
-            <TopBar>
+            <TopBar titleText={projectData.project_name}>
                 <TopBarButton
                     Icon={SaveIcon}
                     text={"Save"}

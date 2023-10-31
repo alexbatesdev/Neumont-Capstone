@@ -1,9 +1,13 @@
 // Assistant-generated code starts here
+// Assistant made the code, I converted it to typescript
+import React, { useState, useEffect, FC } from 'react';
 
-import React, { useState, useEffect } from 'react';
+interface Props {
+    // Props go here
+}
 
-const AnimatedDots = () => {
-    const [dots, setDots] = useState('.');
+const AnimatedDots: FC<Props> = () => {
+    const [dots, setDots] = useState<string>('.');
 
     useEffect(() => {
         const timer = setInterval(() => {

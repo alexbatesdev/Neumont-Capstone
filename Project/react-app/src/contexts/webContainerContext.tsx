@@ -2,39 +2,46 @@ import React, { createContext, useState, useContext, useEffect } from "react";
 
 import { useTheme } from "@mui/material";
 
-import { WebContainer } from '@webcontainer/api';
+import { WebContainer, FileSystemTree } from '@webcontainer/api';
 
 import { useFiles, useWebContainer } from "./editor-context";
 
+import { Dir } from "fs";
+
 const WebContainerContext = createContext({
-    fitAddon: null,
-    terminal_instance: null,
-    setTerminal_instance: () => { },
-    webContainer: null,
-    setWebContainer: () => { },
-    webContainerStatus: null,
-    setWebContainerStatus: () => { },
-    webContainerURL: null,
-    setWebContainerURL: () => { },
+    fitAddon: null as any, //These are any because the imports have to be dynamic, so I don't have the types
+    terminal_instance: null as any, //These are any because the imports have to be dynamic, so I don't have the types
+    setTerminal_instance: (value: any) => { }, //These are any because the imports have to be dynamic, so I don't have the types
+    webContainer: null as null | WebContainer,
+    setWebContainer: (value: WebContainer) => { },
+    webContainerStatus: null as null | number,
+    setWebContainerStatus: (value: number) => { },
+    webContainerURL: null as null | string,
+    setWebContainerURL: (value: string) => { },
 });
 
-export const WebContainerContextProvider = ({ children }) => {
+type WebContainerContextProviderProps = {
+    children: React.ReactNode;
+}
+
+export const WebContainerContextProvider = ({ children }: WebContainerContextProviderProps) => {
     const theme = useTheme();
 
     const { webContainer, setWebContainer } = useWebContainer();
     const { files } = useFiles();
     const [webContainerStatus, setWebContainerStatus] = useState(0);
-    const [webContainerURL, setWebContainerURL] = useState(null);
+    const [webContainerURL, setWebContainerURL] = useState<null | string>(null);
 
-    const [terminal_instance, setTerminal_instance] = useState();
-    const [fitAddon, setFitAddon] = useState();
+    const [terminal_instance, setTerminal_instance] = useState<any>(); //These are any because the imports have to be dynamic, so I don't have the types
+    const [fitAddon, setFitAddon] = useState<any>(); //These are any because the imports have to be dynamic, so I don't have the types
+    // @ts-ignore //This is my own addition added to the theme object
     const terminalBackground = theme.palette.utilBar.default;
     const terminalForeground = theme.palette.primary.main;
     const [dynamicImportDone, setDynamicImportDone] = useState(false);
 
     useEffect(() => {
         ////console.log(files)
-        if (!files || files == {}) {
+        if (!files || Object.keys(files).length === 0) {
             //console.log("NONONONO")
             return;
         }
@@ -112,11 +119,11 @@ export const useWebContainerContext = () => {
 }
 
 const setupWebContainer = async (
-    files,
-    terminal_instance,
-    setWebContainer,
-    setWebContainerStatus,
-    setWebContainerURL,
+    files: FileSystemTree,
+    terminal_instance: any, //These are any because the imports have to be dynamic, so I don't have the types
+    setWebContainer: React.Dispatch<WebContainer>,
+    setWebContainerStatus: React.Dispatch<number>,
+    setWebContainerURL: React.Dispatch<string>,
 ) => {
     //console.log("AYAYAYAYA")
     const webContainerInstance = await WebContainer.boot({
@@ -140,7 +147,7 @@ const setupWebContainer = async (
     await startShell(webContainerInstance, terminal_instance);
 }
 
-const installDependencies = async (webContainerInstance, terminal_instance) => {
+const installDependencies = async (webContainerInstance: WebContainer, terminal_instance: any) => {
     //console.log("Installing dependencies");
     const installProcess = await webContainerInstance.spawn('pnpm', ['install']);
     installProcess.output.pipeTo(
@@ -154,7 +161,7 @@ const installDependencies = async (webContainerInstance, terminal_instance) => {
     return installProcess.exit;
 }
 
-const runServer = async (webContainerInstance, setWebContainerURL) => {
+const runServer = async (webContainerInstance: WebContainer, setWebContainerURL: React.Dispatch<string>) => {
     //console.log("Running server");
     const startProcess = await webContainerInstance.spawn('npm', ['start']);
     webContainerInstance.on('server-ready', (port, url) => {
@@ -163,7 +170,7 @@ const runServer = async (webContainerInstance, setWebContainerURL) => {
     });
 }
 
-const startShell = async (webContainerInstance, terminal_instance) => {
+const startShell = async (webContainerInstance: WebContainer, terminal_instance: any) => {
     //console.log("Starting shell");
     const shellProcess = await webContainerInstance.spawn('jsh')
     shellProcess.output.pipeTo(
@@ -175,7 +182,7 @@ const startShell = async (webContainerInstance, terminal_instance) => {
     )
 
     const shellInput = shellProcess.input.getWriter();
-    terminal_instance.onData((data) => {
+    terminal_instance.onData((data: string) => {
         shellInput.write(data);
     });
 

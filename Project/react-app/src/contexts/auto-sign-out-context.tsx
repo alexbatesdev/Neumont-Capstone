@@ -6,13 +6,19 @@ export const autoSignOutContext = createContext({
 
 });
 
-export const AutoSignOutContextProvider = ({ children }) => {
+interface AutoSignOutContextProps {
+    children: React.ReactNode;
+}
+
+// I've been a little inconsistent with these type annotating methods, but I'm just trying them all out to find what I think is most readable
+export const AutoSignOutContextProvider = ({ children }: AutoSignOutContextProps) => {
     const session = useSession();
     const router = useRouter();
 
     useEffect(() => {
+        console.log(session)
         if (session.data) {
-            const adjustedDate = new Date(new Date(session.data.expires).toLocaleString())
+            const adjustedDate: Date = new Date(new Date(session.data.expires).toLocaleString())
             console.log(adjustedDate)
             console.log(isPastDate(adjustedDate))
             if (isPastDate(adjustedDate)) {
@@ -33,9 +39,9 @@ export const AutoSignOutContextProvider = ({ children }) => {
     );
 };
 
-function isPastDate(dateString) {
+function isPastDate(date: Date) {
     // Create a Date object from the given date string
-    const givenDate = new Date(dateString);
+    const givenDate = new Date(date);
     // Get the current date and time
     const currentDate = new Date(new Date().toLocaleString());
     console.log(currentDate)

@@ -5,12 +5,22 @@ import { Collapse, Typography } from '@mui/material';
 import { useTheme } from '@mui/material';
 import { useTopBarContext } from '@/contexts/topbar-hover-context';
 
-function TopBarButton({ Icon, text, onClick, buttonIndex, inReverse = false, alwaysOpen = false, openWidth = 50 }) {
+type TopBarButtonProps = {
+    Icon: any;
+    text: string;
+    onClick: (value: any) => void;
+    buttonIndex: number;
+    inReverse?: boolean;
+    alwaysOpen?: boolean;
+    openWidth?: number;
+}
+
+function TopBarButton({ Icon, text, onClick, buttonIndex, inReverse = false, alwaysOpen = false, openWidth = 50 }: TopBarButtonProps) {
     const theme = useTheme();
     const { hoverIndex, setHoverIndex, alternate } = useTopBarContext();
 
-    const iconDivStyle = (isHovering = false) => {
-        const hoverBG = (isHovering) => isHovering ? theme.palette.background.paper : theme.palette.background.default;
+    const iconDivStyle = (isHovering = false): React.CSSProperties => {
+        const hoverBG = (isHovering: boolean) => isHovering ? theme.palette.background.paper : theme.palette.background.default;
         return {
             minWidth: "50px",
             height: "50px",
@@ -23,8 +33,8 @@ function TopBarButton({ Icon, text, onClick, buttonIndex, inReverse = false, alw
         }
     };
 
-    const collapseStyle = (isHovering = false) => {
-        const hoverBG = (isHovering) => isHovering ? theme.palette.background.paper : theme.palette.background.default;
+    const collapseStyle = (isHovering = false): React.CSSProperties => {
+        const hoverBG = (isHovering: boolean) => isHovering ? theme.palette.background.paper : theme.palette.background.default;
         return {
             color: theme.palette.text.primary,
             backgroundColor: alternate ? hoverBG(!isHovering) : hoverBG(isHovering),

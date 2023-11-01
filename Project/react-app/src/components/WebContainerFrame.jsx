@@ -5,7 +5,7 @@ import { useTheme } from '@mui/material/styles';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 
-import LoadingDisplay from './PreviewLoading';
+import LoadingDisplay from './LoadingDisplay';
 import { useFiles } from '@/contexts/editor-context';
 import { useWebContainerContext } from '@/contexts/webContainerContext';
 
@@ -109,7 +109,7 @@ export const WebContainerFrame = ({ }) => {
     }
 
     const handleIFrameLoad = () => {
-        setWebContainerStatus(null);
+        setWebContainerStatus(3);
         const asyncFunc = async () => {
             console.log(webContainer)
             const fileTree = await fileOperations.getFileTree(webContainer)
@@ -135,7 +135,7 @@ export const WebContainerFrame = ({ }) => {
             <div style={loadingWrapperStyle}>
                 <LoadingDisplay webContainerStatus={webContainerStatus} />
             </div>
-            {webContainerStatus != null ? null : (<>
+            {webContainerStatus != 3 ? null : (<>
                 <div style={topBarStyle}>
                     <RefreshIcon style={buttonStyle} onClick={handleRefreshClick} />
 

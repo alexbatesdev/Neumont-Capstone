@@ -154,7 +154,7 @@ export const ResizableViewsHorizontal = ({ children }) => {
                     key={index + "-divider"}
                     onMouseDown={(event) => handleMouseDown(event, index)}
                     style={dividerStyle}></div> : null}
-                {isDragging && <div ref={dragShieldRef} style={dragShieldStyle}></div>}
+                {isDragging && <div key={index + "-DragShield"} ref={dragShieldRef} style={dragShieldStyle}></div>}
             </>)
         })}
 
@@ -314,7 +314,7 @@ export const ResizableViewsVertical = ({ children }) => {
                             style={dividerStyle}
                         ></div>
                     ) : null}
-                    {isDragging && <div ref={dragShieldRef} style={dragShieldStyle}></div>}
+                    {isDragging && <div key={index + "-DragShield"} ref={dragShieldRef} style={dragShieldStyle}></div>}
                 </>
             ))}
         </div>

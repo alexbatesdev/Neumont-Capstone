@@ -30,7 +30,7 @@ const LoadingDisplay = ({ webContainerStatus, fun }) => {
         "Performing Magic Tricks",
         "Wrestling With A Spaghetti Code Monster",
         "Waiting For The Stars To Align",
-        "Buffing The Software",
+        "Dividing By the Square Root Of -1",
         "Watering The Binary Tree",
         "Whispering To The Algorithms",
         "Attempting To Divide By Zero",
@@ -64,15 +64,15 @@ const LoadingDisplay = ({ webContainerStatus, fun }) => {
     // End of code written by AI assistant
 
 
-    React.useEffect(() => {
-        if (webContainerStatus == 1) {
-            setLoadingMessage("Installing dependencies");
-        } else if (webContainerStatus == 2) {
-            setLoadingMessage("Starting server");
-        } else {
-            setLoadingMessage("Loading");
-        }
-    }, [webContainerStatus]);
+    // React.useEffect(() => {
+    //     if (webContainerStatus == 1) {
+    //         setLoadingMessage("Installing dependencies");
+    //     } else if (webContainerStatus == 2) {
+    //         setLoadingMessage("Starting server");
+    //     } else {
+    //         setLoadingMessage("Loading");
+    //     }
+    // }, [webContainerStatus]);
 
     if (fun) {
         //Alternate through messages on a timer
@@ -81,7 +81,6 @@ const LoadingDisplay = ({ webContainerStatus, fun }) => {
         React.useEffect(() => {
             //random interval between 300 and 1000
             const randomIntervalMS = Math.floor(Math.random() * 700) + 300;
-
             const interval = setInterval(() => {
                 const randomLoadingMessageIndex = Math.floor(Math.random() * loadingMessages.length);
                 setLoadingMessage(loadingMessages[randomLoadingMessageIndex]);
@@ -102,7 +101,9 @@ const LoadingDisplay = ({ webContainerStatus, fun }) => {
         }}>
             <CircularProgress disableShrink />
             <Typography variant='h6' color="text.primary" style={{ marginTop: '10px', textWrap: "nowrap" }}>
-                {loadingMessage}<AnimatedDots />
+                {webContainerStatus == 1 && "Installing dependencies"}
+                {webContainerStatus == 2 && "Starting server"}
+                {webContainerStatus != 1 && webContainerStatus != 2 && loadingMessage}<AnimatedDots />
             </Typography>
         </div>
     </>)

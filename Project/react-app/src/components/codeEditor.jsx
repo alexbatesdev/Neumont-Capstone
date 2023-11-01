@@ -12,6 +12,13 @@ import { useEditorContext } from '@/contexts/editor-context';
 export const CodeEditor = () => {
     const theme = useTheme();
     const { openFilePaths, setOpenFilePaths, openFilePathIndex, setOpenFilePathIndex, files, setFiles, fileOperations, webContainer, setHighlightedPath, expandedPaths, setExpandedPaths } = useEditorContext();
+    const editorRef = React.useRef(null);
+
+    const handleEditorMount = (editor, monaco) => {
+        editorRef.current = editor;
+    }
+
+
     const handleMonacoWillMount = (monaco) => {
         monaco.editor.defineTheme('spooky', monaco_spooky)
         monaco.editor.defineTheme('night-owl', monaco_night_owl)
@@ -20,27 +27,48 @@ export const CodeEditor = () => {
     const [hoverIndex, setHoverIndex] = React.useState(null);
     const tabBarRef = React.useRef(null);
     const [tabBarHeight, setTabBarHeight] = React.useState(30);
+    // ------------------------------------------------- Create an array of booleans of the length of the openFilePaths array
+
 
     const handleEditorChange = (value, event) => {
-        // Can get the value like this
-        // console.log(value)
+        openFilePaths[openFilePathIndex].contents = value
+        if (openFilePaths[openFilePathIndex].isSaved) {
+            console.log("NOT SAVED")
+            setOpenFilePaths((prevOpenFilePaths) => {
+                const newOpenFilePaths = [...prevOpenFilePaths]
+                newOpenFilePaths[openFilePathIndex].isSaved = false
+                return newOpenFilePaths
+            })
+        }
+    }
 
+    const handleEditorKeyDown = (event) => {
+        // console.log(event)
+        if (event.ctrlKey && event.key == "s") {
+            event.preventDefault()
+            handleEditorSave()
+            console.log("SAVED")
+        }
+    }
+
+    const handleEditorSave = () => {
+        console.log("SAVING")
         setFiles((prevFiles) => {
             const newFiles = { ...prevFiles }
-            // console.log(openFilePaths[0].filepath)
-            fileOperations.writeFile(newFiles, openFilePaths[openFilePathIndex], value)
+            fileOperations.writeFile(newFiles, openFilePaths[openFilePathIndex].path, editorRef.current.getValue())
             const doAsyncTask = async () => {
-                if (webContainer && webContainer.fs) await webContainer.fs.writeFile(openFilePaths[openFilePathIndex], value)
+                if (webContainer && webContainer.fs) await webContainer.fs.writeFile(openFilePaths[openFilePathIndex].path, editorRef.current.getValue())
             }
             doAsyncTask();
             return newFiles
 
         })
 
-        //Or I can make a ref
-        // assign that ref to the editor in a function on mount
-        // then us the ref to get the value like this
-        // console.log(editorRef.current.getValue())
+        setOpenFilePaths((prevOpenFilePaths) => {
+            const newOpenFilePaths = [...prevOpenFilePaths]
+            newOpenFilePaths[openFilePathIndex].isSaved = true
+            return newOpenFilePaths
+        })
     }
 
     const resolveExtensionToLanguage = (extension) => {
@@ -127,9 +155,12 @@ export const CodeEditor = () => {
     }
 
     const handleTabClick = (index) => {
+        // Make toggling autosave a setting
+        // handleEditorSave()
+
         setOpenFilePathIndex(index)
         // Iterates through the path and opens any closed directories on the way
-        const fullPathArrayMinusFileName = openFilePaths[index].split('/').slice(0, -1).join('/')
+        const fullPathArrayMinusFileName = openFilePaths[index].path.split('/').slice(0, -1).join('/')
         fullPathArrayMinusFileName.split('/').forEach((path, index) => {
             if (path == ".") return;
             //console.log(path)
@@ -145,7 +176,7 @@ export const CodeEditor = () => {
                 })
             }
         })
-        setHighlightedPath(openFilePaths[index])
+        setHighlightedPath(openFilePaths[index].path)
     }
 
     const tabStyle = (index) => {
@@ -183,7 +214,7 @@ export const CodeEditor = () => {
     const handleChangeHighlight = () => {
         if (openFilePaths.length == 0) return;
         // Iterates through the path and opens any closed directories on the way
-        const fullPathArrayMinusFileName = openFilePaths[openFilePathIndex].split('/').slice(0, -1).join('/')
+        const fullPathArrayMinusFileName = openFilePaths[openFilePathIndex].path.split('/').slice(0, -1).join('/')
         fullPathArrayMinusFileName.split('/').forEach((path, index) => {
             if (path == ".") return;
             //console.log(path)
@@ -199,7 +230,7 @@ export const CodeEditor = () => {
                 })
             }
         })
-        setHighlightedPath(openFilePaths[openFilePathIndex])
+        setHighlightedPath(openFilePaths[openFilePathIndex].path)
     }
 
     const editorStyle = {
@@ -216,12 +247,12 @@ export const CodeEditor = () => {
     return (<>
         <div ref={tabBarRef} style={editorTabBarStyle}>
             <Typography variant="body1" sx={languageDisplayStyle}>
-                {openFilePaths && openFilePaths[openFilePathIndex] && resolveExtensionToLanguage(openFilePaths[openFilePathIndex].split('.')[2])}
+                {openFilePaths && openFilePaths[openFilePathIndex] && resolveExtensionToLanguage(openFilePaths[openFilePathIndex].path.split('.')[2])}
             </Typography>
             <div style={tabFlexboxStyle}>
                 {openFilePaths && openFilePaths.map((file, index) => {
                     return (<div
-                        key={openFilePaths[index] + "-tab"}
+                        key={openFilePaths[index].path + "-tab"}
                         onMouseEnter={() => setHoverIndex(index)}
                         onMouseLeave={() => setHoverIndex(null)}
                         onClick={() => handleTabClick(index)}
@@ -230,7 +261,7 @@ export const CodeEditor = () => {
                             display: "inline",
                             fontSize: "0.8rem",
                         }}>
-                            {file.split('/')[file.split('/').length - 1]}
+                            {file.path.split('/')[file.path.split('/').length - 1]} {!openFilePaths[index].isSaved && "*"}
                         </Typography>
                         <CloseIcon
                             onClick={(event) => {
@@ -244,7 +275,9 @@ export const CodeEditor = () => {
                 })}
             </div>
         </div>
-        <div onClick={handleChangeHighlight}
+        <div
+            onClick={handleChangeHighlight}
+            onKeyDown={handleEditorKeyDown}
             style={{
                 position: "relative",
                 height: `calc(100% - ${tabBarHeight}px)`,
@@ -252,10 +285,11 @@ export const CodeEditor = () => {
             }}>
             {(openFilePaths && openFilePaths[openFilePathIndex]) ? (
                 <Editor
-                    language={resolveExtensionToLanguage(openFilePaths[openFilePathIndex].split('.')[2])}
-                    value={fileOperations.getFileContents(files, openFilePaths[openFilePathIndex])}
+                    language={resolveExtensionToLanguage(openFilePaths[openFilePathIndex].path.split('.')[2])}
+                    value={openFilePaths[openFilePathIndex].contents}
                     theme={'spooky'}
                     beforeMount={handleMonacoWillMount}
+                    onMount={handleEditorMount}
                     onChange={handleEditorChange}
                     wrapperProps={{
                         style: editorStyle

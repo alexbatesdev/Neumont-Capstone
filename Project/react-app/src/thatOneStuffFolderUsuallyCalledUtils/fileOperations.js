@@ -79,10 +79,10 @@ const deleteDirectory = (directory, path) => {
 }
 
 const getFile = (directory, path) => {
-    console.log("Getting file")
-    console.log(directory)
-    console.log(path)
-    console.log(directory[path])
+    // console.log("Getting file")
+    // console.log(directory)
+    // console.log(path)
+    // console.log(directory[path])
     return directory[path].file.contents;
 }
 
@@ -120,6 +120,15 @@ const getDirectoryContents = async (webContainer, tree = {}, path = "") => {
     return tree;
 };
 
+const setDirectoryContents = async (directory, path, tree) => {
+    console.log("Setting directory contents")
+    console.log("PWD: ", path);
+    console.log("Directory to override", directory[path].directory);
+    console.log("New Contents: ", tree);
+    return directory[path].directory = tree;
+}
+
+//These functions manipulate the file tree, the rely on pass by reference to do so
 //Wrapper functions for easier use
 const fileOperations = {
     writeFile: (fileTree, path, contents) => {
@@ -140,6 +149,12 @@ const fileOperations = {
     },
     getFileTree: async (webContainer) => {
         return await getDirectoryContents(webContainer);
+    },
+    setDirectory: async (fileTree, path, newDirectoryContents) => {
+        return await fileTraverse(fileTree, path.split("/"), setDirectoryContents, [newDirectoryContents]);
+    },
+    getDirectory: async (webContainer, path) => {
+        return await getDirectoryContents(webContainer, {}, path);
     }
 }
 

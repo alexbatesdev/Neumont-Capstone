@@ -12,14 +12,21 @@ export const AutoSignOutContextProvider = ({ children }) => {
 
     useEffect(() => {
         if (session.data) {
-            const adjustedDate = new Date(new Date(session.data.expires).toLocaleString())
+            console.log(session.data)
+
+            function JWTExpirationDate(token) {
+                if (!token) return null;
+                return new Date(JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString()).exp * 1000);
+            };
+
+            console.log()
+
+            const adjustedDate = new Date(JWTExpirationDate(session.data.token).toLocaleString())
             console.log(adjustedDate)
             console.log(isPastDate(adjustedDate))
             if (isPastDate(adjustedDate)) {
                 console.log('expired')
-                alert("HALT")
                 signOut()
-                router.push('/')
             }
         }
     }, [session])

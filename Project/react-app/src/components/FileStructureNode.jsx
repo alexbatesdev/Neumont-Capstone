@@ -1,19 +1,29 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { useTheme } from '@mui/material/styles'; // Import useTheme from Material-UI
 import { Typography } from '@mui/material';
 import Collapse from '@mui/material/Collapse';
 
-import { useFilePaths } from '@/contexts/editor-context';
+import { useEditorContext, useFilePaths, useWebContainer } from '@/contexts/editor-context';
 import { FileNodeIcon } from './FileNodeIcon';
-
+import { useWebContainerContext } from '@/contexts/webContainerContext';
+import AddIcon from '@mui/icons-material/Add';
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 // This is an assistant-generated boilerplate for a React functional component.
 // You can customize this component by adding your own props, state, and logic.
 
 function FileStructureNode({ currentNodeTree, path, depth = 0 }) {
     const theme = useTheme(); // Use the Material-UI useTheme hook
     const [isHovered, setIsHovered] = useState(false);
-    const { setOpenFilePaths, openFilePaths, setOpenFilePathIndex, highlightedPath, setHighlightedPath, expandedPaths, setExpandedPaths } = useFilePaths();
+    const {
+        //Filepath hook
+        setOpenFilePaths, openFilePaths, setOpenFilePathIndex, openFilePathIndex, highlightedPath, setHighlightedPath, expandedPaths, setExpandedPaths,
+        //Web Container Hook
+        webContainer,
+        //Files hook
+        fileOperations, files, setFiles,
+    } = useEditorContext();
+
     if (currentNodeTree == undefined) {
         console.log("Current Node Tree is undefined")
         return;
@@ -31,11 +41,12 @@ function FileStructureNode({ currentNodeTree, path, depth = 0 }) {
         justifyContent: 'flex-start',
         alignItems: 'center',
         gap: '5px',
-        width: '100%',
         backgroundColor: (isHovered || path == highlightedPath) ? theme.palette.background.default : 'transparent',
         paddingLeft: `${(depth * 10) + 10}px`,
+        width: `calc(100% - ${(depth * 10) + 10}px)`,
         paddingTop: '3px',
         paddingBottom: '3px',
+        position: 'relative',
     }
 
     const handleClick = () => {
@@ -53,9 +64,49 @@ function FileStructureNode({ currentNodeTree, path, depth = 0 }) {
         setHighlightedPath(path)
     }
 
+    const handleDirectoryUpdate = async (pathNotModules) => {
+        let directoryContents = await fileOperations.getDirectory(webContainer, pathNotModules)
+        fileOperations.setDirectory(files, pathNotModules, directoryContents).then((newFiles) => {
+            setFiles(() => {
+                const newFiles = { ...files }
+                return newFiles
+            })
+        })
+        // Update the file tree for this directory
+    }
+
     // console.log(currentNodeTree.)
     // Spelling counts!
     if (currentNodeTree.hasOwnProperty('directory')) {
+        useEffect(() => {
+            // ------------------------------------ If the path is node modules watch the root directory instead
+            // This works because I don't want to watch the node modules directory, but I do want to watch the root directory (which doesn't get a FileStructureNode)
+            // This personally feels like a very creative and good solution to the problem, but something unscaleable and would cause technical debt in the long term
+            let pathNotModules = ((path == "./node_modules") ? "./" : path)
+            let watcher = null;
+            if (webContainer) {
+                console.log("Watching " + path)
+                watcher = webContainer.fs.watch(pathNotModules, (event, filename) => {
+                    //if the filename starts with _tmp, ignore it
+
+                    console.log("File Changed")
+                    console.log(event, filename)
+                    if (filename.substring(0, 4) == "_tmp") {
+                        console.log("Ignoring _tmp file")
+                        return;
+                    }
+
+                    console.log("PATH: ", pathNotModules)
+                    handleDirectoryUpdate(pathNotModules)
+                })
+            }
+            return () => {
+                if (watcher) {
+                    watcher.close()
+                }
+            }
+        }, [])
+
         let fileKeys = Object.keys(currentNodeTree.directory)
         let fileKeys_folders = []
         let fileKeys_files = []
@@ -83,6 +134,18 @@ function FileStructureNode({ currentNodeTree, path, depth = 0 }) {
         // Render a directory
         return (
             <>
+                <style>
+                    {`
+                        @keyframes rotatePLUS {
+                            from {
+                                transform: rotate(0deg);
+                            }
+                            to {
+                            transform: rotate(180deg);
+                        }
+                    }
+                    `}
+                </style>
                 <div
                     onMouseEnter={() => setIsHovered(true)}
                     onMouseLeave={() => setIsHovered(false)}
@@ -92,7 +155,27 @@ function FileStructureNode({ currentNodeTree, path, depth = 0 }) {
                     <Typography variant='body1' style={typographyStyle}>
                         {displayName}
                     </Typography>
-                </div >
+                    {path == "./node_modules" ? null : (
+                        <AddIcon
+                            onMouseEnter={(event) => {
+                                let target = event.target;
+
+                                target.style.animation = 'rotatePLUS 0.3s ease-out';
+                                setTimeout(() => {
+                                    target.style.animation = '';
+                                }, 300);
+                            }}
+                            onClick={(event) => alert("Add File or Folder")}
+                            sx={{
+                                marginLeft: 'auto',
+                                marginRight: '5px',
+                                // fontSize: '1.5rem',
+                                color: isHovered ? theme.palette.utilBar.icons : 'transparent',
+                                cursor: 'pointer',
+
+                            }} />
+                    )}
+                </div>
                 <Collapse
                     in={expandedPaths.includes(path)}
                     timeout={200}
@@ -125,13 +208,37 @@ function FileStructureNode({ currentNodeTree, path, depth = 0 }) {
                 onClick={handleClick}
                 onDoubleClick={() => {
 
+                    if (openFilePaths.length > 0) {
+                        setFiles((prevFiles) => {
+                            const newFiles = { ...prevFiles }
+                            fileOperations.writeFile(newFiles, openFilePaths[openFilePathIndex].path, openFilePaths[openFilePathIndex].contents)
+                            const doAsyncTask = async () => {
+                                if (webContainer && webContainer.fs) await webContainer.fs.writeFile(openFilePaths[openFilePathIndex].path, openFilePaths[openFilePathIndex].contents)
+                            }
+                            doAsyncTask();
+                            return newFiles
+
+                        })
+
+                        setOpenFilePaths((prevOpenFilePaths) => {
+                            const newOpenFilePaths = [...prevOpenFilePaths]
+                            newOpenFilePaths[openFilePathIndex].isSaved = true
+                            return newOpenFilePaths
+                        })
+                    }
+
                     if (openFilePaths.includes(path)) {
                         setOpenFilePathIndex(openFilePaths.indexOf(path))
                         return;
                     }
 
                     setOpenFilePaths((prevOpenFilePaths) => {
-                        return [...prevOpenFilePaths, path]
+                        const pathObject = {
+                            path: path,
+                            contents: fileOperations.getFileContents(files, path),
+                            isSaved: true,
+                        }
+                        return [...prevOpenFilePaths, pathObject]
                     })
                     setOpenFilePathIndex(openFilePaths.length)
                 }}
@@ -148,6 +255,8 @@ function FileStructureNode({ currentNodeTree, path, depth = 0 }) {
                 <h1>Hello, World!</h1>
                 {/* You can access the theme object from Material-UI here */}
                 {/* You can also use your context here */}
+
+                {/* Alex Here: This bit of JSX should never be returned */}
             </div>
         );
     }

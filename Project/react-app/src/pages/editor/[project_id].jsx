@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import dynamic from 'next/dynamic';
-import LoadingDisplay from '@/components/PreviewLoading';
+import LoadingDisplay from '@/components/LoadingDisplay';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
 
@@ -41,7 +41,6 @@ export default function Page() {
                         "Authorization": `Bearer ${session.data.token}`,
                     }
                 }).then(res => {
-                    //console.log(res)
                     return res.json()
                 }).then(data => {
                     //console.log(data)
@@ -54,6 +53,9 @@ export default function Page() {
 
             }
             getProject()
+        } else if (session.data && session.status == "unauthenticated") {
+            router.push('/access')
+
         }
     }, [session])
 

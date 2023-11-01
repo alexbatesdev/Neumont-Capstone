@@ -57,11 +57,8 @@ const ProjectList = ({ projects }) => {
                                 {formatDate(project.creation_date)}
                             </TableCell>
                             <TableCell align="right" sx={{ display: "flex", flexDirection: "row", justifyContent: "space-evenly" }}>
-                                {/* Edit needs a popup 💭 */}
                                 <Button variant="contained" color="secondary">Share</Button>
-                                <Link href={`/editor/${project.project_id}`}>
-                                    <Button variant="contained" color="primary" sx={{ color: theme.palette.text.primary }}>Open</Button>
-                                </Link>
+                                <Button variant="contained" color="primary" sx={{ color: theme.palette.text.primary }} onClick={() => window.location.href = `/editor/${project.project_id}`}>Open</Button>
                             </TableCell>
                         </TableRow>
                     ))}

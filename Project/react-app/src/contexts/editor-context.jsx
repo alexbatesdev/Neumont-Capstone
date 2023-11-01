@@ -35,7 +35,7 @@ export const EditorContext = createContext({
 
 export const EditorContextProvider = ({
     children,
-    project_in
+    project_in,
 }) => {
     //console.log(project_in)
     const session = useSession();

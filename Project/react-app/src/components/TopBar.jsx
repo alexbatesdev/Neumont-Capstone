@@ -30,6 +30,10 @@ const TopBar = ({ children, titleText, alternate = false, showAccount = true }) 
     }
 
     const handleBack = () => {
+        if (router.pathname == "/access") {
+            router.push("/");
+            return;
+        }
         router.back();
     }
 

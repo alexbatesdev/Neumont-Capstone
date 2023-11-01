@@ -14,7 +14,7 @@ import { useRouter } from 'next/router';
 import { Collapse, Typography } from '@mui/material';
 import { useSession } from 'next-auth/react';
 import { WebContainerContextProvider } from '@/contexts/webContainerContext';
-import LoadingDisplay from '@/components/PreviewLoading';
+import LoadingDisplay from '@/components/LoadingDisplay';
 import TopBar from '@/components/TopBar';
 import TopBarButton from '@/components/TopBarButton';
 import SaveIcon from '@mui/icons-material/Save';

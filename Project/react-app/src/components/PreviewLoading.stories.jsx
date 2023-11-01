@@ -1,6 +1,6 @@
 // Written by AI assistant
 import React from 'react';
-import LoadingDisplay from './PreviewLoading';
+import LoadingDisplay from './LoadingDisplay';
 import { ThemeProvider } from '@mui/material/styles';
 import { withThemeFromJSXProvider } from "@storybook/addon-themes";
 import { theme } from "../thatOneStuffFolderUsuallyCalledUtils/themes";

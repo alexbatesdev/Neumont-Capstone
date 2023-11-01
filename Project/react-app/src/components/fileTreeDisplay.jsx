@@ -4,21 +4,20 @@ import { Typography } from '@mui/material';
 import { useTheme } from '@mui/material/styles'; // Import useTheme from Material-UI
 import RefreshIcon from '@mui/icons-material/Refresh';
 
-import { useFiles } from '@/contexts/editor-context';
+import { useFiles, useWebContainer } from '@/contexts/editor-context';
 import FileStructureNode from './FileStructureNode';
 import { useWebContainerContext } from '@/contexts/webContainerContext';
+import LoadingDisplay from './LoadingDisplay';
 
 
 const FileTreeDisplay = () => {
     const theme = useTheme();
     const { files, setFiles, fileOperations } = useFiles();
-    const { webContainer } = useWebContainerContext();
+    const { webContainer } = useWebContainer();
 
     if (!files) {
         return (
-            <Typography sx={{ pl: "10px" }}>
-                Loading...
-            </Typography>
+            <LoadingDisplay />
         )
     }
 
@@ -101,6 +100,10 @@ const FileTreeDisplay = () => {
             target.style.animation = '';
         }, 600);
         const asyncFunc = async () => {
+            console.log(webContainer)
+            if (!webContainer) {
+                return;
+            }
             const fileTree = await fileOperations.getFileTree(webContainer)
             setFiles(fileTree);
         }

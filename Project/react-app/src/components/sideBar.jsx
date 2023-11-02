@@ -31,7 +31,6 @@ export const SideBar = ({ sidebarWidth, setSidebarWidth }) => {
 
     const handleMouseDown = useCallback((event) => {
         event.preventDefault();
-
         // Get the initial mouse position
         let lastX = event.clientX;
         const handleMouseMove = (event) => {
@@ -47,7 +46,6 @@ export const SideBar = ({ sidebarWidth, setSidebarWidth }) => {
                 }
                 return newWidth;
             });
-
         };
 
         const handleMouseUp = () => {
@@ -118,7 +116,7 @@ export const SideBar = ({ sidebarWidth, setSidebarWidth }) => {
         position: "relative",
         borderTopRightRadius: "0px",
         borderBottomRightRadius: "0px",
-        overflow: "hidden",
+        // overflow: "hidden",
     }
 
     const sideBarButtonStripStyle = {
@@ -154,7 +152,7 @@ export const SideBar = ({ sidebarWidth, setSidebarWidth }) => {
         justifyContent: "flex-start",
         alignItems: "center",
         color: theme.palette.text.primary,
-        overflow: "hidden",
+        // overflow: "hidden",
     }
 
     const resizeBarStyle = {

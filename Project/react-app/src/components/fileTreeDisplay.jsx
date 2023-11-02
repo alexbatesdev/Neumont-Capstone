@@ -6,8 +6,8 @@ import RefreshIcon from '@mui/icons-material/Refresh';
 
 import { useFiles, useWebContainer } from '@/contexts/editor-context';
 import FileStructureNode from './FileStructureNode';
-import { useWebContainerContext } from '@/contexts/webContainerContext';
 import LoadingDisplay from './LoadingDisplay';
+import AddButton from './AddButton';
 
 
 const FileTreeDisplay = () => {
@@ -54,7 +54,7 @@ const FileTreeDisplay = () => {
         flexDirection: 'column',
         justifyContent: 'flex-start',
         alignItems: 'flex-start',
-        overflow: "hidden",
+        // overflow: "hidden",
     }
 
     const topBannerStyle = {
@@ -72,6 +72,7 @@ const FileTreeDisplay = () => {
         alignItems: 'center',
         gap: '5px',
         textWrap: "nowrap",
+        zIndex: "2",
     }
 
     const refreshIconStyle = {
@@ -126,6 +127,15 @@ const FileTreeDisplay = () => {
                     }
                     `}
                 </style>
+                <span style={{
+                    zIndex: "3",
+                    marginLeft: 'auto',
+                    marginRight: '5px',
+                    display: "flex",
+                    alignItems: "center",
+                }}>
+                    <AddButton path={"."} isHovered />
+                </span>
                 <RefreshIcon
                     sx={refreshIconStyle}
                     onClick={handleRefresh}

@@ -69,6 +69,7 @@ export const Message = ({ message, index }) => {
         borderBottomLeftRadius: message.role == "assistant" ? "10px" : "0",
         backgroundColor: message.role == "assistant" ? color : theme.palette.tertiary.main,
         alignSelf: message.role == "assistant" ? "flex-end" : "flex-start",
+        boxShadow: "0px 0px 10px 0px rgba(0,0,0,0.6)",
     }
 
     const SyntaxHighlighterStyle = {

@@ -9,6 +9,7 @@ import { FileNodeIcon } from './FileNodeIcon';
 import { useWebContainerContext } from '@/contexts/webContainerContext';
 import AddIcon from '@mui/icons-material/Add';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import AddButton from './AddButton';
 // This is an assistant-generated boilerplate for a React functional component.
 // You can customize this component by adding your own props, state, and logic.
 
@@ -156,24 +157,13 @@ function FileStructureNode({ currentNodeTree, path, depth = 0 }) {
                         {displayName}
                     </Typography>
                     {path == "./node_modules" ? null : (
-                        <AddIcon
-                            onMouseEnter={(event) => {
-                                let target = event.target;
-
-                                target.style.animation = 'rotatePLUS 0.3s ease-out';
-                                setTimeout(() => {
-                                    target.style.animation = '';
-                                }, 300);
-                            }}
-                            onClick={(event) => alert("Add File or Folder")}
-                            sx={{
-                                marginLeft: 'auto',
-                                marginRight: '5px',
-                                // fontSize: '1.5rem',
-                                color: isHovered ? theme.palette.utilBar.icons : 'transparent',
-                                cursor: 'pointer',
-
-                            }} />
+                        <span style={{
+                            zIndex: "3",
+                            marginLeft: 'auto',
+                            marginRight: '5px',
+                        }}>
+                            <AddButton isHovered={isHovered} path={path} />
+                        </span>
                     )}
                 </div>
                 <Collapse

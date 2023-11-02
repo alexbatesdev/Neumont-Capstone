@@ -65,7 +65,7 @@ export const WebContainerFrame = ({ }) => {
         display: 'flex',
         flexDirection: 'row',
         justifyContent: 'space-between',
-        gap: '50px',
+        gap: '15px',
         alignItems: 'center',
     }
 
@@ -74,7 +74,7 @@ export const WebContainerFrame = ({ }) => {
         height: 'calc(100% - 10px)',
         backgroundColor: theme.palette.utilBar.secondary,
         color: theme.palette.text.primary,
-        borderRadius: "0px",
+        borderRadius: "5px",
         padding: '0 5px',
     }
 

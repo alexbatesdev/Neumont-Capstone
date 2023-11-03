@@ -116,9 +116,9 @@ const setupWebContainer = async (
     const webContainerInstance = await WebContainer.boot({
         workdirName: 'react-app'
     });
-    //console.log("Post create");
+    console.log("Post create");
     webContainerInstance.mount(files)
-    //console.log("Post mount");
+    console.log("Post mount");
     setWebContainer(webContainerInstance);
 
     setWebContainerStatus(1)

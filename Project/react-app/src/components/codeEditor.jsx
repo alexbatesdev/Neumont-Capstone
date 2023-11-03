@@ -11,7 +11,7 @@ import { useEditorContext } from '@/contexts/editor-context';
 
 export const CodeEditor = () => {
     const theme = useTheme();
-    const { openFilePaths, setOpenFilePaths, openFilePathIndex, setOpenFilePathIndex, files, setFiles, fileOperations, webContainer, setHighlightedPath, expandedPaths, setExpandedPaths, isProjectSaved, setIsProjectSaved } = useEditorContext();
+    const { openFilePaths, setOpenFilePaths, openFilePathIndex, setOpenFilePathIndex, setFiles, fileOperations, webContainer, setHighlightedPath, expandedPaths, setExpandedPaths, isProjectSaved, setIsProjectSaved } = useEditorContext();
     const editorRef = React.useRef(null);
 
     const handleEditorMount = (editor, monaco) => {
@@ -33,7 +33,7 @@ export const CodeEditor = () => {
     const handleEditorChange = (value, event) => {
         openFilePaths[openFilePathIndex].contents = value
         if (openFilePaths[openFilePathIndex].isSaved) {
-            console.log("NOT SAVED")
+            // console.log("NOT SAVED")
             setOpenFilePaths((prevOpenFilePaths) => {
                 const newOpenFilePaths = [...prevOpenFilePaths]
                 newOpenFilePaths[openFilePathIndex].isSaved = false
@@ -50,12 +50,12 @@ export const CodeEditor = () => {
         if (event.ctrlKey && event.key == "s") {
             event.preventDefault()
             handleEditorSave()
-            console.log("SAVED")
+            // console.log("SAVED")
         }
     }
 
     const handleEditorSave = () => {
-        console.log("SAVING")
+        // console.log("SAVING")
         setFiles((prevFiles) => {
             const newFiles = { ...prevFiles }
             fileOperations.writeFile(newFiles, openFilePaths[openFilePathIndex].path, editorRef.current.getValue())
@@ -249,7 +249,7 @@ export const CodeEditor = () => {
     return (<>
         <div ref={tabBarRef} style={editorTabBarStyle}>
             <Typography variant="body1" sx={languageDisplayStyle}>
-                {openFilePaths && openFilePaths[openFilePathIndex] && resolveExtensionToLanguage(openFilePaths[openFilePathIndex].path.split('.')[2])}
+                {openFilePaths && openFilePaths[openFilePathIndex] && openFilePaths[openFilePathIndex].path && resolveExtensionToLanguage(openFilePaths[openFilePathIndex].path.split('.')[2])}
             </Typography>
             <div style={tabFlexboxStyle}>
                 {openFilePaths && openFilePaths.map((file, index) => {
@@ -263,7 +263,7 @@ export const CodeEditor = () => {
                             display: "inline",
                             fontSize: "0.8rem",
                         }}>
-                            {file.path.split('/')[file.path.split('/').length - 1]} {!openFilePaths[index].isSaved && "*"}
+                            {file.path && file.path.split('/')[file.path.split('/').length - 1]} {!openFilePaths[index].isSaved && "*"}
                         </Typography>
                         <CloseIcon
                             onClick={(event) => {

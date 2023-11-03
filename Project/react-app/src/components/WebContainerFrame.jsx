@@ -111,7 +111,7 @@ export const WebContainerFrame = ({ }) => {
     const handleIFrameLoad = () => {
         setWebContainerStatus(3);
         const asyncFunc = async () => {
-            console.log(webContainer)
+            // console.log(webContainer)
             const fileTree = await fileOperations.getFileTree(webContainer)
             setFiles(fileTree);
         }

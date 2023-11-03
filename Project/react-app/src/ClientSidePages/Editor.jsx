@@ -5,7 +5,7 @@ import dynamic from 'next/dynamic'
 import { useTheme } from '@mui/material/styles';
 
 import { ResizableViewsHorizontal, ResizableViewsVertical } from '@/components/ResizableViews'
-import { EditorContextProvider, useEditorContext } from '@/contexts/editor-context'
+import { EditorContextProvider, useContextMenu, useEditorContext } from '@/contexts/editor-context'
 import { WebContainerTerminal } from '@/components/WebContainerTerminal'
 import { WebContainerFrame } from '@/components/WebContainerFrame'
 import { CodeEditor } from '@/components/CodeEditor'
@@ -26,6 +26,7 @@ import ShareIcon from '@mui/icons-material/Share';
 export default function Editor() {
     const theme = useTheme();
     const { projectData, saveProject, isProjectSaved, setIsProjectSaved, hasEditAccess } = useEditorContext();
+    const { contextOpen, setContextOpen, contextCoords, setContextCoords, contextMenuItems, setContextMenuItems, contextMenuHelperOpen, setContextMenuHelperOpen, contextMenuHelper, setContextMenuHelper } = useContextMenu();
     const session = useSession();
     const [sidebarWidth, setSidebarWidth] = React.useState(330);
 
@@ -39,6 +40,17 @@ export default function Editor() {
         backgroundColor: theme.palette.background.default,
         overflow: 'hidden',
         position: 'relative',
+    }
+
+    const contextMenuStyle = {
+        width: '200px',
+        backgroundColor: theme.palette.background.paper,
+        border: `3px solid ${theme.palette.utilBar.default}`,
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'flex-start',
+        alignItems: 'flex-start',
+        boxShadow: '0px 2px 5px rgba(0,0,0,0.6)',
     }
 
     useEffect(() => {
@@ -64,6 +76,12 @@ export default function Editor() {
         console.log("Sharing project");
     }
 
+    const handleContextMenuClick = (event, method) => {
+        event.preventDefault();
+        event.stopPropagation();
+        method();
+    }
+
     return (
         <div
             className='pageWrapper'
@@ -78,7 +96,7 @@ export default function Editor() {
                         alwaysOpen={!isProjectSaved}
                     />
                 }
-                {session.status == "authenticated" &&
+                {session.status == "authenticated" && !projectData.is_private &&
                     <TopBarButton
                         Icon={AltRouteIcon}
                         text={"Fork"}
@@ -120,6 +138,35 @@ export default function Editor() {
                     </ResizableViewsHorizontal>
                 </div>
             </div>
-        </div>
+            {contextOpen && (<div style={{
+                position: 'absolute',
+                top: contextCoords.y,
+                left: contextCoords.x,
+            }}>
+                <div style={contextMenuStyle}>
+                    {contextMenuItems.map((item, index) => {
+                        //console.log(contextMenuHelperOpen)
+                        return (<>
+                            <Typography
+                                variant='body1'
+                                onClick={(event) => handleContextMenuClick(event, item.method)}
+                                color={theme.palette.text.primary}
+                                sx={{
+                                    cursor: 'pointer',
+                                    width: 'calc(100% - 10px)',
+                                    '&:hover': {
+                                        backgroundColor: theme.palette.background.default,
+                                    },
+                                    padding: '5px',
+                                }}
+                            >
+                                {item.text}
+                            </Typography>
+                        </>)
+                    })}
+                </div>
+                {(contextMenuHelper && contextMenuHelperOpen) ? contextMenuHelper : <></>}
+            </div>)}
+        </div >
     )
 }

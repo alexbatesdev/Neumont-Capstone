@@ -10,12 +10,15 @@ import { useWebContainerContext } from '@/contexts/webContainerContext';
 import AddIcon from '@mui/icons-material/Add';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import AddButton from './AddButton';
+import AddNodePrompt from './AddNodePrompt';
+import RenameNodePrompt from './RenameNodePrompt';
 // This is an assistant-generated boilerplate for a React functional component.
 // You can customize this component by adding your own props, state, and logic.
 
 function FileStructureNode({ currentNodeTree, path, depth = 0 }) {
     const theme = useTheme(); // Use the Material-UI useTheme hook
     const [isHovered, setIsHovered] = useState(false);
+    // I've made specific hooks to use just some parts of the editor context, but some components like this one need a lot of the context so they just use the hook that has everything
     const {
         //Filepath hook
         setOpenFilePaths, openFilePaths, setOpenFilePathIndex, openFilePathIndex, highlightedPath, setHighlightedPath, expandedPaths, setExpandedPaths,
@@ -23,10 +26,12 @@ function FileStructureNode({ currentNodeTree, path, depth = 0 }) {
         webContainer,
         //Files hook
         fileOperations, files, setFiles,
+        // Context Menu hook
+        contextOpen, setContextOpen, contextCoords, setContextCoords, contextMenuItems, setContextMenuItems, contextMenuHelperOpen, setContextMenuHelperOpen, contextMenuHelper, setContextMenuHelper
     } = useEditorContext();
 
     if (currentNodeTree == undefined) {
-        console.log("Current Node Tree is undefined")
+        //console.log("Current Node Tree is undefined")
         return;
     }
     const displayName = Object.keys(currentNodeTree)[0]
@@ -66,14 +71,85 @@ function FileStructureNode({ currentNodeTree, path, depth = 0 }) {
     }
 
     const handleDirectoryUpdate = async (pathNotModules) => {
+        //console.log("Updating directory: " + pathNotModules)
         let directoryContents = await fileOperations.getDirectory(webContainer, pathNotModules)
-        fileOperations.setDirectory(files, pathNotModules, directoryContents).then((newFiles) => {
-            setFiles(() => {
-                const newFiles = { ...files }
-                return newFiles
-            })
+        if (directoryContents == null) directoryContents = {}
+        console.log(directoryContents);
+        //console.log("Call set Directory from FileStructureNode")
+        fileOperations.setDirectory(files, pathNotModules, directoryContents).then((value) => {
+            setFiles(value)
         })
+
+
         // Update the file tree for this directory
+    }
+
+    const handleDirectoryContextMenu = (event) => {
+        event.preventDefault();
+        // console.log("Context Menu: " + path);
+        setContextOpen(true)
+        setContextCoords({ x: event.pageX, y: event.pageY })
+        setContextMenuItems([
+            {
+                text: "New File/Folder",
+                // icon: <AddCircleOutlineIcon />,
+                method: () => {
+                    setContextMenuHelperOpen(true)
+                    setContextMenuHelper(<AddNodePrompt path={path} isOpen={true} setIsOpen={(bool) => {
+                        setContextMenuHelperOpen(bool)
+                        setContextMenuHelper(null)
+                        setContextOpen(bool)
+                    }} />)
+                }
+            },
+            {
+                text: "Rename Folder",
+                // icon: <AddCircleOutlineIcon />,
+                method: () => {
+                    setContextMenuHelperOpen(true)
+                    setContextMenuHelper(<RenameNodePrompt path={path} isDirectory={true} setIsOpen={(bool) => {
+                        setContextMenuHelperOpen(bool)
+                        setContextMenuHelper(null)
+                        setContextOpen(bool)
+                    }} />)
+                }
+            }
+        ])
+        document.addEventListener('click', () => {
+            setContextOpen(false)
+            setContextMenuItems([])
+            setContextCoords({ x: 0, y: 0 })
+            // setContextMenuHelperOpen(false)
+            // setContextMenuHelper(null)
+        });
+    }
+
+    const handleFileContextMenu = (event) => {
+        event.preventDefault();
+        // console.log("Context Menu: " + path);
+        setContextOpen(true)
+        setContextCoords({ x: event.pageX, y: event.pageY })
+        setContextMenuItems([
+            {
+                text: "Rename File",
+                // icon: <AddCircleOutlineIcon />,
+                method: () => {
+                    setContextMenuHelperOpen(true)
+                    setContextMenuHelper(<RenameNodePrompt path={path} isDirectory={false} setIsOpen={(bool) => {
+                        setContextMenuHelperOpen(bool)
+                        setContextMenuHelper(null)
+                        setContextOpen(bool)
+                    }} />)
+                }
+            }
+        ])
+        document.addEventListener('click', () => {
+            setContextOpen(false)
+            setContextMenuItems([])
+            setContextCoords({ x: 0, y: 0 })
+            setContextMenuHelper(null)
+            // setContextMenuHelperOpen(false)
+        });
     }
 
     // console.log(currentNodeTree.)
@@ -86,18 +162,18 @@ function FileStructureNode({ currentNodeTree, path, depth = 0 }) {
             let pathNotModules = ((path == "./node_modules") ? "./" : path)
             let watcher = null;
             if (webContainer) {
-                console.log("Watching " + path)
+                console.log("Watching " + pathNotModules)
                 watcher = webContainer.fs.watch(pathNotModules, (event, filename) => {
                     //if the filename starts with _tmp, ignore it
 
                     console.log("File Changed")
                     console.log(event, filename)
                     if (filename.substring(0, 4) == "_tmp") {
-                        console.log("Ignoring _tmp file")
+                        //console.log("Ignoring _tmp file")
                         return;
                     }
 
-                    console.log("PATH: ", pathNotModules)
+                    console.log("HandleDirectoryUpdate PATH: ", pathNotModules)
                     handleDirectoryUpdate(pathNotModules)
                 })
             }
@@ -106,7 +182,7 @@ function FileStructureNode({ currentNodeTree, path, depth = 0 }) {
                     watcher.close()
                 }
             }
-        }, [])
+        }, [webContainer])
 
         let fileKeys = Object.keys(currentNodeTree.directory)
         let fileKeys_folders = []
@@ -151,6 +227,7 @@ function FileStructureNode({ currentNodeTree, path, depth = 0 }) {
                     onMouseEnter={() => setIsHovered(true)}
                     onMouseLeave={() => setIsHovered(false)}
                     onClick={handleClick}
+                    onContextMenu={handleDirectoryContextMenu}
                     style={rowStyle}>
                     <FileNodeIcon filename={displayName} isFolder={true} isOpen={expandedPaths.includes(path)} />
                     <Typography variant='body1' style={typographyStyle}>
@@ -196,6 +273,7 @@ function FileStructureNode({ currentNodeTree, path, depth = 0 }) {
                 onMouseEnter={() => setIsHovered(true)}
                 onMouseLeave={() => setIsHovered(false)}
                 onClick={handleClick}
+                onContextMenu={handleFileContextMenu}
                 onDoubleClick={() => {
 
                     if (openFilePaths.length > 0) {

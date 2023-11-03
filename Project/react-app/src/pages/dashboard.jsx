@@ -14,7 +14,7 @@ export default function Home() {
     const theme = useTheme()
     const session = useSession()
     const router = useRouter()
-    console.log(session)
+    // console.log(session)
 
     const [projects, setProjects] = React.useState([])
 
@@ -28,7 +28,7 @@ export default function Home() {
                     }
                 })
                 const data = await response.json()
-                console.log(data)
+                // console.log(data)
                 setProjects(data)
             }
             getProjects()

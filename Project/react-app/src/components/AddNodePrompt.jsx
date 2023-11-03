@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import AddIcon from '@mui/icons-material/Add';
 import { useTheme } from '@emotion/react';
 import { Stack, TextField } from '@mui/material';
@@ -21,7 +21,6 @@ export default function AddNodePrompt({ path, isOpen, setIsOpen }) {
     const createDirectory = async (fileName_in) => {
         await webContainer.fs.mkdir(path + "/" + fileName_in)
     }
-
 
     return (<>
         {isOpen &&
@@ -91,8 +90,8 @@ export default function AddNodePrompt({ path, isOpen, setIsOpen }) {
                 <Stack direction={"column"} gap={1}>
                     <NoteAddIcon
                         onClick={() => {
-                            console.log(path)
-                            console.log(path + "/" + fileName);
+                            //console.log(path)
+                            //console.log(path + "/" + fileName);
                             const pattern = /^[a-zA-Z0-9.](?:[a-zA-Z0-9 ._-]*[a-zA-Z0-9])?\.?[a-zA-Z0-9_-]+$/
                             if (pattern.test(fileName)) {
                                 fileOperations.writeFile(files, path + "/" + fileName, "")
@@ -107,8 +106,8 @@ export default function AddNodePrompt({ path, isOpen, setIsOpen }) {
                         }} />
                     <CreateNewFolderIcon
                         onClick={() => {
-                            console.log(path)
-                            console.log(path + "/" + fileName);
+                            //console.log(path)
+                            //console.log(path + "/" + fileName);
                             let fileNameNoTrailingSlash = fileName;
                             if (fileName.substring(fileName.length - 1) === "/") {
                                 // Is a directory

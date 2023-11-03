@@ -146,16 +146,15 @@ export const ResizableViewsHorizontal = ({ children }) => {
         ref={containerRef}
         style={outerWrapperStyle}>
         {columns.map((column, index) => {
-            return (<>
-                <div key={index + "-column"} style={columnStyle(column)}>
+            return (<React.Fragment key={index}>
+                <div style={columnStyle(column)}>
                     {cloneElement(column.component, { style: { width: '100%', height: '100%' } })}
                 </div>
                 {index < columns.length - 1 ? <div
-                    key={index + "-divider"}
                     onMouseDown={(event) => handleMouseDown(event, index)}
                     style={dividerStyle}></div> : null}
-                {isDragging && <div key={index + "-DragShield"} ref={dragShieldRef} style={dragShieldStyle}></div>}
-            </>)
+                {isDragging && <div ref={dragShieldRef} style={dragShieldStyle}></div>}
+            </React.Fragment>)
         })}
 
     </div>)
@@ -300,22 +299,20 @@ export const ResizableViewsVertical = ({ children }) => {
             style={outerWrapperStyle}
         >
             {columns.map((column, index) => (
-                <>
+                <React.Fragment key={index}>
                     <div
-                        key={index + "-column"}
                         style={columnStyle(column)}
                     >
                         {cloneElement(column.component, { style: { width: '100%', height: '100%' } })}
                     </div>
                     {index < columns.length - 1 ? (
                         <div
-                            key={index + "-divider"}
                             onMouseDown={(event) => handleMouseDown(event, index)}
                             style={dividerStyle}
                         ></div>
                     ) : null}
-                    {isDragging && <div key={index + "-DragShield"} ref={dragShieldRef} style={dragShieldStyle}></div>}
-                </>
+                    {isDragging && <div ref={dragShieldRef} style={dragShieldStyle}></div>}
+                </React.Fragment>
             ))}
         </div>
     );

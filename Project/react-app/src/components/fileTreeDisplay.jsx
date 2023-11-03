@@ -101,7 +101,7 @@ const FileTreeDisplay = () => {
             target.style.animation = '';
         }, 600);
         const asyncFunc = async () => {
-            console.log(webContainer)
+            // console.log(webContainer)
             if (!webContainer) {
                 return;
             }

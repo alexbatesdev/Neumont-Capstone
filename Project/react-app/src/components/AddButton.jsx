@@ -30,7 +30,7 @@ export default function AddButton({ isHovered = true, path }) {
                     document.addEventListener('click', () => setisOpen(false));
                 }
                 setisOpen(!isOpen);
-                console.log(path)
+                //console.log(path)
             }}
             sx={{
                 color: isHovered ? theme.palette.utilBar.icons : 'transparent',

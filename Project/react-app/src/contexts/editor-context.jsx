@@ -34,6 +34,16 @@ export const EditorContext = createContext({
     isProjectSaved: true,
     setIsProjectSaved: () => { },
     hasEditAccess: false,
+    contextOpen: false,
+    setContextOpen: () => { },
+    contextCoords: { x: 0, y: 0 },
+    setContextCoords: () => { },
+    contextMenuItems: [],
+    setContextMenuItems: () => { },
+    contextMenuHelperOpen: false,
+    setContextMenuHelperOpen: () => { },
+    contextMenuHelper: null,
+    setContextMenuHelper: () => { },
 });
 
 export const EditorContextProvider = ({
@@ -90,6 +100,16 @@ export const EditorContextProvider = ({
 
     const [isProjectSaved, setIsProjectSaved] = useState(true);
 
+    const [contextOpen, setContextOpen] = useState(false);
+
+    const [contextCoords, setContextCoords] = useState({ x: 0, y: 0 });
+
+    const [contextMenuItems, setContextMenuItems] = useState([]);
+
+    const [contextMenuHelperOpen, setContextMenuHelperOpen] = useState(false);
+
+    const [contextMenuHelper, setContextMenuHelper] = useState(null);
+
     const saveProject = async () => {
         if (!hasEditAccess) {
             return;
@@ -138,6 +158,16 @@ export const EditorContextProvider = ({
                 isProjectSaved,
                 setIsProjectSaved,
                 hasEditAccess,
+                contextOpen,
+                setContextOpen,
+                contextCoords,
+                setContextCoords,
+                contextMenuItems,
+                setContextMenuItems,
+                contextMenuHelperOpen,
+                setContextMenuHelperOpen,
+                contextMenuHelper,
+                setContextMenuHelper,
             }}
         >
             {children}
@@ -182,4 +212,9 @@ export const useWebContainer = () => {
 export const useProjectData = () => {
     const { projectData, setProjectData } = useEditorContext();
     return { projectData, setProjectData };
+}
+
+export const useContextMenu = () => {
+    const { contextOpen, setContextOpen, contextCoords, setContextCoords, contextMenuItems, setContextMenuItems, contextMenuHelperOpen, setContextMenuHelperOpen, contextMenuHelper, setContextMenuHelper } = useEditorContext();
+    return { contextOpen, setContextOpen, contextCoords, setContextCoords, contextMenuItems, setContextMenuItems, contextMenuHelperOpen, setContextMenuHelperOpen, contextMenuHelper, setContextMenuHelper };
 }

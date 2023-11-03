@@ -11,7 +11,7 @@ import { useEditorContext } from '@/contexts/editor-context';
 
 export const CodeEditor = () => {
     const theme = useTheme();
-    const { openFilePaths, setOpenFilePaths, openFilePathIndex, setOpenFilePathIndex, files, setFiles, fileOperations, webContainer, setHighlightedPath, expandedPaths, setExpandedPaths } = useEditorContext();
+    const { openFilePaths, setOpenFilePaths, openFilePathIndex, setOpenFilePathIndex, files, setFiles, fileOperations, webContainer, setHighlightedPath, expandedPaths, setExpandedPaths, isProjectSaved, setIsProjectSaved } = useEditorContext();
     const editorRef = React.useRef(null);
 
     const handleEditorMount = (editor, monaco) => {
@@ -40,6 +40,9 @@ export const CodeEditor = () => {
                 return newOpenFilePaths
             })
         }
+        if (isProjectSaved) {
+            setIsProjectSaved(false)
+        }
     }
 
     const handleEditorKeyDown = (event) => {
@@ -61,7 +64,6 @@ export const CodeEditor = () => {
             }
             doAsyncTask();
             return newFiles
-
         })
 
         setOpenFilePaths((prevOpenFilePaths) => {

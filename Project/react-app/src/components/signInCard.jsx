@@ -6,7 +6,7 @@ import { Card, Typography, Button, TextField, Box, Divider } from "@mui/material
 import { useTheme } from '@mui/material/styles';
 import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/router";
-
+import { GithubLoginButton, GoogleLoginButton } from 'react-social-login-buttons'
 
 export const SignInCard = ({ }) => {
     const router = useRouter();
@@ -55,7 +55,7 @@ export const SignInCard = ({ }) => {
         top: "-7%",
     }
 
-    const textFieldStyle = { width: "80%" }
+    const textFieldStyle = { width: "70%" }
 
     return (<>
         <Box sx={outerCardStyle}>
@@ -93,8 +93,9 @@ export const SignInCard = ({ }) => {
             <Button
                 variant="contained"
                 sx={{
-                    width: "50%",
-                    borderRadius: "5px"
+                    width: "70%",
+                    borderRadius: "5px",
+                    height: "50px"
                 }}
                 color="primary"
                 onClick={handleSignIn}
@@ -104,28 +105,8 @@ export const SignInCard = ({ }) => {
             <Divider sx={{ width: "80%" }}>
                 <Typography variant="body1" sx={{ padding: "0 1rem" }}>or OAuth</Typography>
             </Divider>
-            <Button
-                variant="contained"
-                sx={{
-                    width: "50%",
-                    borderRadius: "5px"
-                }}
-                color="secondary"
-                onClick={() => handleOAuthSignIn("google")}
-            >
-                Sign In with Google
-            </Button>
-            <Button
-                variant="contained"
-                sx={{
-                    width: "50%",
-                    borderRadius: "5px"
-                }}
-                color="secondary"
-                onClick={() => handleOAuthSignIn("github")}
-            >
-                Sign In with Github
-            </Button>
+            <GoogleLoginButton style={{ width: "70%" }} onClick={() => handleOAuthSignIn("google")} />
+            <GithubLoginButton style={{ width: "70%" }} onClick={() => handleOAuthSignIn("github")} />
             {error && <Typography variant="body1" color={"error"}>Invalid login credentials</Typography>}
         </Box>
     </>)

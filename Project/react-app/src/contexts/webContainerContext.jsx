@@ -64,8 +64,8 @@ export const WebContainerContextProvider = ({ children }) => {
             setFitAddon(fitAddon);
             setTerminal_instance(terminal_instance);
         }
-        console.log("Pre WebContainer Setup")
         if (!dynamicImportDone) {
+            console.log("Pre WebContainer Setup")
             importDynamic();
             setDynamicImportDone(true);
         }

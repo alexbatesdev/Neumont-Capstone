@@ -222,7 +222,7 @@ async def new_user(Account: AccountIn):
 
     # Send verification email 💭
 
-    return {"redirect": "/sign-in"}
+    return {"success": True}
 
 
 # get user by email

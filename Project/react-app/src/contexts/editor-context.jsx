@@ -31,11 +31,15 @@ export const EditorContext = createContext({
     setProjectData: () => { },
     saveProject: () => { },
     //Save might be something a lot of components want to do
+    isProjectSaved: true,
+    setIsProjectSaved: () => { },
+    hasEditAccess: false,
 });
 
 export const EditorContextProvider = ({
     children,
     project_in,
+    hasEditAccess,
 }) => {
     //console.log(project_in)
     const session = useSession();
@@ -84,7 +88,13 @@ export const EditorContextProvider = ({
 
     const [expandedPaths, setExpandedPaths] = useState([]);
 
+    const [isProjectSaved, setIsProjectSaved] = useState(true);
+
     const saveProject = async () => {
+        if (!hasEditAccess) {
+            return;
+        }
+
         const body = {
             ...projectData,
             file_structure: files,
@@ -100,6 +110,7 @@ export const EditorContextProvider = ({
             },
             body: JSON.stringify(body)
         })
+        setIsProjectSaved(true);
     }
 
 
@@ -124,6 +135,9 @@ export const EditorContextProvider = ({
                 projectData,
                 setProjectData,
                 saveProject,
+                isProjectSaved,
+                setIsProjectSaved,
+                hasEditAccess,
             }}
         >
             {children}

@@ -4,11 +4,24 @@ import { useTheme } from '@emotion/react';
 import { Stack, TextField } from '@mui/material';
 import NoteAddIcon from '@mui/icons-material/NoteAdd';
 import CreateNewFolderIcon from '@mui/icons-material/CreateNewFolder';
+import fileOperations from '@/thatOneStuffFolderUsuallyCalledUtils/fileOperations';
+import { useFiles, useWebContainer } from '@/contexts/editor-context';
 
 // Regex codes were taken from stack overflow and regex101, and modified to be slightly less picky
 export default function AddNodePrompt({ path, isOpen, setIsOpen }) {
     const theme = useTheme();
     const [fileName, setFileName] = React.useState();
+    const { files } = useFiles();
+    const { webContainer } = useWebContainer();
+
+    const createFile = async (fileName_in) => {
+        await webContainer.fs.writeFile(path + "/" + fileName_in, "")
+    }
+
+    const createDirectory = async (fileName_in) => {
+        await webContainer.fs.mkdir(path + "/" + fileName_in)
+    }
+
 
     return (<>
         {isOpen &&
@@ -41,25 +54,32 @@ export default function AddNodePrompt({ path, isOpen, setIsOpen }) {
                     onKeyDown={(event) => {
                         if (event.key === "Enter") {
                             let pattern;
-                            let fileNameToTest = fileName;
+                            let fileNameNoTrailingSlash = fileName;
+                            // Auto detect if file or folder, a trailing / means folder
+                            // This is only if the user presses enter, not if they click a button which specifies
                             if (fileName.substring(fileName.length - 1) === "/") {
-                                fileNameToTest = fileName.substring(0, fileName.length - 1)
-                                console.log("Folder")
+                                // Is a directory
+                                // Remove the trailing slash
+                                fileNameNoTrailingSlash = fileName.substring(0, fileName.length - 1)
+                                // Valid directory name regex taken and modified from stack overflow
                                 pattern = /^[^\s^\x00-\x1f\\?*:"";<>|\/][^\x00-\x1f\\?*:"";<>|\/]*[^\s^\x00-\x1f\\?*:"";<>|\/.]+$/
+                                if (pattern.test(fileNameNoTrailingSlash)) {
+                                    fileOperations.addDirectory(files, path + "/" + fileNameNoTrailingSlash)
+                                    createDirectory(fileNameNoTrailingSlash)
+                                    setIsOpen(false);
+                                    setFileName("");
+                                }
                             } else {
-                                console.log("File")
+                                // Is a file
+                                // Valid file name regex taken and modified from stack overflow or regex101, I do not remember
                                 pattern = /^[a-zA-Z0-9.](?:[a-zA-Z0-9 ._-]*[a-zA-Z0-9])?\.?[a-zA-Z0-9_-]+$/
+                                if (pattern.test(fileNameNoTrailingSlash)) {
+                                    fileOperations.writeFile(files, path + "/" + fileNameNoTrailingSlash, "")
+                                    createFile(fileNameNoTrailingSlash)
+                                    setIsOpen(false);
+                                    setFileName("");
+                                }
                             }
-                            console.log(path)
-                            console.log(path + "/" + fileNameToTest);
-                            if (pattern.test(fileNameToTest)) {
-                                console.log("Valid")
-                            }
-                            else {
-                                console.log("Invalid")
-                            }
-                            setIsOpen(false);
-                            setFileName("");
                         }
 
                     }}
@@ -75,16 +95,12 @@ export default function AddNodePrompt({ path, isOpen, setIsOpen }) {
                             console.log(path + "/" + fileName);
                             const pattern = /^[a-zA-Z0-9.](?:[a-zA-Z0-9 ._-]*[a-zA-Z0-9])?\.?[a-zA-Z0-9_-]+$/
                             if (pattern.test(fileName)) {
-                                console.log("Valid")
-                            }
-                            else {
-                                console.log("Invalid")
+                                fileOperations.writeFile(files, path + "/" + fileName, "")
+                                setIsOpen(false);
+                                setFileName("");
+                                createFile(fileName)
                             }
 
-
-                            // fileOperations.createFile(path, "New File")
-                            setIsOpen(false);
-                            setFileName("");
                         }}
                         sx={{
                             cursor: 'pointer',
@@ -93,17 +109,20 @@ export default function AddNodePrompt({ path, isOpen, setIsOpen }) {
                         onClick={() => {
                             console.log(path)
                             console.log(path + "/" + fileName);
-
-                            const pattern = /^[^\s^\x00-\x1f\\?*:"";<>|\/][^\x00-\x1f\\?*:"";<>|\/]*[^\s^\x00-\x1f\\?*:"";<>|\/.]+$/
-                            if (pattern.test(fileName)) {
-                                console.log("Valid")
-                            } else {
-                                console.log("Invalid")
+                            let fileNameNoTrailingSlash = fileName;
+                            if (fileName.substring(fileName.length - 1) === "/") {
+                                // Is a directory
+                                // Remove the trailing slash
+                                fileNameNoTrailingSlash = fileName.substring(0, fileName.length - 1)
                             }
 
-                            // fileOperations.createFolder(path, "New Folder")
-                            setIsOpen(false);
-                            setFileName("");
+                            const pattern = /^[^\s^\x00-\x1f\\?*:"";<>|\/][^\x00-\x1f\\?*:"";<>|\/]*[^\s^\x00-\x1f\\?*:"";<>|\/.]+$/
+                            if (pattern.test(fileNameNoTrailingSlash)) {
+                                fileOperations.addDirectory(files, path + "/" + fileNameNoTrailingSlash)
+                                createDirectory(fileNameNoTrailingSlash)
+                                setIsOpen(false);
+                                setFileName("");
+                            }
                         }}
                         sx={{
                             cursor: 'pointer',

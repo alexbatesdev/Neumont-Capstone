@@ -3,22 +3,26 @@ import dynamic from 'next/dynamic';
 import LoadingDisplay from '@/components/LoadingDisplay';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
-
+import Editor from '@/ClientSidePages/Editor';
 import { EditorContextProvider } from '@/contexts/editor-context';
 
-const Editor = dynamic(
-    () => import('@/ClientSidePages/Editor'),
-    {
-        ssr: false,
-        loading: () => <LoadingDisplay fun />,
-    }
-);
+// I cannot tell if the dynamic import helps or hinders the experience
+
+// const Editor = dynamic(
+//     () => import('@/ClientSidePages/Editor'),
+//     {
+//         ssr: false,
+//         loading: () => <LoadingDisplay fun />,
+//     }
+// );
 
 
 export default function Page() {
     const session = useSession();
     const [projData, setProjData] = React.useState({});
     const [loading, setLoading] = React.useState(true);
+
+    const [userHasEditAccess, setUserHasEditAccess] = React.useState(true);
 
     // If the user isn't the owner or a collaborator, redirect them to the "view/[project_id]" page
     // Or swap out the components for a read only version of the editor
@@ -32,36 +36,53 @@ export default function Page() {
     //If the editor is rendered before the files are loaded, it may crash
     //We'll see
     useEffect(() => {
-        if (session.data) {
-            const getProject = async () => {
-                //console.log(session.data)
-                const response = await fetch(`${process.env.NEXT_PUBLIC_PROJECT_API_URL}/by_id/${project_id}`, {
-                    method: 'GET',
-                    headers: {
-                        "Authorization": `Bearer ${session.data.token}`,
-                    }
-                }).then(res => {
-                    return res.json()
-                }).then(data => {
-                    //console.log(data)
-                    setProjData(data)
-                    setLoading(false)
-                }).catch(err => {
-                    //console.log(err)
-                    alert("oops")
-                })
-
+        console.log("Loading project");
+        const getProject = async () => {
+            if (!project_id) {
+                console.log("No project ID")
+                return;
             }
-            getProject()
-        } else if (session.data && session.status == "unauthenticated") {
-            router.push('/access')
+            //console.log(session.data)
+            let endpointURL = `${process.env.NEXT_PUBLIC_PROJECT_API_URL}/by_id/${project_id}`
+            console.log(endpointURL)
+            const response = await fetch(endpointURL, {
+                method: 'GET'
+            }).then(res => {
+                if (!res.ok) throw new Error(res.status)
+                return res.json()
+            }).then(data => {
+                console.log(data)
+                setProjData(data)
+                setLoading(false)
+                if (
+                    // IF session.data exists
+                    session.data &&
+                    // AND session.data.user exists
+                    session.data.user &&
+                    // AND the user's ID does not match the project owner's ID
+                    (session.data.user.account_id != data.project_owner)// &&
+                    // AND the user's ID is not in the list of collaborators
+                    // !projData.collaborators.includes(session.data.user.account_id)
+                ) {
+                    console.log("User does not have edit access")
+                    // Then the user does not have edit access
+                    setUserHasEditAccess(false);
+                } else if (session.status == "unauthenticated" || !session.data) {
+                    console.log("User does not have edit access")
+                    setUserHasEditAccess(false);
+                }
+            }).catch(err => {
+                console.log(err)
+                alert("oops")
+            })
 
         }
-    }, [session])
+        getProject()
+    }, [project_id])
 
     return (<>
         {!loading ? (
-            <EditorContextProvider project_in={projData}>
+            <EditorContextProvider project_in={projData} hasEditAccess={userHasEditAccess}>
                 <Editor />
             </EditorContextProvider>
         ) : <LoadingDisplay fun />}

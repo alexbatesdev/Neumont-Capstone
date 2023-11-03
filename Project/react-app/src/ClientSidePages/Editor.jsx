@@ -25,8 +25,8 @@ import ShareIcon from '@mui/icons-material/Share';
 
 export default function Editor() {
     const theme = useTheme();
-    const { projectData, saveProject } = useEditorContext();
-
+    const { projectData, saveProject, isProjectSaved, setIsProjectSaved, hasEditAccess } = useEditorContext();
+    const session = useSession();
     const [sidebarWidth, setSidebarWidth] = React.useState(330);
 
     const pageWrapperStyles = {
@@ -68,19 +68,24 @@ export default function Editor() {
         <div
             className='pageWrapper'
             style={pageWrapperStyles}>
-            <TopBar>
-                <TopBarButton
-                    Icon={SaveIcon}
-                    text={"Save"}
-                    onClick={saveProject}
-                    buttonIndex={1}
-                />
-                <TopBarButton
-                    Icon={AltRouteIcon}
-                    text={"Fork"}
-                    onClick={forkProject}
-                    buttonIndex={2}
-                />
+            <TopBar titleText={projectData.project_name}>
+                {hasEditAccess &&
+                    <TopBarButton
+                        Icon={SaveIcon}
+                        text={"Save"}
+                        onClick={saveProject}
+                        buttonIndex={1}
+                        alwaysOpen={!isProjectSaved}
+                    />
+                }
+                {session.status == "authenticated" &&
+                    <TopBarButton
+                        Icon={AltRouteIcon}
+                        text={"Fork"}
+                        onClick={forkProject}
+                        buttonIndex={2}
+                    />
+                }
                 <TopBarButton
                     Icon={ShareIcon}
                     text={"Share"}

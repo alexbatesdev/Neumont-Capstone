@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Card, Typography, Button, TextField, Box } from "@mui/material";
 import { useTheme } from '@mui/material/styles';
 import { useRouter } from "next/router";
+import { ArrowRight } from "@mui/icons-material";
 
 
 export const SignUpCard = ({ }) => {
@@ -14,6 +15,7 @@ export const SignUpCard = ({ }) => {
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [registerSuccess, setRegisterSuccess] = useState(false);
 
     const handleNameChange = (e) => {
         setName(e.target.value);
@@ -51,10 +53,10 @@ export const SignUpCard = ({ }) => {
             })
         }).then(res => res.json()).then(data => {
             //console.log(data);
-            if (data.redirect != null) {
-                router.push(data.redirect);
-            } else if (data.detail != null) {
+            if (data.detail != null) {
                 setError(data.detail);
+            } else {
+                setRegisterSuccess(true);
             }
         })
     }
@@ -123,6 +125,11 @@ export const SignUpCard = ({ }) => {
             >
                 Sign Up
             </Button>
+            {registerSuccess && (
+                <Typography variant="body1" sx={{ marginTop: "1rem" }}>
+                    Sign up successful! Log in over there 👉
+                </Typography>
+            )}
         </Box>
     </>)
 }

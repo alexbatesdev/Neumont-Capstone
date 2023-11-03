@@ -288,7 +288,6 @@ async def get_all_projects(user: AccountWithToken = Depends(verify_token)):
     return projects
 
 
-# completely untested 😎
 # get all templates
 @app.get("/all/templates")
 async def get_all_projects(user: AccountWithToken = Depends(verify_token)):
@@ -304,14 +303,25 @@ async def get_all_projects(user: AccountWithToken = Depends(verify_token)):
 
 # get project by id
 @app.get("/by_id/{project_id}")
-async def get_project(project_id: UUID, user: AccountWithToken = Depends(verify_token)):
+async def get_project(project_id: UUID):
     project = await ProjectDataDB.find_one({"project_id": project_id})
-
-    verify_collaborator(project, user)
-
+    if project.is_private:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="You do not have permission to view this project, or you used the wrong endpoint",
+        )
     verify_item_found(project)
-    print("-------------------------------------------")
-    print(project)
+    return project
+
+
+# get private project by id
+@app.get("/private/by_id/{project_id}")
+async def get_private_project(
+    project_id: UUID, user: AccountWithToken = Depends(verify_token)
+):
+    project = await ProjectDataDB.find_one({"project_id": project_id})
+    verify_collaborator(project, user)
+    verify_item_found(project)
     return project
 
 

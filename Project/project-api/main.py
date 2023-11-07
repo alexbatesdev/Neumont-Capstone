@@ -279,7 +279,7 @@ async def fork_project(
 # get all projects
 @app.get("/all")
 async def get_all_projects(user: AccountWithToken = Depends(verify_token)):
-    projects = await ProjectDataDB.find({}).to_list()
+    projects = await ProjectDataDB.find({}).sort("last_modified_date", -1).to_list()
 
     projects = filter_out_private_projects(projects, user)
 
@@ -291,7 +291,7 @@ async def get_all_projects(user: AccountWithToken = Depends(verify_token)):
 # get all templates
 @app.get("/all/templates")
 async def get_all_projects(user: AccountWithToken = Depends(verify_token)):
-    projects = await ProjectDataDB.find({}).to_list()
+    projects = await ProjectDataDB.find({}).sort("last_modified_date", -1).to_list()
 
     projects = filter_out_private_projects(projects, user)
     projects = filter_in_templates(projects, user)
@@ -330,7 +330,11 @@ async def get_private_project(
 async def get_projects(
     project_owner: UUID, user: AccountWithToken = Depends(verify_token)
 ):
-    projects = await ProjectDataDB.find({"project_owner": project_owner}).to_list()
+    projects = (
+        await ProjectDataDB.find({"project_owner": project_owner})
+        .sort("last_modified_date", -1)
+        .to_list()
+    )
 
     projects = filter_out_private_projects(projects, user)
 
@@ -344,7 +348,11 @@ async def get_projects(
 async def get_projects(
     project_owner: UUID, user: AccountWithToken = Depends(verify_token)
 ):
-    projects = await ProjectDataDB.find({"project_owner": project_owner}).to_list()
+    projects = (
+        await ProjectDataDB.find({"project_owner": project_owner})
+        .sort("last_modified_date", -1)
+        .to_list()
+    )
 
     projects = filter_out_private_projects(projects, user)
     projects = filter_in_templates(projects, user)
@@ -352,6 +360,26 @@ async def get_projects(
     verify_item_found(projects)
 
     return projects
+
+
+# entirely untested (Dave style 😎)
+@app.get("/dashboard/{current_user_ID}")
+async def get_projects(
+    current_user_ID: UUID, user: AccountWithToken = Depends(verify_token)
+):
+    projectsByOwner = (
+        await ProjectDataDB.find({"project_owner": current_user_ID})
+        .sort("last_modified_date", -1)
+        .to_list()
+    )
+    projectsSharedWithUser = (
+        await ProjectDataDB.find({"collaborators": current_user_ID})
+        .sort("last_modified_date", -1)
+        .to_list()
+    )
+
+    projects = projectsByOwner + projectsSharedWithUser
+    verify_item_found(projects)
 
 
 # update project

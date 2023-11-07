@@ -18,7 +18,9 @@ export const theme = createTheme({
         background: {
             default: '#1C0C3B',
             paper: '#300F62',
-            alternate: '#280958'
+            paperLight: '#4C1E91',
+            alternate: '#200958',
+            alternateDark: '#0e073a',
         },
         dragBar: {
             default: '#4C1E91',

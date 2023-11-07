@@ -9,34 +9,11 @@ import { signOut, useSession } from 'next-auth/react'
 
 import ProjectList from '@/components/ProjectList'
 import { useRouter } from 'next/router'
+import ProfileView from '@/components/ProfileView'
+import TopBar from '@/components/TopBar'
 
 export default function Home() {
     const theme = useTheme()
-    const session = useSession()
-    const router = useRouter()
-    // console.log(session)
-
-    const [projects, setProjects] = React.useState([])
-
-    useEffect(() => {
-        if (session.data) {
-            const getProjects = async () => {
-                const response = await fetch(`${process.env.NEXT_PUBLIC_PROJECT_API_URL}/by_owner/${session.data.user.account_id}`, {
-                    method: 'GET',
-                    headers: {
-                        "Authorization": `Bearer ${session.data.token}`
-                    }
-                })
-                const data = await response.json()
-                // console.log(data)
-                setProjects(data)
-            }
-            getProjects()
-        }
-        if (session.status === 'unauthenticated') {
-            router.push('/')
-        }
-    }, [session])
 
     return (
         <>
@@ -59,21 +36,26 @@ export default function Home() {
         `}
             </style>
             <main style={{
-                // backgroundColor: theme.palette.background.default,
+                // backgroundColor: "#FF0000",
                 color: theme.palette.text.primary,
                 minHeight: '100vh',
                 display: 'flex',
                 flexDirection: 'column',
-                justifyContent: 'center',
+                justifyContent: 'flex-start',
                 alignItems: 'center',
-                gap: '2rem',
+                // gap: '2rem',
                 position: 'relative',
                 overflow: 'hidden',
+                gap: '1rem',
             }}>
+
+                <TopBar alternate showAccount={false} titleText={"Dashboard"}>
+
+                </TopBar>
                 <div style={{
                     position: 'absolute',
-                    // top: "50%",
-                    // left: "50%",
+                    top: "-60%",
+                    // left: "-75%",
                     // transform: "translate(-50%, -50%)",
                     width: '250vw',
                     height: '250vh',
@@ -84,8 +66,23 @@ export default function Home() {
                     backgroundPosition: 'center',
                     backgroundColor: theme.palette.background.default,
                     animation: 'rotate 120s infinite linear',
+
                 }}></div>
-                <ProjectList projects={projects} />
+                <div style={{
+                    width: 'calc(100% - 2rem)',
+                    display: 'flex',
+                    flexDirection: 'row',
+                    gap: '1rem',
+                    justifyContent: 'flex-start',
+                    alignItems: 'flex-start',
+
+                }}>
+                    <ProfileView />
+                    <ProjectList />
+                </div>
+
+
+
             </main>
         </>
     )

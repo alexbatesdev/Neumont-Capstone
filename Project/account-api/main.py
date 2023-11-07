@@ -281,6 +281,15 @@ async def oauth_account_exists(oauth_id: str):
     return {"exists": True}
 
 
+@app.get("/search/{search_term}")
+async def search(search_term: str):
+    AccountsByEmail = await AccountDB.find({"email": {"$regex": search_term}})
+    AccountsByName = await AccountDB.find({"name": {"$regex": search_term}})
+    AccountsByID = await AccountDB.find({"account_id": {"$regex": search_term}})
+    Accounts = AccountsByEmail + AccountsByName + AccountsByID
+    return {"results": [AccountOut(**Account.model_dump()) for Account in Accounts]}
+
+
 # Endpoints TODO:
 
 
@@ -333,6 +342,7 @@ async def change_email(
     new_email: EmailStr, current_user: Annotated[AccountDB, Depends(get_current_user)]
 ):
     current_user.email = new_email
+    current_user.emailVerified = False
     await current_user.save()
     return {"success": True}
 

@@ -113,6 +113,13 @@ function FileStructureNode({ currentNodeTree, path, depth = 0 }) {
                         setContextOpen(bool)
                     }} />)
                 }
+            },
+            {
+                text: "Delete Folder",
+                method: () => {
+                    webContainer.fs.rm(path, { recursive: true })
+                    setContextOpen(false)
+                }
             }
         ])
         document.addEventListener('click', () => {
@@ -140,6 +147,21 @@ function FileStructureNode({ currentNodeTree, path, depth = 0 }) {
                         setContextMenuHelper(null)
                         setContextOpen(bool)
                     }} />)
+                }
+            },
+            {
+                text: "Delete File",
+                method: () => {
+                    if (openFilePaths[openFilePathIndex] && path == openFilePaths[openFilePathIndex].path) {
+                        setOpenFilePaths((prevOpenFilePaths) => {
+                            const newOpenFilePaths = [...prevOpenFilePaths]
+                            newOpenFilePaths.splice(openFilePathIndex, 1)
+                            return newOpenFilePaths
+                        })
+                        setOpenFilePathIndex(0)
+                    }
+                    webContainer.fs.rm(path)
+                    setContextOpen(false)
                 }
             }
         ])

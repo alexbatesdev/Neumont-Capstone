@@ -27,6 +27,7 @@ from models.account_models import (
     OAuthAccount,
     AccountAuth,
     AccountWithToken,
+    AccountNameEmailOnly,
 )
 from datetime import timedelta, datetime
 
@@ -138,6 +139,29 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
     user = await AccountDB.find_one({"email": token_data.email})
     if user is None:
         raise credentials_exception
+    return user
+
+
+async def get_current_user_with_token(token: Annotated[str, Depends(oauth2_scheme)]):
+    credentials_exception = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Could not validate credentials",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
+
+    try:
+        payload = jwt.decode(
+            token, config("SECRET_KEY"), algorithms=[config("ALGORITHM")]
+        )
+        email: str = payload.get("sub")
+        if email is None:
+            raise credentials_exception
+        token_data = TokenData(email=email)
+    except JWTError:
+        raise credentials_exception
+    user = await AccountDB.find_one({"email": token_data.email})
+    if user is None:
+        raise credentials_exception
     return AccountWithToken(**user.model_dump(), access_token=token)
 
 
@@ -161,7 +185,7 @@ def verify_account_found(Account):
 
 @app.post("/verify_token")
 async def verify_token(token: Token):
-    user = await get_current_user(token.access_token)
+    user = await get_current_user_with_token(token.access_token)
     return AccountOut(**user.model_dump())
 
 
@@ -225,10 +249,21 @@ async def new_user(Account: AccountIn):
     return {"success": True}
 
 
+@app.patch("/update_account")
+async def update_account(
+    account_in: AccountNameEmailOnly,
+    current_user: Annotated[AccountDB, Depends(get_current_user)],
+):
+    current_user.name = account_in.name
+    current_user.email = account_in.email
+    await current_user.save()
+    return {"success": True}
+
+
 # get user by email
 @app.get("/by_email/{email}")
 async def get_user_by_email(email: EmailStr):
-    Account = await Account.find_one({"email": email})
+    Account = await AccountDB.find_one({"email": email})
     verify_account_found(Account)
     return AccountOut(**Account.model_dump())
 
@@ -237,9 +272,9 @@ async def get_user_by_email(email: EmailStr):
 # get user by id
 @app.get("/by_id/{account_id}")
 async def get_user_by_id(account_id: UUID):
-    Account = await Account.find_one({"account_id": account_id})
-    verify_account_found(Account)
-    return AccountOut(**Account.model_dump())
+    account = await AccountDB.find_one({"account_id": account_id})
+    verify_account_found(account)
+    return AccountOut(**account.model_dump())
 
 
 # Entirely untested 😎
@@ -351,13 +386,13 @@ async def change_email(
 # - deactivate Account
 @app.delete("/deactivate/{account_id}")
 async def deactivate_account(
-    account_id: str, current_user: Annotated[AccountDB, Depends(get_current_user)]
+    account_id: UUID, current_user: Annotated[AccountDB, Depends(get_current_user)]
 ):
     # if account_id is None:
     #    Delete logged in Account
     # else:
     #    Make sure the user is an admin, then delete the Account
-    if (current_user.account_id != account_id) and (current_user.is_admin is False):
+    if (current_user.account_id != account_id) and (current_user.isAdmin is False):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="You are not authorized to deactivate this Account",
@@ -475,7 +510,8 @@ async def remove_collaborator(
 
 @app.delete("/remove_project_shared_with_me/{project_id}")
 async def remove_project_shared_with_me(
-    current_user: Annotated[AccountDB, Depends(get_current_user)], project_id: str
+    current_user: Annotated[AccountDB, Depends(get_current_user_with_token)],
+    project_id: str,
 ):
     if project_id is None:
         raise HTTPException(

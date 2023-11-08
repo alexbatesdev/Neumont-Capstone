@@ -11,7 +11,7 @@ import ShareIcon from '@mui/icons-material/Share';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { TopBarContextProvider } from "@/contexts/topbar-hover-context";
 
-const TopBar = ({ children, titleText, alternate = false, showAccount = true }) => {
+const TopBar = ({ children, titleText, backLocation, alternate = false, showSignIn = false, hideBack = false }) => {
     const theme = useTheme();
     const router = useRouter();
     const [hoverIndex, setHoverIndex] = useState(null);
@@ -30,11 +30,7 @@ const TopBar = ({ children, titleText, alternate = false, showAccount = true }) 
     }
 
     const handleBack = () => {
-        if (router.pathname == "/access") {
-            router.push("/");
-            return;
-        }
-        router.back();
+        router.push(backLocation);
     }
 
     return (<>
@@ -48,12 +44,13 @@ const TopBar = ({ children, titleText, alternate = false, showAccount = true }) 
                     flexDirection: 'row',
                     justifyContent: 'flex-start',
                 }}>
-                    <TopBarButton
-                        Icon={ArrowBack}
-                        text={"Back"}
-                        onClick={handleBack}
-                        buttonIndex={0}
-                    />
+                    {!hideBack &&
+                        <TopBarButton
+                            Icon={ArrowBack}
+                            text={"Back"}
+                            onClick={handleBack}
+                            buttonIndex={0}
+                        />}
                     {children}
                 </span>
                 <span style={{
@@ -70,13 +67,14 @@ const TopBar = ({ children, titleText, alternate = false, showAccount = true }) 
                     flexDirection: 'row',
                     justifyContent: 'flex-end',
                 }}>
-                    {showAccount &&
+                    {showSignIn &&
                         <TopBarButton
                             hoverIndex={hoverIndex}
                             setHoverIndex={setHoverIndex}
                             Icon={AccountCircleIcon}
-                            text={"Account"}
-                            onClick={() => { alert("Account") }}
+                            text={"Sign in/up"}
+                            // Add a url parameter that will redirect to the current page after signing in 💭
+                            onClick={() => { router.push('/access') }}
                             buttonIndex={-1}
                             openWidth={60}
                             inReverse

@@ -6,6 +6,8 @@ import { useProjectData } from '@/contexts/editor-context';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { outlinedInputClasses } from '@mui/material/OutlinedInput';
 import { useSession } from 'next-auth/react';
+import ProfileMiniAccordion from './ProfileMiniAccordion';
+import CollaboratorsConfigWindow from './CollaboratorsConfigWindow';
 
 
 const possiblyEmptyValue = (value, valueIfNotFound) => {
@@ -163,15 +165,14 @@ const ProjectConfig = () => {
                     Project Owner:
                 </Typography>
 
+                <ProfileMiniAccordion profile_id={projectOwner} />
                 {/* Some sort of display signifying the project owner */}
 
                 <Typography variant='subtitle2'>
                     Collaborators:
                 </Typography>
 
-                {/* Some sort of display that shows a list of the collaborators */}
-                {/* Both of these components should use the same profile component, this second one is just a list */}
-                {/* Maybe they are both the exact same component */}
+                <CollaboratorsConfigWindow collaborators={["c78c5535-0806-4250-b322-28100c8bee8e", "aea9cabc-96de-467d-8859-3cb8d813bf7e"]} setCollaborators={setNewCollaborators} />
 
 
                 <Stack direction="row" spacing={1} alignItems="center" gap={"25px"}>

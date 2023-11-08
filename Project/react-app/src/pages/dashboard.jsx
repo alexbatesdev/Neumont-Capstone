@@ -49,7 +49,12 @@ export default function Home() {
                 gap: '1rem',
             }}>
 
-                <TopBar alternate showAccount={false} titleText={"Dashboard"}>
+                <TopBar
+                    alternate
+                    showAccount={false}
+                    titleText={"Dashboard"}
+                    backLocation={"/"}
+                >
 
                 </TopBar>
                 <div style={{

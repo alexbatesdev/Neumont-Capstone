@@ -86,7 +86,10 @@ export default function Editor() {
         <div
             className='pageWrapper'
             style={pageWrapperStyles}>
-            <TopBar titleText={projectData.project_name}>
+            <TopBar
+                titleText={projectData.project_name}
+                backLocation={"/dashboard"}
+            >
                 {hasEditAccess &&
                     <TopBarButton
                         Icon={SaveIcon}

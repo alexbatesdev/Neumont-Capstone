@@ -63,7 +63,12 @@ export default function SignIn() {
         }}>
 
 
-            <TopBar alternate showAccount={false} titleText={"Webbie"}>
+            <TopBar
+                alternate
+                showAccount={false}
+                titleText={"Webbie"}
+                backLocation={"/"}
+            >
 
             </TopBar>
             <div style={{

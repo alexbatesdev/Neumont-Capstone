@@ -116,6 +116,11 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None):
     return encoded_jwt
 
 
+def filter_out_deactivated_accounts(accounts):
+    # Copilot snippet
+    return [account for account in accounts if not account.isDeactivated]
+
+
 # ---------------------------------- Dependency functions ----------------------------------
 
 
@@ -318,10 +323,17 @@ async def oauth_account_exists(oauth_id: str):
 
 @app.get("/search/{search_term}")
 async def search(search_term: str):
-    AccountsByEmail = await AccountDB.find({"email": {"$regex": search_term}})
-    AccountsByName = await AccountDB.find({"name": {"$regex": search_term}})
-    AccountsByID = await AccountDB.find({"account_id": {"$regex": search_term}})
+    AccountsByEmail = await AccountDB.find(
+        {"email": {"$regex": search_term, "$options": "i"}}
+    ).to_list()
+    AccountsByName = await AccountDB.find(
+        {"name": {"$regex": search_term, "$options": "i"}}
+    ).to_list()
+    AccountsByID = await AccountDB.find(
+        {"account_id": {"$regex": search_term, "$options": "i"}}
+    ).to_list()
     Accounts = AccountsByEmail + AccountsByName + AccountsByID
+    Accounts = filter_out_deactivated_accounts(Accounts)
     return {"results": [AccountOut(**Account.model_dump()) for Account in Accounts]}
 
 

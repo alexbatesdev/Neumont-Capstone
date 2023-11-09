@@ -26,15 +26,22 @@ const ProjectList = () => {
     const [projects, setProjects] = React.useState([])
 
     useEffect(() => {
+        console.log(session)
         if (session.data) {
             const getProjects = async () => {
-                const response = await fetch(`${process.env.NEXT_PUBLIC_PROJECT_API_URL}/dashboard/${session.data.user.account_id}`, {
+                const response = await fetch(`${process.env.NEXT_PUBLIC_PROJECT_API_URL}/get_dashboard/${session.data.user.account_id}`, {
                     method: 'GET',
                     headers: {
-                        "Authorization": `Bearer ${session.data.token}`
+                        "Authorization": `Bearer ${session.data.token}`,
+                        "content-type": "application/json",
                     }
                 })
+                if (response.status !== 200) {
+                    console.log(response)
+                    return
+                }
                 const data = await response.json()
+                console.log(data)
                 setProjects(data)
             }
             getProjects()

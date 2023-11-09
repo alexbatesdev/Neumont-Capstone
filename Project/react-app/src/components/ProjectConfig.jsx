@@ -2,7 +2,7 @@ import React from 'react';
 
 import { Button, Stack, Switch, TextField, Typography } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
-import { useProjectData } from '@/contexts/editor-context';
+import { useEditorContext, useProjectData } from '@/contexts/editor-context';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { outlinedInputClasses } from '@mui/material/OutlinedInput';
 import { useSession } from 'next-auth/react';
@@ -21,6 +21,7 @@ const ProjectConfig = () => {
     const theme = useTheme();
     const session = useSession();
     const { projectData, setProjectData } = useProjectData();
+    const { hasEditAccess } = useEditorContext();
 
     if (!projectData) {
         return (
@@ -60,7 +61,8 @@ const ProjectConfig = () => {
         flexDirection: 'column',
         justifyContent: 'flex-start',
         alignItems: 'flex-start',
-        overflow: "hidden",
+        // overflow: "hidden",
+        // overflowY: "auto",
         paddingLeft: '10px',
         paddingTop: '10px',
         gap: '15px',
@@ -75,7 +77,6 @@ const ProjectConfig = () => {
 
     const [newIsTemplate, setNewIsTemplate] = React.useState(projectData.is_template);
     const [newIsPrivate, setNewIsPrivate] = React.useState(projectData.is_private);
-    const [newCollaborators, setNewCollaborators] = React.useState(projectData.collaborators);
 
     //Make API call to get project owner data and collaborators data
     //No need to get project owner data if project owner is the current user
@@ -85,6 +86,7 @@ const ProjectConfig = () => {
     }
 
     const handleSaveChanges = () => {
+        if (!hasEditAccess) return;
         setProjectData((prevData) => {
             const output = {
                 ...prevData,
@@ -92,7 +94,6 @@ const ProjectConfig = () => {
                 project_description: newProjectDescription,
                 is_template: newIsTemplate,
                 is_private: newIsPrivate,
-                collaborators: newCollaborators,
             }
             //console.log(output);
             saveData(output);
@@ -143,6 +144,7 @@ const ProjectConfig = () => {
                     value={newProjectName}
                     sx={formStyle}
                     onChange={(e) => { setNewProjectName(e.target.value) }}
+                    disabled={!hasEditAccess}
                 />
                 <Typography variant='subtitle2'>
                     Project Description:
@@ -158,21 +160,26 @@ const ProjectConfig = () => {
                     value={newProjectDescription}
                     sx={formStyle}
                     onChange={(e) => { setNewProjectDescription(e.target.value) }}
+                    disabled={!hasEditAccess}
                 />
 
 
                 <Typography variant='subtitle2'>
                     Project Owner:
                 </Typography>
-
-                <ProfileMiniAccordion profile_id={projectOwner} />
+                <div style={{
+                    width: 'calc(100% - 20px)',
+                    backgroundColor: theme.palette.background.default,
+                }}>
+                    <ProfileMiniAccordion profile_id={projectOwner} />
+                </div>
                 {/* Some sort of display signifying the project owner */}
 
                 <Typography variant='subtitle2'>
                     Collaborators:
                 </Typography>
 
-                <CollaboratorsConfigWindow collaborators={["c78c5535-0806-4250-b322-28100c8bee8e", "aea9cabc-96de-467d-8859-3cb8d813bf7e"]} setCollaborators={setNewCollaborators} />
+                <CollaboratorsConfigWindow collaborators={projectData.collaborators} />
 
 
                 <Stack direction="row" spacing={1} alignItems="center" gap={"25px"}>
@@ -186,6 +193,7 @@ const ProjectConfig = () => {
                                 color="primary"
                                 checked={newIsTemplate}
                                 onChange={(e) => { setNewIsTemplate(e.target.checked) }}
+                                disabled={!hasEditAccess}
                             />
                             <Typography variant="body1" sx={{}}>
                                 {newIsTemplate ? "Yes" : "No"}
@@ -203,6 +211,7 @@ const ProjectConfig = () => {
                                 color="primary"
                                 checked={newIsPrivate}
                                 onChange={(e) => { setNewIsPrivate(e.target.checked) }}
+                                disabled={!hasEditAccess}
                             />
                             <Typography variant="body1" sx={{}}>
                                 {newIsPrivate ? "Yes" : "No"}
@@ -210,11 +219,11 @@ const ProjectConfig = () => {
                         </Stack>
                     </div>
                 </Stack>
-                <Button variant="outlined" color="primary" sx={{ borderRadius: "5px" }} onClick={handleSaveChanges}>
+                <Button variant="outlined" color="primary" sx={{ borderRadius: "5px" }} onClick={handleSaveChanges} disabled={!hasEditAccess}>
                     Save Changes
                 </Button>
             </div>
-        </div>
+        </div >
     </>)
 
 }

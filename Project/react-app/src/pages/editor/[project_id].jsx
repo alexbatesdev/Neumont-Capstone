@@ -51,7 +51,6 @@ export default function Page() {
                 if (!res.ok) throw new Error(res.status)
                 return res.json()
             }).then(data => {
-                console.log(data)
                 setProjData(data)
                 setLoading(false)
                 if (
@@ -60,9 +59,9 @@ export default function Page() {
                     // AND session.data.user exists
                     session.data.user &&
                     // AND the user's ID does not match the project owner's ID
-                    (session.data.user.account_id != data.project_owner)// &&
+                    (session.data.user.account_id != data.project_owner) &&
                     // AND the user's ID is not in the list of collaborators
-                    // !projData.collaborators.includes(session.data.user.account_id)
+                    !data.collaborators.includes(session.data.user.account_id)
                 ) {
                     console.log("User does not have edit access")
                     // Then the user does not have edit access
@@ -77,8 +76,8 @@ export default function Page() {
             })
 
         }
-        getProject()
-    }, [project_id])
+        if (session.status != "loading") getProject()
+    }, [project_id, session])
 
     return (<>
         {!loading ? (

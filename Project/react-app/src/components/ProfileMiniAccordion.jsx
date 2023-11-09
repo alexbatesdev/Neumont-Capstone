@@ -5,12 +5,16 @@ import { useEffect } from 'react';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { AccountCircle } from '@mui/icons-material';
+import { useProjectData } from '@/contexts/editor-context';
+import { useSession } from 'next-auth/react';
 
-function ProfileMiniAccordion({ profile_id, isCollaborator = false, removeCollaboratorMethod = () => { } }) {
+function ProfileMiniAccordion({ profile_id, showRemoveCollaborator = false, showAddCollaborator = false }) {
     const theme = useTheme();
     const router = useRouter();
+    const session = useSession();
     const [profile, setProfile] = React.useState(null);
     const [expanded, setExpanded] = React.useState(false);
+    const { projectData, setProjectData } = useProjectData();
 
     // rest of component code goes here
     useEffect(() => {
@@ -42,8 +46,52 @@ function ProfileMiniAccordion({ profile_id, isCollaborator = false, removeCollab
         setExpanded(!expanded);
     }
 
+    const removeCollaboratorMethod = async () => {
+        let response = await fetch(`${process.env.NEXT_PUBLIC_PROJECT_API_URL}/by_id/${projectData.project_id}/remove_collaborator/${profile_id}`, {
+            method: 'PATCH',
+            headers: {
+                "Authorization": `Bearer ${session.data.token}`,
+            },
+        })
+        if (response.status !== 200) {
+            console.log(response)
+            return
+        }
+        let data = await response.json()
+        console.log(data)
+        setProjectData((prevData) => {
+            const output = {
+                ...prevData,
+                collaborators: data.collaborators,
+            }
+            return output;
+        })
+    }
+
+    const addCollaboratorMethod = async () => {
+        let response = await fetch(`${process.env.NEXT_PUBLIC_PROJECT_API_URL}/by_id/${projectData.project_id}/add_collaborator/${profile_id}`, {
+            method: 'PATCH',
+            headers: {
+                "Authorization": `Bearer ${session.data.token}`,
+            },
+        })
+        if (response.status !== 200) {
+            console.log(response)
+            return
+        }
+        let data = await response.json()
+        console.log(data)
+        setProjectData((prevData) => {
+            const output = {
+                ...prevData,
+                collaborators: data.collaborators,
+            }
+            return output;
+        })
+    }
+
     return (<div style={{
-        width: 'calc(100% - 20px)',
+        width: '100%',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
@@ -55,8 +103,7 @@ function ProfileMiniAccordion({ profile_id, isCollaborator = false, removeCollab
             flexDirection: 'row',
             justifyContent: 'space-between',
             alignItems: 'center',
-            backgroundColor: theme.palette.background.default,
-            borderRadius: "7px",
+            // backgroundColor: theme.palette.background.default,
         }}
             onClick={handleExpand}
         >
@@ -78,15 +125,13 @@ function ProfileMiniAccordion({ profile_id, isCollaborator = false, removeCollab
         <Collapse in={expanded} sx={{ width: "100%" }} >
             <div style={{
                 width: "calc(100% - 20px)",
+                padding: "10px",
                 height: 'auto',
                 display: 'flex',
                 flexDirection: 'column',
                 justifyContent: 'flex-start',
                 alignItems: 'flex-start',
                 backgroundColor: theme.palette.background.default,
-                borderBottomLeftRadius: "7px",
-                borderBottomRightRadius: "7px",
-                padding: "10px",
             }}
             >
                 <Typography variant="body1" onClick={() => {
@@ -113,7 +158,8 @@ function ProfileMiniAccordion({ profile_id, isCollaborator = false, removeCollab
 
                     <Button variant="outlined" size='small' onClick={() => router.push(`/profile/${profile_id}`)} sx={{ mt: 1 }}>View Profile</Button>
                     {/* Remove collaborator button */}
-                    {isCollaborator && <Button variant="outlined" size='small' color='error' sx={{ mt: 1 }} onClick={removeCollaboratorMethod}>Remove Collaborator</Button>}
+                    {showRemoveCollaborator && <Button variant="outlined" size='small' color='error' sx={{ mt: 1 }} onClick={removeCollaboratorMethod}>Remove Collaborator</Button>}
+                    {showAddCollaborator && <Button variant="outlined" size='small' color='success' sx={{ mt: 1 }} onClick={addCollaboratorMethod}>Add Collaborator</Button>}
                 </span>
             </div>
         </Collapse>

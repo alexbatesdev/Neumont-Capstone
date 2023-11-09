@@ -104,13 +104,15 @@ def filter_in_templates(projects: list[ProjectDataDB], user: AccountWithToken):
 
 
 def verify_collaborator(project: ProjectDataDB, user: AccountWithToken):
+    print(str(user.account_id) != project.project_owner)
+    print(str(user.account_id) not in project.collaborators)
     if (
-        str(user.account_id) != project.project_owner
-        and str(user.account_id) not in project.collaborators
+        user.account_id != project.project_owner
+        and user.account_id not in project.collaborators
     ) and not user.isAdmin:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="You do not have permission to edit this project",
+            detail="You do not have permission to edit this project ;P",
         )
 
 
@@ -355,8 +357,8 @@ async def get_projects(
 
 
 # entirely untested (Dave style 😎)
-@app.get("/dashboard/{current_user_ID}")
-async def get_projects(
+@app.get("/get_dashboard/{current_user_ID}")
+async def get_dashboard_projects(
     current_user_ID: UUID, user: AccountWithToken = Depends(verify_token)
 ):
     projectsByOwner = await ProjectDataDB.find(
@@ -538,7 +540,7 @@ async def update_project_file_structure(
 # add collaborator
 @app.patch("/by_id/{project_id}/add_collaborator/{collaborator}")
 async def add_collaborator(
-    project_id: UUID, collaborator: str, user: AccountWithToken = Depends(verify_token)
+    project_id: UUID, collaborator: UUID, user: AccountWithToken = Depends(verify_token)
 ):
     project = await ProjectDataDB.find_one({"project_id": project_id})
     verify_owner(project, user)
@@ -585,7 +587,7 @@ async def add_collaborator(
 # remove collaborator
 @app.patch("/by_id/{project_id}/remove_collaborator/{collaborator}")
 async def remove_collaborator(
-    project_id: UUID, collaborator: str, user: AccountWithToken = Depends(verify_token)
+    project_id: UUID, collaborator: UUID, user: AccountWithToken = Depends(verify_token)
 ):
     project = await ProjectDataDB.find_one({"project_id": project_id})
 
@@ -595,6 +597,7 @@ async def remove_collaborator(
         verify_owner(project, user)
 
     verify_item_found(project)
+    print(project.collaborators)
     if collaborator not in project.collaborators:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,

@@ -10,6 +10,7 @@ import StarIcon from '@mui/icons-material/Star';
 import { ConversationWindow } from "./ConversationWindow";
 import FileTreeDisplay from "./FileTreeDisplay";
 import ProjectConfig from "./ProjectConfig";
+import { Scrollbar } from "react-scrollbars-custom";
 
 export const SideBar = ({ sidebarWidth, setSidebarWidth }) => {
     const theme = useTheme();
@@ -98,8 +99,13 @@ export const SideBar = ({ sidebarWidth, setSidebarWidth }) => {
                 setSelectedTab(2);
                 break;
             case 3:
-                if (sidebarWidth < 300) {
-                    setSidebarWidth(300)
+                minWidth = 450;
+                maxWidth = 550;
+                if (sidebarWidth < minWidth) {
+                    setSidebarWidth(minWidth)
+                }
+                if (sidebarWidth > maxWidth) {
+                    setSidebarWidth(maxWidth)
                 }
                 setSelectedTab(3);
                 break;
@@ -202,24 +208,31 @@ export const SideBar = ({ sidebarWidth, setSidebarWidth }) => {
                 className="sideBarContent"
                 style={sideBarContentStyle}
             >
-                <div
-                    className="FilesTab"
-                    style={sideBarContentInnerWrapperStyle}
-                >
-                    {selectedTab === 0 ? (<>
-                        <FileTreeDisplay />
-                    </>) : null}
-                    {selectedTab === 1 ? (<>
-                        <ConversationWindow />
-                    </>) : null}
-                    {selectedTab === 2 ? (<>
-                        {/* Theme View Component goes here 💭 */}
-                        <Typography variant="h6">Theme<br /> WIP <br /> Component goes here</Typography>
-                    </>) : null}
-                    {selectedTab === 3 ? (<>
-                        <ProjectConfig />
-                    </>) : null}
-                </div>
+                <Scrollbar
+                    noScrollX
+                    style={{
+                        flexGrow: 1,
+                    }}>
+
+                    <div
+                        className="FilesTab"
+                        style={sideBarContentInnerWrapperStyle}
+                    >
+                        {selectedTab === 0 ? (<>
+                            <FileTreeDisplay />
+                        </>) : null}
+                        {selectedTab === 1 ? (<>
+                            <ConversationWindow />
+                        </>) : null}
+                        {selectedTab === 2 ? (<>
+                            {/* Theme View Component goes here 💭 */}
+                            <Typography variant="h6">Theme<br /> WIP <br /> Component goes here</Typography>
+                        </>) : null}
+                        {selectedTab === 3 ? (<>
+                            <ProjectConfig />
+                        </>) : null}
+                    </div>
+                </Scrollbar>
             </div>
             <div
                 onMouseDown={(event) => handleMouseDown(event)}

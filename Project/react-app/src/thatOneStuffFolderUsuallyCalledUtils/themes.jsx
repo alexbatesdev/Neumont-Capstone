@@ -35,7 +35,7 @@ export const theme = createTheme({
         MuiTextField: {
             styleOverrides: {
                 root: {
-                    '--TextField-brandBorderColor': '#1C0C3B',
+                    '--TextField-brandBorderColor': '#8d7eff',
                     '--TextField-brandBorderHoverColor': '#8d7eff',
                     '--TextField-brandBorderFocusedColor': '#8d7eff',
                     '& label.Mui-focused': {

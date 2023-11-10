@@ -7,6 +7,7 @@ import SyntaxHighlighter from "react-syntax-highlighter";
 import { atelierCaveDark } from "react-syntax-highlighter/dist/cjs/styles/hljs";
 
 import { CodeSnippetButtonBar } from './CodeSnippetButtonBar';
+import { useEditorContext } from '@/contexts/editor-context';
 
 const handleDisplayCodeSnippet = (message) => {
     const segments = [];

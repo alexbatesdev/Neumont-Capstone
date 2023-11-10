@@ -4,6 +4,7 @@ import { Card, Box, Typography, TextField, Button, FormControlLabel, Checkbox, C
 import { Scrollbar } from 'react-scrollbars-custom';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
+import MiniFileTreeDisplay from './MiniFileTreeDisplay';
 
 const NewProjectForm = ({ setModalOpen }) => {
     const theme = useTheme();
@@ -204,7 +205,9 @@ const NewProjectForm = ({ setModalOpen }) => {
                         overflow: "auto",
                         borderRadius: "5px",
                         border: "1px solid " + theme.palette.dragBar.default,
-                    }}></Box>
+                    }}>
+                        <MiniFileTreeDisplay files={selectedTemplateIndex && (selectedTemplateIndex > 0) ? templates[selectedTemplateIndex].file_structure : null} />
+                    </Box>
                 </Box>
             </>
             <Box sx={{

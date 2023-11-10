@@ -147,9 +147,7 @@ const FileTreeDisplay = () => {
                     [key]: files[key]
                 }
                 return (
-                    <>
-                        <FileStructureNode key={key + "-" + index} currentNodeTree={node} path={"./" + key} />
-                    </>
+                    <FileStructureNode key={key + "-" + index} currentNodeTree={node} path={"./" + key} />
                 );
             })}
         </div>

@@ -27,7 +27,9 @@ function FileStructureNode({ currentNodeTree, path, depth = 0 }) {
         //Files hook
         fileOperations, files, setFiles,
         // Context Menu hook
-        contextOpen, setContextOpen, contextCoords, setContextCoords, contextMenuItems, setContextMenuItems, contextMenuHelperOpen, setContextMenuHelperOpen, contextMenuHelper, setContextMenuHelper
+        contextOpen, setContextOpen, contextCoords, setContextCoords, contextMenuItems, setContextMenuItems, contextMenuHelperOpen, setContextMenuHelperOpen, contextMenuHelper, setContextMenuHelper,
+        // Diff Editor Stuff
+        codeEditorDiffMode, setCodeEditorDiffMode, codeEditorDiffValue, setCodeEditorDiffValue
     } = useEditorContext();
 
     if (currentNodeTree == undefined) {
@@ -163,6 +165,19 @@ function FileStructureNode({ currentNodeTree, path, depth = 0 }) {
                     webContainer.fs.rm(path)
                     setContextOpen(false)
                 }
+            },
+            {
+                text: "Open In Diff Editor",
+                method: () => {
+                    if (codeEditorDiffMode) {
+                        setCodeEditorDiffMode(false);
+                        setCodeEditorDiffValue("");
+                    } else {
+                        setCodeEditorDiffMode(true);
+                        setCodeEditorDiffValue(fileOperations.getFileContents(files, path));
+                    }
+                    setContextOpen(false)
+                }
             }
         ])
         document.addEventListener('click', () => {
@@ -277,9 +292,7 @@ function FileStructureNode({ currentNodeTree, path, depth = 0 }) {
                             [key]: currentNodeTree.directory[key]
                         }
                         return (
-                            <>
-                                <FileStructureNode key={key + "-" + index} currentNodeTree={node} depth={depth + 1} path={path + "/" + key} />
-                            </>
+                            <FileStructureNode key={key + "-" + index} currentNodeTree={node} depth={depth + 1} path={path + "/" + key} />
                         );
                     })}
 

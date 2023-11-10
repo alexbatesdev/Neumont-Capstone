@@ -4,13 +4,37 @@ import Head from 'next/head'
 import Image from 'next/image'
 import Link from 'next/link'
 
-import { Button, Typography, useTheme } from '@mui/material'
+import { Button, Collapse, Typography, useTheme } from '@mui/material'
 import { signOut, useSession } from 'next-auth/react'
+import { AccountCircle } from '@mui/icons-material'
 
 
 export default function Home() {
   const theme = useTheme()
   const session = useSession()
+  const [accountHovered, setAccountHovered] = React.useState(false);
+
+  const iconDivStyle = (isHovering = false) => {
+    const hoverBG = (isHovering) => isHovering ? theme.palette.background.paper : theme.palette.background.default;
+    return {
+      minWidth: "50px",
+      height: "50px",
+      display: "flex",
+      flexDirection: "row",
+      justifyContent: "center",
+      alignItems: "center",
+      color: theme.palette.text.primary,
+    }
+  };
+
+  const collapseStyle = (isHovering = false) => {
+    const hoverBG = (isHovering) => isHovering ? theme.palette.background.paper : theme.palette.background.default;
+    return {
+      color: theme.palette.text.primary,
+      height: '50px',
+      position: "relative",
+    }
+  };
 
   return (
     <>
@@ -66,6 +90,105 @@ export default function Home() {
           backgroundColor: theme.palette.background.default,
           animation: 'rotate 120s infinite linear',
         }}></div>
+        <div style={{
+          position: 'absolute',
+          top: '0',
+          left: '0',
+          right: '0',
+          backgroundColor: theme.palette.utilBar.default,
+          height: '50px',
+          display: 'flex',
+          flexDirection: 'row',
+          justifyContent: 'flex-end',
+          alignItems: 'center',
+        }}>
+          {session.data ?
+            <div
+              onMouseEnter={() => setAccountHovered(true)}
+              onMouseLeave={() => setAccountHovered(false)}
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                justifyContent: "flex-end",
+                alignItems: "center",
+              }}>
+              <div
+                style={iconDivStyle(accountHovered)}
+              >
+                <AccountCircle />
+              </div>
+              <Collapse in={accountHovered} orientation='horizontal' style={collapseStyle(accountHovered)}>
+                <div
+                  onClick={() => signOut()}
+                  style={{
+                    position: 'relative',
+                    height: '50px',
+                    width: '90px',
+                    marginRight: '1rem',
+                  }}>
+
+                  <Typography
+                    variant='body2'
+                    style={{
+                      color: theme.palette.text.primary,
+                      fontSize: '1.5rem',
+                      cursor: 'pointer',
+                      textWrap: 'nowrap',
+                      position: 'absolute',
+                      left: '50%',
+                      top: '50%',
+                      transform: 'translate(-50%, -50%)',
+                      userSelect: 'none',
+                    }}>
+                    Sign out
+                  </Typography>
+                </div>
+              </Collapse>
+            </div>
+            :
+            <Link href="/access"
+              onMouseEnter={() => setAccountHovered(true)}
+              onMouseLeave={() => setAccountHovered(false)}
+              style={{
+                textDecoration: "none",
+                display: "flex",
+                flexDirection: "row",
+                justifyContent: "flex-end",
+                alignItems: "center",
+              }}>
+              <div
+                style={iconDivStyle(accountHovered)}
+              >
+                <AccountCircle />
+              </div>
+              <Collapse in={accountHovered} orientation='horizontal' style={collapseStyle(accountHovered)}>
+                <div style={{
+                  position: 'relative',
+                  height: '50px',
+                  width: '80px',
+                  marginRight: '1rem',
+                }}>
+
+                  <Typography
+                    variant='body2'
+                    style={{
+                      color: theme.palette.text.primary,
+                      fontSize: '1.5rem',
+                      cursor: 'pointer',
+                      textWrap: 'nowrap',
+                      position: 'absolute',
+                      left: '50%',
+                      top: '50%',
+                      transform: 'translate(-50%, -50%)',
+                      userSelect: 'none',
+                    }}>
+                    Sign in
+                  </Typography>
+                </div>
+              </Collapse>
+            </Link>}
+        </div>
+
         <Typography variant="h1" style={{
           fontFamily: "'Dancing Script', cursive",
           fontFamily: "'Teko', sans-serif"
@@ -86,13 +209,16 @@ export default function Home() {
         </Typography>
         <Image src="/spider.png" width={150} height={150} alt='spider logo, but not like spiderman' />
         <Typography variant="h4">Webbie the web <span style={{ color: theme.palette.primary.main }}>IDE</span></Typography>
-        <Link href="/dashboard">
+        <Link href="/editor/demo">
           <Button variant="contained" color="primary" sx={{ borderRadius: "5px" }}>
-            Dashboard
+            Try it out!
           </Button>
         </Link>
-        {session.data ? <Button onClick={() => { signOut() }}>Sign Out</Button> :
-          <Link href="/access"><Button variant="contained" color="tertiary" sx={{ borderRadius: "5px", color: theme.palette.common.black }}>Sign In</Button></Link>}
+        {session.data &&
+          <Link href="/dashboard">
+            <Button variant="contained" color="primary" sx={{ borderRadius: "5px" }}>Dashboard</Button>
+          </Link>
+        }
       </main >
     </>
   )

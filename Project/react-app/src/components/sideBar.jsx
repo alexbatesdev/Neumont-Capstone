@@ -212,10 +212,10 @@ export const SideBar = ({ sidebarWidth, setSidebarWidth }) => {
                     noScrollX
                     style={{
                         flexGrow: 1,
+                        height: "100%"
                     }}>
 
                     <div
-                        className="FilesTab"
                         style={sideBarContentInnerWrapperStyle}
                     >
                         {selectedTab === 0 ? (<>

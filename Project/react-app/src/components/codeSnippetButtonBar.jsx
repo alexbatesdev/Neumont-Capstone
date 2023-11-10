@@ -2,8 +2,10 @@ import React from "react";
 
 import { Typography } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
+import { useEditorContext } from "@/contexts/editor-context";
 
 export const CodeSnippetButtonBar = ({ segment }) => {
+    const { codeEditorDiffMode, setCodeEditorDiffMode, codeEditorDiffValue, setCodeEditorDiffValue } = useEditorContext();
     const theme = useTheme();
 
     const buttonStyle = {
@@ -41,6 +43,17 @@ export const CodeSnippetButtonBar = ({ segment }) => {
         filter: "opacity(0.75)"
     }
 
+    const handleDiffClick = () => {
+        console.log("Diff Clicked");
+        if (codeEditorDiffMode) {
+            setCodeEditorDiffMode(false);
+            setCodeEditorDiffValue("");
+        } else {
+            setCodeEditorDiffMode(true);
+            setCodeEditorDiffValue(segment.content);
+        }
+    }
+
     return (<div style={buttonBarStyle}>
         <Typography
             variant="body1"
@@ -57,6 +70,7 @@ export const CodeSnippetButtonBar = ({ segment }) => {
             onMouseOut={(event) => {
                 event.target.style.backgroundColor = theme.palette.utilBar.default;
             }}
+            onClick={() => handleDiffClick()}
         >
             Diff
         </Typography>

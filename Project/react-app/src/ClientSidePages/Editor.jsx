@@ -73,7 +73,7 @@ export default function Editor() {
     }
 
     const shareProject = () => {
-        console.log("Sharing project");
+        navigator.clipboard.writeText(window.location.href);
     }
 
     const handleContextMenuClick = (event, method) => {

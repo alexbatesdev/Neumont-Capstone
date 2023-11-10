@@ -21,6 +21,10 @@ export const EditorContext = createContext({
     setHighlightedPath: () => { },
     expandedPaths: [],
     setExpandedPaths: () => { },
+    codeEditorDiffMode: false,
+    setCodeEditorDiffMode: () => { },
+    codeEditorDiffValue: "",
+    setCodeEditorDiffValue: () => { },
     //File Operations
     fileOperations: {},
     //The web container duh
@@ -54,30 +58,7 @@ export const EditorContextProvider = ({
     //console.log(project_in)
     const session = useSession();
     // Don't forget to remove sample message 💭
-    const [messageHistory, setMessageHistory] = useState([{
-        role: 'assistant',
-        content: "```\n" + "import React from 'react'; \
-        \nimport { Box, Typography } from '@mui/material'; \
-        \n \
-        \nexport const SampleComponent = () => { \
-        \n    return ( \
-        \n        <Box sx={{ \
-        \n            display: 'flex', \
-        \n            flexDirection: 'column', \
-        \n            justifyContent: 'flex-start', \
-        \n            alignItems: 'flex-start', \
-        \n            width: '100%', \
-        \n            height: '100%', \
-        \n        }}> \
-        \n            <Typography variant='h1'> \
-        \n                Hello World! \
-        \n            </Typography> \
-        \n        </Box> \
-        \n    ); \
-        \n} \
-        " + "\n```",
-        model: 'gpt-4-0613'
-    }]);
+    const [messageHistory, setMessageHistory] = useState([]);
 
 
     const [files, setFiles] = useState(project_in.file_structure);
@@ -97,6 +78,10 @@ export const EditorContextProvider = ({
     const [projectData, setProjectData] = useState(projectMetaData);
 
     const [expandedPaths, setExpandedPaths] = useState([]);
+
+    const [codeEditorDiffMode, setCodeEditorDiffMode] = useState(false);
+
+    const [codeEditorDiffValue, setCodeEditorDiffValue] = useState("");
 
     const [isProjectSaved, setIsProjectSaved] = useState(true);
 
@@ -149,6 +134,10 @@ export const EditorContextProvider = ({
                 setHighlightedPath,
                 expandedPaths,
                 setExpandedPaths,
+                codeEditorDiffMode,
+                setCodeEditorDiffMode,
+                codeEditorDiffValue,
+                setCodeEditorDiffValue,
                 fileOperations,
                 webContainer,
                 setWebContainer,

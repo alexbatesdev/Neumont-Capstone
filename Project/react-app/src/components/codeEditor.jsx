@@ -8,10 +8,18 @@ import Editor, { DiffEditor, useMonaco, loader } from '@monaco-editor/react';
 
 import { monaco_spooky, monaco_night_owl } from '@/thatOneStuffFolderUsuallyCalledUtils/themes'
 import { useEditorContext } from '@/contexts/editor-context';
+import { Add } from '@mui/icons-material';
 
 export const CodeEditor = () => {
     const theme = useTheme();
-    const { openFilePaths, setOpenFilePaths, openFilePathIndex, setOpenFilePathIndex, setFiles, fileOperations, webContainer, setHighlightedPath, expandedPaths, setExpandedPaths, isProjectSaved, setIsProjectSaved } = useEditorContext();
+    const {
+        openFilePaths, setOpenFilePaths, openFilePathIndex, setOpenFilePathIndex,
+        setFiles, fileOperations,
+        webContainer,
+        setHighlightedPath, expandedPaths, setExpandedPaths,
+        isProjectSaved, setIsProjectSaved,
+        codeEditorDiffMode, setCodeEditorDiffMode, codeEditorDiffValue, setCodeEditorDiffValue
+    } = useEditorContext();
     const editorRef = React.useRef(null);
 
     const handleEditorMount = (editor, monaco) => {
@@ -49,12 +57,19 @@ export const CodeEditor = () => {
         // console.log(event)
         if (event.ctrlKey && event.key == "s") {
             event.preventDefault()
-            handleEditorSave()
+            if (codeEditorDiffMode) {
+                handleDiffEditorSave()
+            } else {
+                handleEditorSave()
+            }
             // console.log("SAVED")
         }
     }
 
     const handleEditorSave = () => {
+        if (codeEditorDiffMode) {
+            return;
+        }
         // console.log("SAVING")
         setFiles((prevFiles) => {
             const newFiles = { ...prevFiles }
@@ -71,6 +86,29 @@ export const CodeEditor = () => {
             newOpenFilePaths[openFilePathIndex].isSaved = true
             return newOpenFilePaths
         })
+    }
+
+    const handleDiffEditorSave = () => {
+        // console.log("SAVING")
+        setFiles((prevFiles) => {
+            const newFiles = { ...prevFiles }
+            fileOperations.writeFile(newFiles, openFilePaths[openFilePathIndex].path, editorRef.current.getModifiedEditor().getValue())
+            openFilePaths[openFilePathIndex].contents = editorRef.current.getModifiedEditor().getValue()
+            const doAsyncTask = async () => {
+                if (webContainer && webContainer.fs) await webContainer.fs.writeFile(openFilePaths[openFilePathIndex].path, editorRef.current.getModifiedEditor().getValue())
+            }
+            doAsyncTask();
+            return newFiles
+        })
+
+        setOpenFilePaths((prevOpenFilePaths) => {
+            const newOpenFilePaths = [...prevOpenFilePaths]
+            newOpenFilePaths[openFilePathIndex].isSaved = true
+            return newOpenFilePaths
+        })
+
+        setCodeEditorDiffMode(false);
+        setCodeEditorDiffValue("");
     }
 
     const resolveExtensionToLanguage = (extension) => {
@@ -121,6 +159,14 @@ export const CodeEditor = () => {
         }
 
     }, [])
+
+    useEffect(() => {
+        if (openFilePaths.length == 0) {
+            setHighlightedPath(null)
+            setCodeEditorDiffMode(false)
+            setCodeEditorDiffValue("")
+        }
+    }, [openFilePaths])
 
     const editorTabBarStyle = {
         width: "100%",
@@ -252,6 +298,49 @@ export const CodeEditor = () => {
                 {openFilePaths && openFilePaths[openFilePathIndex] && openFilePaths[openFilePathIndex].path && resolveExtensionToLanguage(openFilePaths[openFilePathIndex].path.split('.')[2])}
             </Typography>
             <div style={tabFlexboxStyle}>
+                {codeEditorDiffMode &&
+                    <>
+                        <div
+                            onMouseEnter={() => setHoverIndex(-2)}
+                            onMouseLeave={() => setHoverIndex(null)}
+                            onClick={() => {
+                                handleDiffEditorSave();
+                                setCodeEditorDiffMode(false);
+                                setCodeEditorDiffValue("");
+                            }}
+                            style={tabStyle(-2)}>
+                            <Typography variant="body2" style={{
+                                display: "inline",
+                                fontSize: "0.8rem",
+                            }}>
+                                Accept Changes (Right Side)
+                            </Typography>
+                            <Add
+                                sx={{
+                                    fontSize: "15px"
+                                }} />
+                        </div>
+                        <div
+                            onMouseEnter={() => setHoverIndex(-1)}
+                            onMouseLeave={() => setHoverIndex(null)}
+                            onClick={() => {
+                                setCodeEditorDiffMode(false);
+                                setCodeEditorDiffValue("");
+                            }}
+                            style={tabStyle(-1)}>
+                            <Typography variant="body2" style={{
+                                display: "inline",
+                                fontSize: "0.8rem",
+                            }}>
+                                Close Diff Editor
+                            </Typography>
+                            <CloseIcon
+                                sx={{
+                                    fontSize: "15px"
+                                }} />
+                        </div>
+                    </>
+                }
                 {openFilePaths && openFilePaths.map((file, index) => {
                     return (<div
                         key={openFilePaths[index].path + "-tab"}
@@ -285,18 +374,33 @@ export const CodeEditor = () => {
                 height: `calc(100% - ${tabBarHeight}px)`,
                 backgroundColor: theme.palette.background.default,
             }}>
+            {/* If openFilePaths exists, and the file we think is open exists */}
             {(openFilePaths && openFilePaths[openFilePathIndex]) ? (
-                <Editor
-                    language={resolveExtensionToLanguage(openFilePaths[openFilePathIndex].path.split('.')[2])}
-                    value={openFilePaths[openFilePathIndex].contents}
-                    theme={'spooky'}
-                    beforeMount={handleMonacoWillMount}
-                    onMount={handleEditorMount}
-                    onChange={handleEditorChange}
-                    wrapperProps={{
-                        style: editorStyle
-                    }}
-                />) : (
+                codeEditorDiffMode ? (
+                    <DiffEditor
+                        language={resolveExtensionToLanguage(openFilePaths[openFilePathIndex].path.split('.')[2])}
+                        original={openFilePaths[openFilePathIndex].contents}
+                        modified={codeEditorDiffValue}
+                        theme={'spooky'}
+                        beforeMount={handleMonacoWillMount}
+                        onMount={handleEditorMount}
+                        wrapperProps={{
+                            style: editorStyle
+                        }}
+                    />
+                ) : (
+                    <Editor
+                        language={resolveExtensionToLanguage(openFilePaths[openFilePathIndex].path.split('.')[2])}
+                        value={openFilePaths[openFilePathIndex].contents}
+                        theme={'spooky'}
+                        beforeMount={handleMonacoWillMount}
+                        onMount={handleEditorMount}
+                        onChange={handleEditorChange}
+                        wrapperProps={{
+                            style: editorStyle
+                        }}
+                    />
+                )) : (
                 <div style={{
                     position: "absolute",
                     top: "50%",

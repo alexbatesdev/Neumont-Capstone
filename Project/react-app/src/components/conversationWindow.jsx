@@ -187,15 +187,18 @@ export const ConversationWindow = () => {
     }, [messageHistory]);
 
     const wrapperStyle = {
-        height: "100%",
         display: "flex",
         flexDirection: "column",
         justifyContent: "flex-start",
         alignItems: "flex-start",
         zIndex: 1,
         backgroundColor: theme.palette.background.paper,
-        width: "100%",
-        minWidth: "375px"
+        minWidth: "375px",
+        position: "absolute",
+        top: "0px",
+        left: "0px",
+        bottom: "0px",
+        right: "0px",
     }
 
     const topBannerStyle = {
@@ -313,7 +316,7 @@ export const ConversationWindow = () => {
             <Box sx={bottomBarStyle}>
                 <TextField
                     sx={{ flexGrow: 1 }}
-                    ultiline
+                    multiline
                     color="tertiary"
                     label="Message"
                     variant="outlined"

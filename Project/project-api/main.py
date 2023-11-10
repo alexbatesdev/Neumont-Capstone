@@ -341,6 +341,20 @@ async def get_projects(
     return projects
 
 
+# get projects by owner
+@app.get("/public/by_owner/{project_owner}")
+async def get_public_projects(project_owner: UUID):
+    projects = await ProjectDataDB.find({"project_owner": project_owner}).to_list()
+
+    for project in projects:
+        if project.is_private:
+            projects.remove(project)
+
+    verify_item_found(projects)
+
+    return projects
+
+
 # Get templates by owner
 @app.get("/by_owner/{project_owner}/templates")
 async def get_projects(

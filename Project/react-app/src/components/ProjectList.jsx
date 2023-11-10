@@ -16,40 +16,14 @@ function formatDate(datetimeString) {
     return formattedDate;
 }
 
-const ProjectList = () => {
+const ProjectList = ({ projects, setProjects, viewOnly = false }) => {
     const theme = useTheme();
     const [modalOpen, setModalOpen] = React.useState(false);
 
     const session = useSession()
     const router = useRouter()
 
-    const [projects, setProjects] = React.useState([])
 
-    useEffect(() => {
-        console.log(session)
-        if (session.data) {
-            const getProjects = async () => {
-                const response = await fetch(`${process.env.NEXT_PUBLIC_PROJECT_API_URL}/get_dashboard/${session.data.user.account_id}`, {
-                    method: 'GET',
-                    headers: {
-                        "Authorization": `Bearer ${session.data.token}`,
-                        "content-type": "application/json",
-                    }
-                })
-                if (response.status !== 200) {
-                    console.log(response)
-                    return
-                }
-                const data = await response.json()
-                console.log(data)
-                setProjects(data)
-            }
-            getProjects()
-        }
-        if (session.status === 'unauthenticated') {
-            router.push('/')
-        }
-    }, [session])
 
     const getBGColor = (project) => {
         // Private and template
@@ -90,17 +64,20 @@ const ProjectList = () => {
                         <TableCell color="primary" align="right">Last Updated</TableCell>
                         <TableCell color="primary" align="right">Created</TableCell>
                         <TableCell color="primary" align="center">
-                            <Button variant="contained" color="tertiary" onClick={() => setModalOpen(true)}>Create Project</Button>
-                            <Modal open={modalOpen} onClose={() => setModalOpen(false)}>
-                                <div style={{
-                                    position: "absolute",
-                                    top: "50%",
-                                    left: "50%",
-                                    transform: "translate(-50%, -50%)",
-                                }}>
-                                    <NewProjectForm setModalOpen={setModalOpen} />
-                                </div>
-                            </Modal>
+                            {!viewOnly && <>
+                                <Button variant="contained" color="tertiary" onClick={() => setModalOpen(true)}>Create Project</Button>
+                                <Modal open={modalOpen} onClose={() => setModalOpen(false)}>
+                                    <div style={{
+                                        position: "absolute",
+                                        top: "50%",
+                                        left: "50%",
+                                        transform: "translate(-50%, -50%)",
+                                    }}>
+                                        <NewProjectForm setModalOpen={setModalOpen} />
+                                    </div>
+                                </Modal>
+                            </>
+                            }
                         </TableCell>
                     </TableRow>
                 </TableHead>

@@ -8,6 +8,8 @@ import { useFiles, useWebContainer } from '@/contexts/editor-context';
 import FileStructureNode from './FileStructureNode';
 import LoadingDisplay from './LoadingDisplay';
 import AddButton from './AddButton';
+import { ResizableViewsVertical } from './ResizableViews';
+import DependencyDisplay from './DependencyDisplay';
 
 
 const FileTreeDisplay = () => {

@@ -73,17 +73,16 @@ function FileStructureNode({ currentNodeTree, path, depth = 0 }) {
     }
 
     const handleDirectoryUpdate = async (pathNotModules) => {
-        //console.log("Updating directory: " + pathNotModules)
+        // console.log("Updating directory: " + pathNotModules)
+
         let directoryContents = await fileOperations.getDirectory(webContainer, pathNotModules)
         if (directoryContents == null) directoryContents = {}
         console.log(directoryContents);
-        //console.log("Call set Directory from FileStructureNode")
+        console.log("Call set Directory from FileStructureNode")
         fileOperations.setDirectory(files, pathNotModules, directoryContents).then((value) => {
-            setFiles(value)
+            const newValue = { ...value }
+            setFiles(newValue)
         })
-
-
-        // Update the file tree for this directory
     }
 
     const handleDirectoryContextMenu = (event) => {
@@ -199,12 +198,12 @@ function FileStructureNode({ currentNodeTree, path, depth = 0 }) {
             let pathNotModules = ((path == "./node_modules") ? "./" : path)
             let watcher = null;
             if (webContainer) {
-                console.log("Watching " + pathNotModules)
+                // console.log("Watching " + pathNotModules)
                 watcher = webContainer.fs.watch(pathNotModules, (event, filename) => {
                     //if the filename starts with _tmp, ignore it
 
-                    console.log("File Changed")
-                    console.log(event, filename)
+                    // console.log("File Changed")
+                    // console.log(event, filename)
                     if (filename.substring(0, 4) == "_tmp") {
                         //console.log("Ignoring _tmp file")
                         return;
@@ -246,6 +245,11 @@ function FileStructureNode({ currentNodeTree, path, depth = 0 }) {
         fileKeys = fileKeys_folders.concat(fileKeys_files)
         // If the current node is a directory
         // Render a directory
+        if (path == "./node_modules") {
+            return null;
+        }
+
+
         return (
             <>
                 <style>
@@ -270,15 +274,15 @@ function FileStructureNode({ currentNodeTree, path, depth = 0 }) {
                     <Typography variant='body1' style={typographyStyle}>
                         {displayName}
                     </Typography>
-                    {path == "./node_modules" ? null : (
-                        <span style={{
-                            zIndex: "3",
-                            marginLeft: 'auto',
-                            marginRight: '5px',
-                        }}>
-                            <AddButton isHovered={isHovered} path={path} />
-                        </span>
-                    )}
+
+                    <span style={{
+                        zIndex: "3",
+                        marginLeft: 'auto',
+                        marginRight: '5px',
+                    }}>
+                        <AddButton isHovered={isHovered} path={path} />
+                    </span>
+
                 </div>
                 <Collapse
                     in={expandedPaths.includes(path)}
@@ -286,15 +290,17 @@ function FileStructureNode({ currentNodeTree, path, depth = 0 }) {
                     sx={{
                         width: '100%',
                     }}>
+                    {
+                        fileKeys.map((key, index) => {
+                            const node = {
+                                [key]: currentNodeTree.directory[key]
+                            }
+                            return (
+                                <FileStructureNode key={key + "-" + index} currentNodeTree={node} depth={depth + 1} path={path + "/" + key} />
+                            );
+                        })
 
-                    {fileKeys.map((key, index) => {
-                        const node = {
-                            [key]: currentNodeTree.directory[key]
-                        }
-                        return (
-                            <FileStructureNode key={key + "-" + index} currentNodeTree={node} depth={depth + 1} path={path + "/" + key} />
-                        );
-                    })}
+                    }
 
                 </Collapse>
             </>
@@ -350,16 +356,6 @@ function FileStructureNode({ currentNodeTree, path, depth = 0 }) {
                 <Typography variant='body1' style={typographyStyle}>
                     {displayName}
                 </Typography>
-            </div>
-        );
-    } else {
-        return (
-            <div>
-                <h1>Hello, World!</h1>
-                {/* You can access the theme object from Material-UI here */}
-                {/* You can also use your context here */}
-
-                {/* Alex Here: This bit of JSX should never be returned */}
             </div>
         );
     }

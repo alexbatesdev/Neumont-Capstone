@@ -11,11 +11,13 @@ import { ConversationWindow } from "./ConversationWindow";
 import FileTreeDisplay from "./FileTreeDisplay";
 import ProjectConfig from "./ProjectConfig";
 import { Scrollbar } from "react-scrollbars-custom";
+import DependencyDisplay from "./DependencyDisplay";
 
 export const SideBar = ({ sidebarWidth, setSidebarWidth }) => {
     const theme = useTheme();
     const [selectedTab, setSelectedTab] = React.useState(0);
     const [hoverIndex, setHoverIndex] = React.useState(null);
+    const [dependencyDisplayHeight, setDependencyDisplayHeight] = React.useState(200);
 
     const iconDivStyle = (isHovering = false) => {
         return {
@@ -211,8 +213,7 @@ export const SideBar = ({ sidebarWidth, setSidebarWidth }) => {
                 <Scrollbar
                     noScrollX
                     style={{
-                        flexGrow: 1,
-                        height: "100%"
+                        height: (selectedTab === 0 ? `calc(100% - ${dependencyDisplayHeight}px)` : "100%"),
                     }}>
 
                     <div
@@ -233,6 +234,7 @@ export const SideBar = ({ sidebarWidth, setSidebarWidth }) => {
                         </>) : null}
                     </div>
                 </Scrollbar>
+                {selectedTab === 0 && <DependencyDisplay height={dependencyDisplayHeight} setHeight={setDependencyDisplayHeight} />}
             </div>
             <div
                 onMouseDown={(event) => handleMouseDown(event)}

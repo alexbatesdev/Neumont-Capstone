@@ -72,11 +72,11 @@ const TopBar = ({ children, titleText, backLocation, alternate = false, showSign
                             hoverIndex={hoverIndex}
                             setHoverIndex={setHoverIndex}
                             Icon={AccountCircleIcon}
-                            text={"Sign in/up"}
+                            text={"Sign in"}
                             // Add a url parameter that will redirect to the current page after signing in 💭
                             onClick={() => { router.push('/access') }}
                             buttonIndex={-1}
-                            openWidth={60}
+                            openWidth={70}
                             inReverse
                             alwaysOpen
                         />

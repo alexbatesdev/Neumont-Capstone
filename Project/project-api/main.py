@@ -147,6 +147,7 @@ async def insert_new_project(
     body_dict = body.model_dump()
     body_dict["project_owner"] = user.account_id
     project = ProjectDataDB(**body_dict)
+    project.file_structure = Directory(react_file_template)
     try:
         async with httpx.AsyncClient() as client:
             await client.post(

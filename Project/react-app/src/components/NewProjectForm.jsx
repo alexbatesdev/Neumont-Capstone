@@ -30,6 +30,11 @@ const NewProjectForm = ({ setModalOpen }) => {
                     Authorization: `Bearer ${session.data.token}`,
                 },
             });
+            if (!response.ok) {
+                console.log(response);
+                setTemplates(null);
+                return;
+            }
             const data = await response.json();
             //console.log(data);
             setTemplates(data);
@@ -79,7 +84,7 @@ const NewProjectForm = ({ setModalOpen }) => {
             if (data.error) {
                 setSubmitError(data.error);
             } else {
-                router.push("/editor/" + data.project_id)
+                window.location.href = "/editor/" + data.project_id;
             }
         }
         ).catch((error) => {

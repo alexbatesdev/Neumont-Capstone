@@ -68,8 +68,30 @@ export default function Editor() {
         };
     }, []);
 
-    const forkProject = () => {
-        console.log("Forking project");
+    const forkProject = async () => {
+
+        const body = {
+            "project_name": `${projectData.project_name} (forked)`,
+            "project_description": projectData.project_description,
+            "is_private": projectData.is_private,
+            "is_template": projectData.is_template,
+            "creation_date": projectData.creation_date,
+        }
+
+        let response = await fetch(`${process.env.NEXT_PUBLIC_PROJECT_API_URL}/fork/${projectData.project_id}`, {
+            method: 'POST',
+            body: JSON.stringify(body),
+            headers: {
+                "Authorization": `Bearer ${session.data.token}`,
+                "content-type": "application/json",
+            }
+        })
+        if (response.status !== 200) {
+            console.log(response)
+            return
+        }
+        let data = await response.json()
+        window.location.href = `/editor/${data.project_id}`
     }
 
     const shareProject = () => {
@@ -82,6 +104,10 @@ export default function Editor() {
         method();
     }
 
+    useEffect(() => {
+        console.log(session)
+    }, [session])
+
     return (
         <div
             className='pageWrapper'
@@ -89,6 +115,7 @@ export default function Editor() {
             <TopBar
                 titleText={projectData.project_name}
                 backLocation={"/dashboard"}
+                showSignIn={session.status == "unauthenticated"}
             >
                 {hasEditAccess &&
                     <TopBarButton

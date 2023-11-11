@@ -10,7 +10,7 @@ import { Scrollbar } from 'react-scrollbars-custom';
 import { useEditorContext, useProjectData } from '@/contexts/editor-context';
 
 const CollaboratorsConfigWindow = ({ collaborators }) => {
-    console.log(collaborators)
+    //console.log(collaborators)
     const theme = useTheme();
     const router = useRouter();
     const { projectData, setProjectData } = useProjectData();
@@ -49,11 +49,11 @@ const CollaboratorsConfigWindow = ({ collaborators }) => {
             }
         })
         if (response.status !== 200) {
-            console.log(response)
+            //console.log(response)
             return
         }
         let data = await response.json()
-        console.log(data)
+        //console.log(data)
         setProfileSearchResults(data.results)
     }
 
@@ -84,7 +84,7 @@ const CollaboratorsConfigWindow = ({ collaborators }) => {
                     Collaborators
                 </Typography>
                 {hasEditAccess &&
-                    addCollaboratorExpanded ? <ExpandLessIcon onClick={handleOpenAddCollaboratorModal} sx={{ pr: "10px", height: "40px", width: "40px" }} /> : <Add onClick={handleOpenAddCollaboratorModal} sx={{ pr: "10px", height: "40px", width: "40px" }} />}
+                    (addCollaboratorExpanded ? <ExpandLessIcon onClick={handleOpenAddCollaboratorModal} sx={{ pr: "10px", height: "40px", width: "40px" }} /> : <Add onClick={handleOpenAddCollaboratorModal} sx={{ pr: "10px", height: "40px", width: "40px" }} />)}
                 {expanded ? <ExpandLessIcon onClick={handleExpand} sx={iconStyle} /> : <ExpandMoreIcon onClick={handleExpand} sx={iconStyle} />}
             </div>
             <Collapse in={addCollaboratorExpanded} sx={{
@@ -121,7 +121,7 @@ const CollaboratorsConfigWindow = ({ collaborators }) => {
                         </Button>
                     </div>
                     {profileSearchResults && profileSearchResults.map((profile) => {
-                        console.log(profile)
+                        //console.log(profile)
                         if (profile.account_id == projectData.project_owner) {
                             return
                         }

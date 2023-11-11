@@ -25,11 +25,11 @@ function ProfileMiniAccordion({ profile_id, showRemoveCollaborator = false, show
                 }
             })
             if (response.status !== 200) {
-                console.log(response)
+                //console.log(response)
                 return
             }
             let data = await response.json()
-            console.log(data)
+            //console.log(data)
             setProfile(data)
         }
         getProfile()
@@ -54,11 +54,11 @@ function ProfileMiniAccordion({ profile_id, showRemoveCollaborator = false, show
             },
         })
         if (response.status !== 200) {
-            console.log(response)
+            //console.log(response)
             return
         }
         let data = await response.json()
-        console.log(data)
+        //console.log(data)
         setProjectData((prevData) => {
             const output = {
                 ...prevData,
@@ -76,11 +76,11 @@ function ProfileMiniAccordion({ profile_id, showRemoveCollaborator = false, show
             },
         })
         if (response.status !== 200) {
-            console.log(response)
+            //console.log(response)
             return
         }
         let data = await response.json()
-        console.log(data)
+        //console.log(data)
         setProjectData((prevData) => {
             const output = {
                 ...prevData,

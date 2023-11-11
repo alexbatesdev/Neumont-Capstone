@@ -48,7 +48,7 @@ class ProjectCreate(BaseModel):
 
 class ProjectData(ProjectCreate):
     project_id: UUID = Field(default_factory=uuid4)
-    project_owner: UUID
+    project_owner: UUID | None
     last_modified_date: datetime = Field(default_factory=datetime.now)
     collaborators: list[UUID] = Field(default=[])
     # Filestructure needs to not be empty, at the very least it needs to have a package.json

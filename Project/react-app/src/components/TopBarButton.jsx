@@ -55,6 +55,7 @@ function TopBarButton({ Icon, text, onClick, buttonIndex, inReverse = false, alw
                                 top: "50%",
                                 transform: "translate(calc(-50% + 20%), -50%)",
                                 userSelect: "none",
+                                textWrap: "nowrap",
                             }}
                         >
                             {text}
@@ -90,6 +91,7 @@ function TopBarButton({ Icon, text, onClick, buttonIndex, inReverse = false, alw
                                 top: "50%",
                                 transform: "translate(calc(-50% - 20%), -50%)",
                                 userSelect: "none",
+                                textWrap: "nowrap",
                             }}
                         >
                             {text}

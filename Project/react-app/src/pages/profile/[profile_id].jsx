@@ -23,11 +23,11 @@ export default function Page() {
                 }
             })
             if (!response.ok) {
-                console.log(response)
+                //console.log(response)
                 return
             }
             let data = await response.json()
-            console.log(data)
+            //console.log(data)
             setProfileData(data)
             let response2 = await fetch(`${process.env.NEXT_PUBLIC_PROJECT_API_URL}/public/by_owner/${profile_id}`, {
                 method: 'GET',
@@ -36,14 +36,14 @@ export default function Page() {
                 }
             })
             if (!response2.ok) {
-                console.log(response2)
+                //console.log(response2)
                 return
             }
             let data2 = await response2.json()
-            console.log(data2)
+            //console.log(data2)
             setProjects(data2)
         }
-        console.log(profile_id)
+        //console.log(profile_id)
         if (profile_id) asyncFunc();
     }, [profile_id]);
 

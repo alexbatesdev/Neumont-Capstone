@@ -4,7 +4,7 @@ import { useTheme } from "@mui/material";
 
 import { WebContainer } from '@webcontainer/api';
 
-import { useFiles, useWebContainer } from "./editor-context";
+import { useEditorContext, useFiles, useProjectData, useWebContainer } from "./editor-context";
 
 const WebContainerContext = createContext({
     fitAddon: null,
@@ -23,6 +23,7 @@ export const WebContainerContextProvider = ({ children }) => {
 
     const { webContainer, setWebContainer } = useWebContainer();
     const { files } = useFiles();
+    const { projectData } = useProjectData();
     const [webContainerStatus, setWebContainerStatus] = useState(0);
     const [webContainerURL, setWebContainerURL] = useState(null);
 
@@ -59,6 +60,7 @@ export const WebContainerContextProvider = ({ children }) => {
                 setWebContainer,
                 setWebContainerStatus,
                 setWebContainerURL,
+                projectData["start_command"]
             );
 
             setFitAddon(fitAddon);
@@ -111,6 +113,7 @@ const setupWebContainer = async (
     setWebContainer,
     setWebContainerStatus,
     setWebContainerURL,
+    start_command_string
 ) => {
     console.log("Setting up web container")
     const webContainerInstance = await WebContainer.boot({
@@ -129,7 +132,7 @@ const setupWebContainer = async (
 
 
     setWebContainerStatus(2);
-    await runServer(webContainerInstance, setWebContainerURL);
+    await runServer(webContainerInstance, setWebContainerURL, start_command_string);
 
     await startShell(webContainerInstance, terminal_instance);
 }
@@ -148,9 +151,13 @@ const installDependencies = async (webContainerInstance, terminal_instance) => {
     return installProcess.exit;
 }
 
-const runServer = async (webContainerInstance, setWebContainerURL) => {
+const runServer = async (webContainerInstance, setWebContainerURL, start_command_string) => {
     console.log("Running server");
-    const startProcess = await webContainerInstance.spawn('npm', ['start']);
+    // Variable named start_command_string because it gets split at this step
+    const command = start_command_string.split(" ")[0];
+    const args = start_command_string.split(" ").slice(1);
+
+    const startProcess = await webContainerInstance.spawn(command, args);
     webContainerInstance.on('server-ready', (port, url) => {
         setWebContainerURL(url);
         console.log(url)

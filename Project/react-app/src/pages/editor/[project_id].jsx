@@ -53,6 +53,7 @@ export default function Page() {
                 return res.json()
             }).then(data => {
                 setProjData(data)
+                console.log(data)
                 setLoading(false)
                 if (
                     // IF session.data exists

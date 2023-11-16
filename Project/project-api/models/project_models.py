@@ -41,6 +41,7 @@ Directory.model_rebuild()
 class ProjectCreate(BaseModel):
     project_name: str = Field(default="New Project", max_length=100)
     project_description: str = Field(default="A new project", max_length=500)
+    start_command: str = Field(default="npm start")
     creation_date: datetime = Field(default_factory=datetime.now)
     is_private: bool = Field(default=False)
     is_template: bool = Field(default=False)

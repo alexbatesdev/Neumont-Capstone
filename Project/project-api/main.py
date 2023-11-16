@@ -308,12 +308,12 @@ async def get_all_projects(user: AccountWithToken = Depends(verify_token)):
 @app.get("/by_id/{project_id}")
 async def get_project(project_id: UUID):
     project = await ProjectDataDB.find_one({"project_id": project_id})
+    verify_item_found(project)
     if project.is_private:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="You do not have permission to view this project, or you used the wrong endpoint",
         )
-    verify_item_found(project)
     return project
 
 

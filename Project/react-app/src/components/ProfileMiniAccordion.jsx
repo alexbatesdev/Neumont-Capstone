@@ -13,7 +13,11 @@ function ProfileMiniAccordion({ profile_id, showRemoveCollaborator = false, show
     const theme = useTheme();
     const router = useRouter();
     const session = useSession();
-    const [profile, setProfile] = React.useState(null);
+    const [profile, setProfile] = React.useState({
+        account_id: "Loading...",
+        name: "Loading...",
+        email: "Loading...",
+    });
     const [expanded, setExpanded] = React.useState(false);
     const { projectData, setProjectData } = useProjectData();
 
@@ -33,7 +37,12 @@ function ProfileMiniAccordion({ profile_id, showRemoveCollaborator = false, show
             //console.log(data)
             setProfile(data)
         }
-        getProfile()
+        if (profile_id) getProfile()
+        else setProfile({
+            name: "Webbie",
+            email: "webbie@webbieURL.com",
+            account_id: "W3bb13-g0bbled1g00k-Uu1d-N0t-4ctu4lly-v4l1d"
+        })
     }, [profile_id])
 
     const iconStyle = {
@@ -145,10 +154,10 @@ function ProfileMiniAccordion({ profile_id, showRemoveCollaborator = false, show
                         padding: '0.25rem',
                         borderRadius: '3px',
                         fontSize: '0.95rem',
-                    }}>{profile ? profile.account_id : "Loading..."}</span>
+                    }}>{profile.account_id}</span>
                 </Typography>
                 <Typography variant="body1">
-                    Email: {profile ? profile.email : "Loading..."}
+                    Email: {profile.email}
                 </Typography>
                 <span style={{
                     width: "100%",

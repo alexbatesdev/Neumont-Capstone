@@ -5,6 +5,7 @@ import { Scrollbar } from 'react-scrollbars-custom';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import MiniFileTreeDisplay from './MiniFileTreeDisplay';
+import { toast } from 'react-toastify';
 
 const NewProjectForm = ({ setModalOpen }) => {
     const theme = useTheme();
@@ -13,13 +14,14 @@ const NewProjectForm = ({ setModalOpen }) => {
 
     const [projectName, setProjectName] = useState("");
     const [projectDescription, setProjectDescription] = useState("");
-    const [expandedDescription, setExpandedDescription] = useState(false);
+    const [advancedOptionsExpanded, setAdvancedOptionsExpanded] = useState(false);
     const [isPrivate, setIsPrivate] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [submitError, setSubmitError] = useState(null);
     const [hoveredIndex, setHoveredIndex] = useState(null);
     const [templates, setTemplates] = useState();
-    const [selectedTemplateIndex, setSelectedTemplateIndex] = useState(null);
+    const [selectedTemplateIndex, setSelectedTemplateIndex] = useState(-1);
+    const [serverStartCommand, setServerStartCommand] = useState("npm start");
 
     useEffect(() => {
         const getTemplates = async () => {
@@ -36,7 +38,7 @@ const NewProjectForm = ({ setModalOpen }) => {
                 return;
             }
             const data = await response.json();
-            //console.log(data);
+            // console.log(data);
             setTemplates(data);
         }
         getTemplates();
@@ -56,6 +58,18 @@ const NewProjectForm = ({ setModalOpen }) => {
     const handleCreateProject = (event) => {
         setIsSubmitting(true);
         setSubmitError(null);
+
+        //Make sure required fields are filled out
+        if (projectName == "") {
+            toast.error("Project name cannot be empty");
+            setIsSubmitting(false);
+            return;
+        }
+        if (serverStartCommand == "") {
+            toast.error("Server start command cannot be empty");
+            setIsSubmitting(false);
+            return;
+        }
 
         // let url = (process.env.NEXT_PUBLIC_PROJECT_API_URL + "/new") + ((selectedTemplateIndex == 0 || selectedTemplateIndex == null) ? "" : ("/template/" + templates[selectedTemplateIndex].toLowerCase()));
         // I wrote ^^this^^ line myself, then I asked GPT to make it more readable. 
@@ -82,14 +96,14 @@ const NewProjectForm = ({ setModalOpen }) => {
         }).then((data) => {
             //console.log(data);
             if (data.error) {
-                setSubmitError(data.error);
+                toast.error(data.error);
             } else {
                 window.location.href = "/editor/" + data.project_id;
             }
         }
         ).catch((error) => {
             //console.log(error);
-            setSubmitError(error);
+            toast.error("Error creating project");
         })
     }
 
@@ -134,15 +148,16 @@ const NewProjectForm = ({ setModalOpen }) => {
                     sx={{ height: "56px", width: "150px", alignSelf: "flex-end" }}
                     variant="outlined"
                     color="secondary"
-                    onClick={() => setExpandedDescription(!expandedDescription)}
+                    onClick={() => setAdvancedOptionsExpanded(!advancedOptionsExpanded)}
                 >
-                    {expandedDescription ? "Remove" : "Add"} Description
+                    {advancedOptionsExpanded ? "Close" : "Open"} Advanced
                 </Button>
             </Box>
-            <Collapse sx={{ width: "100%" }} in={expandedDescription}>
+            <Collapse sx={{ width: "100%", marginBottom: "1rem" }} in={advancedOptionsExpanded}>
                 <TextField
                     color='secondary'
-                    sx={{ width: "100%", marginTop: "1rem" }}
+                    fullWidth
+                    sx={{ marginTop: "1rem" }}
                     id="project-description"
                     label="Project Description"
                     variant="outlined"
@@ -151,70 +166,80 @@ const NewProjectForm = ({ setModalOpen }) => {
                     value={projectDescription}
                     onChange={(e) => setProjectDescription(e.target.value)}
                 />
+                <TextField
+                    fullWidth
+                    label="Server start command"
+                    color='secondary'
+                    sx={{ marginTop: "1rem" }}
+                    variant='outlined'
+                    value={serverStartCommand}
+                    onChange={(e) => setServerStartCommand(e.target.value)}
+                    required
+                />
             </Collapse>
-            <>
-                <Box sx={{
-                    display: "flex",
-                    flexDirection: "row",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    width: "100%",
-                    gap: "1rem",
-                    marginTop: "1rem",
-                    height: "250px",
-                    flexGrow: 1,
-                }}
-                >   {/* I want to change all scrollbars to use this 💭 */}
-                    <Scrollbar
-                        noScrollX
-                        style={{
-                            flexGrow: 1,
-                            border: "1px solid " + theme.palette.dragBar.default,
-                            borderRadius: "5px",
-                        }}>
-                        <Stack sx={{
-                            height: "calc(100% - 0.5rem)",
-                            width: "100%",
-                            paddingLeft: 0,
-                        }}>
-                            <Typography
-                                key={-1}
-                                variant="body2"
-                                onClick={() => { setSelectedTemplateIndex(-1) }}
-                                onMouseEnter={() => { setHoveredIndex(-1) }}
-                                onMouseLeave={() => { setHoveredIndex(null) }}
-                                sx={listItemStyle(-1)}
-                            >
-                                None
-                            </Typography>
-                            {
-                                templates && templates.map((template, i) => (
-                                    <Typography
-                                        key={i}
-                                        variant="body2"
-                                        onClick={() => { setSelectedTemplateIndex(i) }}
-                                        onMouseEnter={() => { setHoveredIndex(i) }}
-                                        onMouseLeave={() => { setHoveredIndex(null) }}
-                                        sx={listItemStyle(i)}
-                                    >
-                                        {template.project_name}
-                                    </Typography>
-                                ))
-                            }
-                        </Stack>
-                    </Scrollbar>
-                    <Box sx={{
-                        width: "calc(100% - 3rem)",
-                        backgroundColor: theme.palette.background.default,
-                        height: "100%",
-                        overflow: "auto",
-                        borderRadius: "5px",
+
+            <Box sx={{
+                display: "flex",
+                flexDirection: "row",
+                justifyContent: "space-between",
+                alignItems: "center",
+                width: "100%",
+                gap: "1rem",
+                marginTop: advancedOptionsExpanded ? "1rem" : "0rem",
+                height: "250px",
+                flexGrow: 1,
+            }}
+            >   {/* I want to change all scrollbars to use this 💭 */}
+                <Scrollbar
+                    noScrollX
+                    style={{
+                        flexGrow: 1,
                         border: "1px solid " + theme.palette.dragBar.default,
+                        borderRadius: "5px",
                     }}>
-                        <MiniFileTreeDisplay files={selectedTemplateIndex && (selectedTemplateIndex > 0) ? templates[selectedTemplateIndex].file_structure : null} />
-                    </Box>
+                    <Stack sx={{
+                        height: "calc(100% - 0.5rem)",
+                        width: "100%",
+                        paddingLeft: 0,
+                    }}>
+                        <Typography
+                            key={-1}
+                            variant="body2"
+                            onClick={() => { setSelectedTemplateIndex(-1) }}
+                            onMouseEnter={() => { setHoveredIndex(-1) }}
+                            onMouseLeave={() => { setHoveredIndex(null) }}
+                            sx={listItemStyle(-1)}
+                        >
+                            None
+                        </Typography>
+                        {
+                            templates && templates.map((template, i) => (
+                                <Typography
+                                    key={i}
+                                    variant="body2"
+                                    onClick={() => { setSelectedTemplateIndex(i) }}
+                                    onMouseEnter={() => { setHoveredIndex(i) }}
+                                    onMouseLeave={() => { setHoveredIndex(null) }}
+                                    sx={listItemStyle(i)}
+                                >
+                                    {template.project_name}
+                                </Typography>
+                            ))
+                        }
+                    </Stack>
+                </Scrollbar>
+                <Box sx={{
+                    width: "calc(100% - 3rem)",
+                    backgroundColor: theme.palette.background.default,
+                    height: "100%",
+                    overflow: "auto",
+                    borderRadius: "5px",
+                    border: "1px solid " + theme.palette.dragBar.default,
+                }}>
+                    <MiniFileTreeDisplay files={(selectedTemplateIndex >= 0) ? templates[selectedTemplateIndex].file_structure : null} />
                 </Box>
-            </>
+            </Box>
+
             <Box sx={{
                 display: "flex",
                 flexDirection: "row",

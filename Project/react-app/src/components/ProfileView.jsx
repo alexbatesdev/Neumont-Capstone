@@ -77,10 +77,6 @@ const ProfileView = () => {
         signOut()
     }
 
-    useEffect(() => {
-        toast.success("Profile updated")
-    })
-
     return (
         <Box sx={{
             display: 'flex',
@@ -112,30 +108,11 @@ const ProfileView = () => {
                     alignItems: 'center',
                     gap: '1rem',
                 }}>
-                    <div style={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        justifyContent: 'flex-start',
-                        alignItems: 'flex-start',
-                        gap: '1rem',
-                    }}>
-                        <Typography variant='h6'>Name: </Typography>
-                        <TextField variant='outlined' value={newName} disabled={!editMode} onChange={(event) => setNewName(event.target.value)} />
-                    </div>
-                    <div style={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        justifyContent: 'flex-start',
-                        alignItems: 'flex-start',
-                        gap: '1rem',
-                    }}>
-                        <Typography variant='h6'>Email: </Typography>
-                        <TextField variant='outlined' value={newEmail} disabled={!editMode} onChange={(event) => setNewEmail(event.target.value)} />
-                    </div>
-
+                    <TextField variant='outlined' value={newName} disabled={!editMode} onChange={(event) => setNewName(event.target.value)} label="Name" />
+                    <TextField variant='outlined' value={newEmail} disabled={!editMode} onChange={(event) => setNewEmail(event.target.value)} label="Email" />
                 </div>
-                <Typography variant='h6'>API Key: </Typography>
-                <TextField variant='outlined' fullWidth value={newAPIKey} disabled={!editMode} onChange={(event) => setNewAPIKey(event.target.value)} />
+                {/* <Typography variant='h6'>API Key: </Typography> */}
+                <TextField variant='outlined' fullWidth value={newAPIKey} disabled={!editMode} onChange={(event) => setNewAPIKey(event.target.value)} label="OpenAI api key (Needed to access GPT 4)" />
                 <div style={{
                     display: 'flex',
                     flexDirection: 'row',

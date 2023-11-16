@@ -77,6 +77,7 @@ const ProjectConfig = () => {
 
     const [newIsTemplate, setNewIsTemplate] = React.useState(projectData.is_template);
     const [newIsPrivate, setNewIsPrivate] = React.useState(projectData.is_private);
+    const [newStartCommand, setNewStartCommand] = React.useState(projectData.start_command);
 
     //Make API call to get project owner data and collaborators data
     //No need to get project owner data if project owner is the current user
@@ -94,6 +95,7 @@ const ProjectConfig = () => {
                 project_description: newProjectDescription,
                 is_template: newIsTemplate,
                 is_private: newIsPrivate,
+                start_command: newStartCommand,
             }
             //console.log(output);
             saveData(output);
@@ -137,9 +139,8 @@ const ProjectConfig = () => {
 
                 <TextField
                     color="secondary"
-                    id="outlined-basic"
                     label={possiblyEmptyValue(projectData.project_name, "Untitled Project")}
-                    variant="filled"
+                    variant="outlined"
                     size='small'
                     value={newProjectName}
                     sx={formStyle}
@@ -151,9 +152,8 @@ const ProjectConfig = () => {
                 </Typography>
                 <TextField
                     color="secondary"
-                    id="outlined-basic"
                     label={possiblyEmptyValue(projectData.project_description, "No description")}
-                    variant="filled"
+                    variant="outlined"
                     size='small'
                     multiline
                     rows={3}
@@ -162,8 +162,19 @@ const ProjectConfig = () => {
                     onChange={(e) => { setNewProjectDescription(e.target.value) }}
                     disabled={!hasEditAccess}
                 />
-
-
+                <Typography variant='subtitle2'>
+                    Start Command:
+                </Typography>
+                <TextField
+                    color="secondary"
+                    label={projectData.start_command}
+                    variant="outlined"
+                    size='small'
+                    value={newStartCommand}
+                    sx={formStyle}
+                    onChange={(e) => { setNewStartCommand(e.target.value) }}
+                    disabled={!hasEditAccess}
+                />
                 <Typography variant='subtitle2'>
                     Project Owner:
                 </Typography>
@@ -219,7 +230,7 @@ const ProjectConfig = () => {
                         </Stack>
                     </div>
                 </Stack>
-                <Button variant="outlined" color="primary" sx={{ borderRadius: "5px" }} onClick={handleSaveChanges} disabled={!hasEditAccess}>
+                <Button variant="outlined" color="primary" sx={{ borderRadius: "5px", marginBottom: "1rem" }} onClick={handleSaveChanges} disabled={!hasEditAccess}>
                     Save Changes
                 </Button>
             </div>

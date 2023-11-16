@@ -11,8 +11,8 @@ export const AutoSignOutContextProvider = ({ children }) => {
     const router = useRouter();
 
     useEffect(() => {
+        console.log(session)
         if (session.data) {
-            // console.log(session.data)
 
             function JWTExpirationDate(token) {
                 if (!token) return null;

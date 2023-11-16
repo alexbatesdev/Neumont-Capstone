@@ -249,7 +249,7 @@ async def new_user(Account: AccountIn):
     )
     await newAccount.insert()
 
-    # Send verification email 💭
+    # Generate JWT for new user
 
     return {"success": True}
 

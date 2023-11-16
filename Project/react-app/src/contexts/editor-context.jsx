@@ -4,11 +4,14 @@ import reactFileTemplate from '@/thatOneStuffFolderUsuallyCalledUtils/reactFileT
 
 import fileOperations from "@/thatOneStuffFolderUsuallyCalledUtils/fileOperations";
 import { useSession } from "next-auth/react";
+import { toast } from "react-toastify";
 
 export const EditorContext = createContext({
     //GPT Messages
     messageHistory: [],
     setMessageHistory: () => { },
+    conversationThreadID: null,
+    setConversationThreadID: () => { },
     //Project Files
     files: {},
     setFiles: () => { },
@@ -57,8 +60,8 @@ export const EditorContextProvider = ({
 }) => {
     //console.log(project_in)
     const session = useSession();
-    // Don't forget to remove sample message 💭
     const [messageHistory, setMessageHistory] = useState([]);
+    const [conversationThreadID, setConversationThreadID] = useState(null);
 
 
     const [files, setFiles] = useState(project_in.file_structure);
@@ -115,8 +118,31 @@ export const EditorContextProvider = ({
             },
             body: JSON.stringify(body)
         })
+        if (response.status !== 200) {
+            console.log(response)
+            toast.error("Error saving project. Your session may have expired.")
+            return
+        }
         setIsProjectSaved(true);
+        toast.success("Project saved")
     }
+
+    useEffect(() => {
+        const api_key = session.data == "authenticated" ? (session.data.user.openai_api_key != null ? session.data.user.openai_api_key : "None") : "None";
+        const url = `${process.env.NEXT_PUBLIC_GPT_INTERFACE_API_URL}/new/thread/${api_key}`
+        const response = fetch(url, {
+            method: 'POST',
+        }).then(res => {
+            console.log(res)
+            return res.json()
+        }).then(data => {
+            console.log(data)
+            setConversationThreadID(data)
+        }).catch(err => {
+            console.log(err)
+            toast.error("Error creating conversation thread. Refresh the page to try again.")
+        })
+    }, [])
 
 
     return (
@@ -124,6 +150,8 @@ export const EditorContextProvider = ({
             value={{
                 messageHistory,
                 setMessageHistory,
+                conversationThreadID,
+                setConversationThreadID,
                 files,
                 setFiles,
                 openFilePaths,
@@ -179,8 +207,8 @@ export const useEditorContext = () => {
 // Specific Custom hooks --------------------------------------------------------
 
 export const useMessageHistory = () => {
-    const { messageHistory, setMessageHistory } = useEditorContext();
-    return { messageHistory, setMessageHistory };
+    const { messageHistory, setMessageHistory, conversationThreadID, setConversationThreadID } = useEditorContext();
+    return { messageHistory, setMessageHistory, conversationThreadID, setConversationThreadID };
 }
 
 export const useFiles = () => {

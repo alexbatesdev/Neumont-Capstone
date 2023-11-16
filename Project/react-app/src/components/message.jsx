@@ -40,9 +40,9 @@ export const Message = ({ message, index }) => {
     const theme = useTheme();
 
     let color = "white";
-    if (message.model == "gpt-4-0613") {
+    if (message.model == "gpt-4-1106-preview") {
         color = "#8d7eff";
-    } else if (message.model == "gpt-3.5-turbo-0613") {
+    } else if (message.model == "gpt-3.5-turbo-1106") {
         color = "#45b288";
     }
 

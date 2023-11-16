@@ -8,6 +8,7 @@ import NewProjectForm from "./NewProjectForm";
 import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
 import ShareIcon from '@mui/icons-material/Share';
+import { toast } from "react-toastify";
 
 
 
@@ -102,7 +103,10 @@ const ProjectList = ({ projects, setProjects, viewOnly = false }) => {
                             <TableCell align="right" sx={{ display: "flex", flexDirection: "row", justifyContent: "space-evenly", alignItems: "center" }}>
                                 <Button variant="contained" color="primary" sx={{ color: theme.palette.text.primary }} onClick={() => window.location.href = `/editor/${project.project_id}`}>Open</Button>
                                 <ShareIcon
-                                    onClick={() => navigator.clipboard.writeText(`${process.env.NEXT_PUBLIC_FRONTEND_BASE_URL}/editor/${project.project_id}`)}
+                                    onClick={() => {
+                                        navigator.clipboard.writeText(`${process.env.NEXT_PUBLIC_FRONTEND_BASE_URL}/editor/${project.project_id}`)
+                                        toast.success("Copied link to clipboard")
+                                    }}
                                     sx={{
                                         "&:hover": {
                                             color: theme.palette.primary.main,

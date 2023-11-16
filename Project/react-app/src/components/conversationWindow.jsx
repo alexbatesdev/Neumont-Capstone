@@ -8,6 +8,8 @@ import ArrowRightIcon from '@mui/icons-material/ArrowRight';
 import { useMessageHistory } from "@/contexts/editor-context";
 import { Message } from "./Message";
 import { ThemeProvider } from "@emotion/react";
+import { useSession } from "next-auth/react";
+import { toast } from "react-toastify";
 
 const trimMessages = (messages) => {
     let newMessages = [];
@@ -40,12 +42,13 @@ const modifyThemeColors = (theme, newPrimaryColor, newSecondaryColor) => {
 
 
 export const ConversationWindow = () => {
-    const { messageHistory, setMessageHistory } = useMessageHistory();
+    const { messageHistory, setMessageHistory, conversationThreadID, setConversationThreadID } = useMessageHistory();
     const [messageField, setMessageField] = useState("");
     const messageBoxRef = useRef(null);
     const theme = useTheme();
     const [isLoading, setIsLoading] = useState(false);
     const [modelIsGPT4, setModelIsGPT4] = useState(false); //True if GPT-4, False if GPT-3.5 Turbo
+    const session = useSession();
 
     const handleMessageFieldChange = (event) => {
         setMessageField(event.target.value);
@@ -53,6 +56,7 @@ export const ConversationWindow = () => {
 
     const handleKeyDown = (event) => {
         if (event.key === "Enter" && !event.shiftKey) {
+            event.preventDefault();
             handleSendMessage();
         }
     };
@@ -61,19 +65,24 @@ export const ConversationWindow = () => {
         if (messageField.length == 0) {
             return;
         }
-        const message = {
+
+        const newMessage = {
             role: "user",
-            content: messageField,
-            model: modelIsGPT4 ? "gpt-4-0613" : "gpt-3.5-turbo-0613"
-        };
+            content: messageField
+        }
+
+        const newMessageWithModel = {
+            ...newMessage,
+            model: modelIsGPT4 ? "gpt-4-1106-preview" : "gpt-3.5-turbo-1106"
+        }
 
         // We store the new message state in a variable so we can immediately use the new state
         // Even though the new state is not yet set (setMessages is async)
         let newMessages;
         // Update messages state (should automatically cause rerender and visual update)
         setMessageHistory((prevMessages) => {
-            newMessages = [...prevMessages, message];
-            return [...prevMessages, message]
+            newMessages = [...prevMessages, newMessageWithModel];
+            return [...prevMessages, newMessageWithModel]
         });
 
         // Clear message field
@@ -113,27 +122,29 @@ export const ConversationWindow = () => {
                 // But I think it should probably be a filename
                 // And then the backend can read the file and give it to the model
                 return;
-            } else if (command == "create") {
-                message.content = command_prompt;
-                function_call = "generate_component_code";
             }
         }
-        // return; //💭🐢 Don't forget to remove this return statement!! 💭🐢
+
+        // This method is absolutely horrendous
+        // In another life I would figure out a solution possibly using enums
+        // Anything to avoid editing strings all over the program
+        const model = modelIsGPT4 ? "gpt-4-1106-preview" : "gpt-3.5-turbo-1106"
+
 
         const body = {
-            messages: trimMessages(newMessages),
-            preImportCode: [],
+            message: newMessage,
             componentToRefactor: "",
-            nodePackages: [],
-            model: modelIsGPT4 ? "gpt-4-0613" : "gpt-3.5-turbo-0613",
+            dependencies: [],
+            model: model,
             function: function_call,
+            api_key: session.data == "authenticated" ? session.data.user.openai_api_key : JSON.stringify("")
         }
         //console.log(body);
         //console.log(JSON.stringify(body));
         setIsLoading(true);
 
         // Send message to backend
-        const URL = "http://localhost:8000/prompt"
+        const URL = "http://localhost:8000/prompt/" + conversationThreadID
         fetch(URL, {
             method: "POST",
             body: JSON.stringify(body),
@@ -143,13 +154,13 @@ export const ConversationWindow = () => {
         }).then((response) => {
             return response.json();
         }).then((data) => {
-            //console.log(data);
-            let content = data.agentResponse;
+            console.log(data);
+            let content = data.data[0].content[0].text.value;
 
             const message_back = {
                 role: "assistant",
                 content: content,
-                model: data.agentModel,
+                model: model,
             };
 
             // Update messages state (should automatically cause rerender and visual update)
@@ -159,12 +170,12 @@ export const ConversationWindow = () => {
             setIsLoading(false);
         }).catch((error) => {
 
-            //console.log(error);
+            console.log(error);
 
             const message_back = {
                 role: "assistant",
                 content: "An error occured, please try again.",
-                model: body.model,
+                model: model,
             };
 
             setMessageHistory((prevMessages) => {
@@ -297,8 +308,13 @@ export const ConversationWindow = () => {
                 <ThemeProvider theme={() => modifyThemeColors(theme, "#45b288", "#8d7eff")} >
                     <Button
                         variant="contained"
-                        // color={modelIsGPT4 ? "secondary" : "primary"}
-                        onClick={() => { setModelIsGPT4(!modelIsGPT4) }}
+                        onClick={() => {
+                            if (session.status == "authenticated" && session.data.user.openai_api_key != null) {
+                                setModelIsGPT4(!modelIsGPT4)
+                            } else {
+                                toast.info("Add an OpenAI API key in your profile to use GPT-4")
+                            }
+                        }}
                         sx={modelToggleStyle}>
                         {modelIsGPT4 ? "GPT-4" : "GPT-3.5"}
                     </Button>

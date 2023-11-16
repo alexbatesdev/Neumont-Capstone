@@ -209,11 +209,11 @@ export default function Home() {
         </Typography>
         <Image src="/spider.png" width={150} height={150} alt='spider logo, but not like spiderman' />
         <Typography variant="h4">Webbie the web <span style={{ color: theme.palette.primary.main }}>IDE</span></Typography>
-        <Link href="/editor/c67e2bf3-0c62-41e2-a0d7-df1a4f06bb0d">
-          <Button variant="contained" color="primary" sx={{ borderRadius: "5px" }}>
-            Try it out!
-          </Button>
-        </Link>
+
+        <Button variant="contained" color="primary" sx={{ borderRadius: "5px" }} onClick={() => window.location.href = "/editor/c67e2bf3-0c62-41e2-a0d7-df1a4f06bb0d"}>
+          Try it out!
+        </Button>
+
         {session.data &&
           <Link href="/dashboard">
             <Button variant="contained" color="primary" sx={{ borderRadius: "5px" }}>Dashboard</Button>

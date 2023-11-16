@@ -7,6 +7,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { AccountCircle } from '@mui/icons-material';
 import { useProjectData } from '@/contexts/editor-context';
 import { useSession } from 'next-auth/react';
+import { toast } from 'react-toastify';
 
 function ProfileMiniAccordion({ profile_id, showRemoveCollaborator = false, showAddCollaborator = false }) {
     const theme = useTheme();
@@ -136,6 +137,7 @@ function ProfileMiniAccordion({ profile_id, showRemoveCollaborator = false, show
             >
                 <Typography variant="body1" onClick={() => {
                     navigator.clipboard.writeText(profile_id)
+                    toast.success("Copied ID to clipboard")
                 }}>
                     ID: <span style={{
                         fontFamily: 'monospace',

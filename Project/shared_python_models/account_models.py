@@ -25,6 +25,8 @@ class AccountAuth(BaseModel):
     email: EmailStr
     password: str
 
+    # In hindsight I think this is entirely unnecessary because I have frontend validation
+    # and it's inconsistent because I don't have validation for anything else
     # GPT snippet
     @validator("password")
     def validate_password(cls, value):
@@ -33,6 +35,11 @@ class AccountAuth(BaseModel):
         return value
 
     # GPT snippet end
+
+
+class AccountNameEmailOnly(BaseModel):
+    name: str
+    email: EmailStr
 
 
 class AccountIn(AccountAuth):
@@ -49,7 +56,7 @@ class AccountOut(BaseModel):
     projects_shared_with_me: Optional[List[UUID]] = Field([])
     my_templates: Optional[List[UUID]] = Field([])
     isAdmin: Optional[bool] = Field(False)
-    emailVerified: Optional[bool] = Field(False)
+    openai_api_key: Optional[str] = Field(None)
 
 
 class Account(AccountOut):

@@ -23,7 +23,7 @@ export const authOptions = {
             },
             async authorize(credentials) {
                 console.log("Credentials Authorize")
-                // console.log(credentials)
+                console.log(credentials)
                 // Hit Endpoint here
                 if (!credentials || !credentials.email || !credentials.password) return null
 
@@ -64,8 +64,8 @@ export const authOptions = {
                     }).then(res => res.json()).then(data => {
                         user = data.user
                     })
-                    // console.log("ASwSwadasdasdSSDAHSDHASHDASHHH")
-                    // console.log(user)
+                    console.log("ASwSwadasdasdSSDAHSDHASHDASHHH")
+                    console.log(user)
 
                     if (!user) {
                         console.log("Failed to login: no user")

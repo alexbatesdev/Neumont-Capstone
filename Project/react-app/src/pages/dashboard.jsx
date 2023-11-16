@@ -80,7 +80,6 @@ export default function Home() {
 
                 <TopBar
                     alternate
-                    showAccount={false}
                     titleText={"Dashboard"}
                     backLocation={"/"}
                 >

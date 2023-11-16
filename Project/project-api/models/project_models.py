@@ -48,7 +48,14 @@ class ProjectCreate(BaseModel):
 
 class ProjectData(ProjectCreate):
     project_id: UUID = Field(default_factory=uuid4)
-    project_owner: UUID | None
+    project_owner: UUID | None = Field(
+        default=None
+    )  # Type | None is the same as Optional[Type]
+    # I think it's interesting how the context of a situation can change the way we think about doing the same thing
+    # When defining my models I think "Oh this field is optional, so I'll make it Optional[Type]"
+    # But I just barely thought "This field can be a UUID or it can be None, so I'll make it UUID | None"
+    # I know consistency is important, but I think it's interesting how the context of a situation can change the way we think about doing the same thing
+    # I'm leaving this here because I think it's interesting
     last_modified_date: datetime = Field(default_factory=datetime.now)
     collaborators: list[UUID] = Field(default=[])
     # Filestructure needs to not be empty, at the very least it needs to have a package.json

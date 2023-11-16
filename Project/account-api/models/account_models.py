@@ -56,7 +56,6 @@ class AccountOut(BaseModel):
     projects_shared_with_me: Optional[List[UUID]] = Field([])
     my_templates: Optional[List[UUID]] = Field([])
     isAdmin: Optional[bool] = Field(False)
-    emailVerified: Optional[bool] = Field(False)
 
 
 class Account(AccountOut):

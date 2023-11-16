@@ -15,6 +15,15 @@ import RenameNodePrompt from './RenameNodePrompt';
 // This is an assistant-generated boilerplate for a React functional component.
 // You can customize this component by adding your own props, state, and logic.
 
+const getOpenFilePathIndex = (openFilePaths, filePath) => {
+    for (let index = 0; index < openFilePaths.length; index++) {
+        if (openFilePaths[index].path == filePath) {
+            return index
+        }
+    }
+    return -1
+}
+
 function FileStructureNode({ currentNodeTree, path, depth = 0 }) {
     const theme = useTheme(); // Use the Material-UI useTheme hook
     const [isHovered, setIsHovered] = useState(false);
@@ -77,8 +86,8 @@ function FileStructureNode({ currentNodeTree, path, depth = 0 }) {
 
         let directoryContents = await fileOperations.getDirectory(webContainer, pathNotModules)
         if (directoryContents == null) directoryContents = {}
-        console.log(directoryContents);
-        console.log("Call set Directory from FileStructureNode")
+        // console.log(directoryContents);
+        // console.log("Call set Directory from FileStructureNode")
         fileOperations.setDirectory(files, pathNotModules, directoryContents).then((value) => {
             const newValue = { ...value }
             setFiles(newValue)
@@ -335,9 +344,9 @@ function FileStructureNode({ currentNodeTree, path, depth = 0 }) {
                             return newOpenFilePaths
                         })
                     }
-
-                    if (openFilePaths.includes(path)) {
-                        setOpenFilePathIndex(openFilePaths.indexOf(path))
+                    const tempOpenFilePathIndex = getOpenFilePathIndex(openFilePaths, path)
+                    if (tempOpenFilePathIndex != -1) {
+                        setOpenFilePathIndex(tempOpenFilePathIndex)
                         return;
                     }
 

@@ -6,6 +6,8 @@ import { Card, Typography, Button, TextField, Box } from "@mui/material";
 import { useTheme } from '@mui/material/styles';
 import { useRouter } from "next/router";
 import { ArrowRight } from "@mui/icons-material";
+import { signIn } from "next-auth/react";
+import { toast } from "react-toastify";
 
 
 export const SignUpCard = ({ }) => {
@@ -52,11 +54,25 @@ export const SignUpCard = ({ }) => {
                 name,
             })
         }).then(res => res.json()).then(data => {
-            //console.log(data);
+
             if (data.detail != null) {
                 setError(data.detail);
+                toast.error("Error creating account")
             } else {
                 setRegisterSuccess(true);
+                toast.success("Account created successfully! Logging in...");
+                signIn("credentials", {
+                    redirect: false,
+                    email: email,
+                    password: password,
+                }).then(res => {
+                    if (res.error) {
+                        setRegisterSuccess(false);
+                        toast.error("Error logging in");
+                    } else {
+                        router.push("/dashboard");
+                    }
+                });
             }
         })
     }
@@ -125,11 +141,6 @@ export const SignUpCard = ({ }) => {
             >
                 Sign Up
             </Button>
-            {registerSuccess && (
-                <Typography variant="body1" sx={{ marginTop: "1rem" }}>
-                    Sign up successful! Log in over there 👉
-                </Typography>
-            )}
         </Box>
     </>)
 }

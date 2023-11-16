@@ -5,6 +5,7 @@ import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import Editor from '@/ClientSidePages/Editor';
 import { EditorContextProvider } from '@/contexts/editor-context';
+import { toast } from 'react-toastify';
 
 // I cannot tell if the dynamic import helps or hinders the experience
 
@@ -68,11 +69,12 @@ export default function Page() {
                     setUserHasEditAccess(false);
                 } else if (session.status == "unauthenticated" || !session.data) {
                     console.log("User does not have edit access")
+                    toast.info("Sign in to edit or fork this project")
                     setUserHasEditAccess(false);
                 }
             }).catch(err => {
                 console.log(err)
-                alert("oops")
+                toast.error("Error loading project. Refresh the page to try again.")
             })
 
         }

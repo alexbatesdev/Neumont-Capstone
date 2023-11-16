@@ -32,7 +32,7 @@ const fileTraverse = (directory, splitPath, fullTree, actionMethod, parameters =
         // //console.log("directory: ", directory)
         //console.log("Action method Path: ", path)
         let output = actionMethod(directory, path, ...parameters);
-        console.log("Output: ", output)
+        // console.log("Output: ", output)
         if (output != undefined) {
             return output;
         } else {

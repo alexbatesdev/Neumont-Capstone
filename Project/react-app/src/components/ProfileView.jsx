@@ -3,6 +3,7 @@ import { Box, Button, Card, Modal, TextField, Typography } from '@mui/material';
 import { signOut, useSession } from 'next-auth/react';
 import React, { useEffect } from 'react';
 import VerifiedUserIcon from '@mui/icons-material/VerifiedUser';
+import { toast } from 'react-toastify';
 
 const ProfileView = () => {
     const theme = useTheme();
@@ -12,6 +13,7 @@ const ProfileView = () => {
     const [newEmail, setNewEmail] = React.useState('');
     const [editMode, setEditMode] = React.useState(false);
     const [modalOpen, setModalOpen] = React.useState(false);
+    const [newAPIKey, setNewAPIKey] = React.useState('');
 
     useEffect(() => {
         const getProfile = async () => {
@@ -23,6 +25,7 @@ const ProfileView = () => {
             })
             if (response.status !== 200) {
                 console.log(response)
+                toast.error("Error getting profile. Try refreshing the page.")
                 return
             }
             let data = await response.json()
@@ -30,6 +33,7 @@ const ProfileView = () => {
             setProfile(data.user)
             setNewName(data.user.name)
             setNewEmail(data.user.email)
+            setNewAPIKey(data.user.openai_api_key)
         }
         if (session.data) getProfile()
     }, [session])
@@ -42,6 +46,12 @@ const ProfileView = () => {
                 "Content-Type": "application/json"
             },
             body: JSON.stringify({ name: newName, email: newEmail })
+        }).then(res => {
+            if (res.status !== 200) {
+                toast.error("Error updating profile")
+            } else {
+                toast.success("Profile updated")
+            }
         })
         setEditMode(false)
     }
@@ -50,6 +60,7 @@ const ProfileView = () => {
         setEditMode(false)
         setNewName(profile.name)
         setNewEmail(profile.email)
+        setNewAPIKey(profile.openai_api_key)
     }
 
     const handleDelete = async () => {
@@ -59,9 +70,16 @@ const ProfileView = () => {
                 "Authorization": `Bearer ${session.data.token}`,
                 "Content-Type": "application/json"
             }
+        }).catch(err => {
+            console.log(err)
+            toast.error("Error deleting account. Contact support or try again.")
         })
         signOut()
     }
+
+    useEffect(() => {
+        toast.success("Profile updated")
+    })
 
     return (
         <Box sx={{
@@ -77,7 +95,10 @@ const ProfileView = () => {
         }}>
             <Typography variant="h4">Profile</Typography>
             {profile && <>
-                <Typography onClick={() => navigator.clipboard.writeText(profile.account_id)} variant='h6'>ID: <span style={{
+                <Typography onClick={() => {
+                    navigator.clipboard.writeText(profile.account_id)
+                    toast.success("Copied ID to clipboard")
+                }} variant='h6'>ID: <span style={{
                     fontFamily: 'monospace',
                     backgroundColor: theme.palette.background.default,
                     padding: '0.25rem',
@@ -113,6 +134,8 @@ const ProfileView = () => {
                     </div>
 
                 </div>
+                <Typography variant='h6'>API Key: </Typography>
+                <TextField variant='outlined' fullWidth value={newAPIKey} disabled={!editMode} onChange={(event) => setNewAPIKey(event.target.value)} />
                 <div style={{
                     display: 'flex',
                     flexDirection: 'row',

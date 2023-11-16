@@ -20,6 +20,7 @@ import TopBarButton from '@/components/TopBarButton';
 import SaveIcon from '@mui/icons-material/Save';
 import AltRouteIcon from '@mui/icons-material/AltRoute';
 import ShareIcon from '@mui/icons-material/Share';
+import { toast } from 'react-toastify';
 
 
 
@@ -96,6 +97,7 @@ export default function Editor() {
 
     const shareProject = () => {
         navigator.clipboard.writeText(window.location.href);
+        toast.success("Copied link to clipboard")
     }
 
     const handleContextMenuClick = (event, method) => {

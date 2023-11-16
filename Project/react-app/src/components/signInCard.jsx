@@ -23,11 +23,14 @@ export const SignInCard = ({ }) => {
     }
 
     const handleSignIn = async () => {
+        console.log("signing in")
+        setError(false);
         const signInResponse = await signIn("credentials", {
             email: email,
             password: password,
             redirect: false,
         }).then(res => {
+            console.log(res)
             if (res.error) {
                 setError(true);
             } else {
@@ -102,11 +105,11 @@ export const SignInCard = ({ }) => {
             >
                 Sign In
             </Button>
-            <Divider sx={{ width: "80%" }}>
+            {/* <Divider sx={{ width: "80%" }}>
                 <Typography variant="body1" sx={{ padding: "0 1rem" }}>or OAuth</Typography>
             </Divider>
             <GoogleLoginButton style={{ width: "70%" }} onClick={() => handleOAuthSignIn("google")} />
-            <GithubLoginButton style={{ width: "70%" }} onClick={() => handleOAuthSignIn("github")} />
+            <GithubLoginButton style={{ width: "70%" }} onClick={() => handleOAuthSignIn("github")} /> */}
             {error && <Typography variant="body1" color={"error"}>Invalid login credentials</Typography>}
         </Box>
     </>)

@@ -3,6 +3,7 @@ import React from "react";
 import { Typography } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { useEditorContext } from "@/contexts/editor-context";
+import { toast } from "react-toastify";
 
 export const CodeSnippetButtonBar = ({ segment }) => {
     const { codeEditorDiffMode, setCodeEditorDiffMode, codeEditorDiffValue, setCodeEditorDiffValue } = useEditorContext();
@@ -74,11 +75,11 @@ export const CodeSnippetButtonBar = ({ segment }) => {
         >
             Diff
         </Typography>
-        {/* Add React-Toasts to notify about saving and copying and more 💭 */}
         <Typography
             variant="body1"
             onClick={() => {
                 navigator.clipboard.writeText(segment.content);
+                toast.success("Copied code to clipboard");
             }}
             onMouseOver={(event) => {
                 event.target.style.backgroundColor = theme.palette.utilBar.icons;

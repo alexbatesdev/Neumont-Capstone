@@ -5,6 +5,7 @@ import reactFileTemplate from '@/thatOneStuffFolderUsuallyCalledUtils/reactFileT
 import fileOperations from "@/thatOneStuffFolderUsuallyCalledUtils/fileOperations";
 import { useSession } from "next-auth/react";
 import { toast } from "react-toastify";
+import JSZip from "jszip";
 
 export const EditorContext = createContext({
     //GPT Messages
@@ -38,6 +39,8 @@ export const EditorContext = createContext({
     setProjectData: () => { },
     saveProject: () => { },
     //Save might be something a lot of components want to do
+    handleDownloadProject: () => { },
+    //This^ logic is better off here instead of in the sidebar
     isProjectSaved: true,
     setIsProjectSaved: () => { },
     hasEditAccess: false,
@@ -144,6 +147,60 @@ export const EditorContextProvider = ({
         })
     }, [])
 
+    const handleDownloadProject = async () => {
+        const zipper = new JSZip();
+        const promises = [];
+
+        for (const file of Object.keys(files)) {
+            console.log(file)
+            if (files[file].hasOwnProperty("directory")) {
+                console.log("Directory")
+                promises.push(recursiveZipper(zipper, files[file].directory, file))
+            } else {
+                console.log("File")
+                console.log(files[file])
+                zipper.file(file, files[file].file.contents);
+            }
+        }
+        //Thing happen here, but only after all of the recursiveZipper calls are done
+        await Promise.all(promises);
+
+        // Now generate the ZIP file and trigger the download
+        zipper.generateAsync({ type: "blob" })
+            .then(function (content) {
+                // Create a temporary link to trigger the download
+                const tempLink = document.createElement("a");
+                tempLink.href = URL.createObjectURL(content);
+                tempLink.download = "project.zip"; // Suggest a filename for the download
+
+                // Append link to body, click it, and then remove it
+                document.body.appendChild(tempLink);
+                tempLink.click();
+                document.body.removeChild(tempLink);
+
+                // Clean up by revoking the Blob URL
+                URL.revokeObjectURL(tempLink.href);
+            });
+    }
+
+    const recursiveZipper = async (zipper, fileTree, path) => {
+        const promises = [];
+
+        for (const file of Object.keys(fileTree)) {
+            console.log(file)
+            console.log(path + "/" + file)
+            if (fileTree[file].hasOwnProperty("directory")) {
+                console.log("Directory")
+                promises.push(recursiveZipper(zipper, fileTree[file].directory, path + "/" + file))
+            } else {
+                console.log("File")
+                console.log(fileTree[file])
+                zipper.file(path + "/" + file, fileTree[file].file.contents);
+            }
+        }
+
+        await Promise.all(promises);
+    }
 
     return (
         <EditorContext.Provider
@@ -172,6 +229,7 @@ export const EditorContextProvider = ({
                 projectData,
                 setProjectData,
                 saveProject,
+                handleDownloadProject,
                 isProjectSaved,
                 setIsProjectSaved,
                 hasEditAccess,

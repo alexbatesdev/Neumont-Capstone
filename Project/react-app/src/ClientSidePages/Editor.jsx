@@ -21,12 +21,13 @@ import SaveIcon from '@mui/icons-material/Save';
 import AltRouteIcon from '@mui/icons-material/AltRoute';
 import ShareIcon from '@mui/icons-material/Share';
 import { toast } from 'react-toastify';
+import { Download } from '@mui/icons-material';
 
 
 
 export default function Editor() {
     const theme = useTheme();
-    const { projectData, saveProject, isProjectSaved, setIsProjectSaved, hasEditAccess } = useEditorContext();
+    const { projectData, saveProject, isProjectSaved, setIsProjectSaved, hasEditAccess, handleDownloadProject } = useEditorContext();
     const { contextOpen, setContextOpen, contextCoords, setContextCoords, contextMenuItems, setContextMenuItems, contextMenuHelperOpen, setContextMenuHelperOpen, contextMenuHelper, setContextMenuHelper } = useContextMenu();
     const session = useSession();
     const [sidebarWidth, setSidebarWidth] = React.useState(330);
@@ -141,6 +142,13 @@ export default function Editor() {
                     text={"Share"}
                     onClick={shareProject}
                     buttonIndex={3}
+                />
+                <TopBarButton
+                    Icon={Download}
+                    text={"Download"}
+                    onClick={handleDownloadProject}
+                    buttonIndex={4}
+                    openWidth={90}
                 />
             </TopBar>
             <div

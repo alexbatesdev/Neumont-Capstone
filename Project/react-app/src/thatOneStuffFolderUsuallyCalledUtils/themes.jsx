@@ -7,13 +7,13 @@ export const theme = createTheme({
     palette: {
         mode: 'dark',
         primary: {
-            main: '#8d7eff',  // Was secondary color
+            main: '#8d7eff',  // Was secondary color (a pastel purple)
         },
         secondary: {
-            main: '#ffb447',  // New secondary color (a warm orange)
+            main: '#56cbf9',  // New tertiary color (a bright cyan)
         },
         tertiary: {
-            main: '#56cbf9',  // New tertiary color (a bright cyan)
+            main: '#364EE0',  // New secondary color (a brilliant blue)
         },
         background: {
             default: '#1C0C3B',

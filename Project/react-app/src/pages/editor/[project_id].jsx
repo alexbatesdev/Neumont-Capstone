@@ -6,6 +6,7 @@ import { useRouter } from 'next/router';
 import Editor from '@/ClientSidePages/Editor';
 import { EditorContextProvider } from '@/contexts/editor-context';
 import { toast } from 'react-toastify';
+import Head from 'next/head';
 
 // I cannot tell if the dynamic import helps or hinders the experience
 
@@ -83,6 +84,9 @@ export default function Page() {
     }, [project_id, session])
 
     return (<>
+        <Head>
+            <title>{projData ? projData.project_name + " - Webbie" : "Project Editor"}</title>
+        </Head>
         {!loading ? (
             <EditorContextProvider project_in={projData} hasEditAccess={userHasEditAccess}>
                 <Editor />

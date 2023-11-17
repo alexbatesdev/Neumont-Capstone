@@ -15,6 +15,7 @@ import TopBar from '@/components/TopBar'
 export default function Home() {
     const theme = useTheme()
     const session = useSession()
+    const router = useRouter()
 
     const [projects, setProjects] = React.useState([])
 

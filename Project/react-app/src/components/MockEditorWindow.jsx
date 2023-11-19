@@ -1,10 +1,56 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { AccountCircle, Close, Fullscreen, Minimize } from '@mui/icons-material'
 import { useTheme } from '@mui/material';
 
 const MockEditorWindow = () => {
     const theme = useTheme();
+    const [mockMessages, setMockMessages] = React.useState(
+        [
+            {
+                messageID: 3,
+                isUserMessage: false,
+                lines: [30, 50, 10, 34, 78]
+            },
+            {
+                messageID: 2,
+                isUserMessage: true,
+                lines: [30, 50, 50, 45, 55, 30]
+            },
+            {
+                messageID: 1,
+                isUserMessage: false,
+                lines: [50, 150, 100, 34, 78]
+            },
+            {
+                messageID: 0,
+                isUserMessage: true,
+                lines: [50, 150, 34, 78]
+            },
+        ]
+    );
+    // GPT color: "#45b288"
+    // User color: theme.palette.tertiary.main
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setMockMessages((prevMessages) => {
+                let lines = [];
+                for (let i = 0; i < (Math.floor(Math.random() * 9) + 1); i++) {
+                    lines.push(Math.floor(Math.random() * 90) + 10);
+                }
+                let newMessages = [{
+                    messageID: prevMessages.length,
+                    isUserMessage: prevMessages.length % 2 == 0 ? true : false,
+                    lines: lines,
+                }];
+                return newMessages.concat(...prevMessages);
+            });
+        }, 2000);
+        return () => clearInterval(interval);
+    }, []);
+
+
     return (
         <div style={{
             maxWidth: '50%',
@@ -235,13 +281,51 @@ const MockEditorWindow = () => {
                                 top: "31px",
                                 left: "0px",
                                 width: "100%",
-                                bottom: "30px",
+                                bottom: "31px",
                                 display: "flex",
-                                flexDirection: "row",
+                                flexDirection: "column-reverse",
                                 justifyContent: "flex-start",
-                                alignItems: "center",
+                                alignItems: "flex-start",
+                                overflow: "hidden",
                             }}>
+                                {mockMessages.map((message, index) => {
 
+                                    return (<div
+                                        key={message.messageID}
+                                        style={{
+                                            display: "inline-flex",
+                                            flexDirection: "column",
+                                            justifyContent: "flex-start",
+                                            alignItems: "flex-start",
+                                            marginTop: "8px",
+                                            marginLeft: "5px",
+                                            marginRight: "5px",
+                                            padding: "10px",
+                                            maxWidth: "calc(100% - 50px)",
+                                            width: "fit-content",
+                                            color: message.isUserMessage ? "black" : "white",
+                                            borderRadius: "10px",
+                                            borderBottomRightRadius: message.isUserMessage ? "0px" : "10px",
+                                            borderBottomLeftRadius: message.isUserMessage ? "10px" : "0px",
+                                            backgroundColor: message.isUserMessage ? theme.palette.tertiary.main : "#45b288",
+                                            alignSelf: message.isUserMessage ? "flex-end" : "flex-start",
+                                            boxShadow: "0px 0px 10px 0px rgba(0,0,0,0.6)",
+                                        }}>
+                                        {message.lines.map((line, index) => {
+                                            let color = message.isUserMessage ? "white" : "black";
+                                            return (<div key={index} style={{
+                                                height: "1px",
+                                                width: line + "px",
+                                                maxWidth: "calc(100% - 10px)",
+                                                borderTop: "2px solid " + color,
+                                                borderBottom: "2px solid " + color,
+                                                backgroundColor: color,
+                                                margin: "2px 0px",
+                                            }}></div>
+                                            )
+                                        })}
+                                    </div>)
+                                })}
                             </div>
 
                             {/* Mini GPT bottom ribbon */}
@@ -293,14 +377,342 @@ const MockEditorWindow = () => {
                         <div style={{
                             flexGrow: 1,
                             height: "100%",
-                            backgroundColor: theme.palette.background.default,
-                        }}></div>
+                            backgroundColor: theme.palette.utilBar.default,
+                            display: "flex",
+                            flexDirection: "column",
+                            justifyContent: "flex-start",
+                            alignItems: "flex-start",
+                            position: "relative",
+                        }}>
+                            {/* Mock Language indicator */}
+                            <div style={{
+                                height: "0px",
+                                width: "40px",
+                                borderTop: "2px solid #cbc5d3",
+                                borderBottom: "2px solid #cbc5d3",
+                                backgroundColor: '#cbc5d3',
+                                margin: "2px 0px",
+                                position: "absolute",
+                                top: "7px",
+                                left: "7px",
+                            }}></div>
+                            {/* Mock tab */}
+                            <div style={{
+                                height: "14px",
+                                width: "40px",
+                                backgroundColor: theme.palette.utilBar.secondary,
+                                margin: "2px 0px",
+                                position: "absolute",
+                                top: "0px",
+                                right: "0px",
+                            }}>
+                                <div style={{
+                                    height: "0px",
+                                    width: "20px",
+                                    borderTop: "2px solid #cbc5d3",
+                                    borderBottom: "2px solid #cbc5d3",
+                                    backgroundColor: '#cbc5d3',
+                                    margin: "2px 0px",
+                                    position: "absolute",
+                                    top: "50%",
+                                    left: "50%",
+                                    transform: "translate(-70%, -50%)",
+                                }}></div>
+                                <div style={{
+                                    height: "5px",
+                                    width: "5px",
+                                    borderRadius: "50%",
+                                    backgroundColor: '#cbc5d3',
+                                    margin: "2px 0px",
+                                    position: "absolute",
+                                    top: "50%",
+                                    right: "5px",
+                                    transform: "translate(0%, -50%)",
+                                }}></div>
+                            </div>
+                            {/* Mock line number indicators */}
+                            <div style={{
+                                position: "absolute",
+                                top: "15px",
+                                left: "0px",
+                                bottom: "0px",
+                                width: "20px",
+                                display: "flex",
+                                flexDirection: "column",
+                                justifyContent: "flex-start",
+                                alignItems: "center",
+                            }}>
+                                {Array(24).fill(0).map((_, index) => {
+                                    return (<div style={{
+                                        height: "5px",
+                                        width: "5px",
+                                        borderRadius: "50%",
+                                        backgroundColor: "#555",
+                                        display: "inline-block",
+                                        margin: "3px",
+                                    }}></div>)
+                                })}
+                            </div>
+                            {/* Lines of mock code */}
+                            <div style={{
+                                position: "absolute",
+                                top: "15px",
+                                left: "20px",
+                                bottom: "0px",
+                                right: "0px",
+                                display: "flex",
+                                flexDirection: "column",
+                                justifyContent: "flex-start",
+                                alignItems: "flex-start",
+                            }}>
+
+                                <div style={{ width: "100%", margin: "3px", display: "flex" }}>
+                                    <div style={{
+                                        height: "5px",
+                                        width: "20px",
+                                        backgroundColor: "#7233cc",
+                                        display: "inline-block",
+                                    }}></div>
+                                    <div style={{
+                                        height: "5px",
+                                        width: "30px",
+                                        backgroundColor: "#66cc33",
+                                        display: "inline-block",
+                                        marginLeft: "4px"
+                                    }}></div>
+                                </div>
+                                <div style={{
+                                    height: "5px",
+                                    width: "calc(100% - 10px)",
+                                    // backgroundColor: "#555",
+                                    display: "inline-block",
+                                    margin: "3px",
+                                }}></div>
+                                <div style={{ width: "100%", margin: "3px", display: "flex" }}>
+                                    <div style={{
+                                        height: "5px",
+                                        width: "30px",
+                                        backgroundColor: "#7233cc",
+                                        display: "inline-block",
+                                    }}></div>
+                                    <div style={{
+                                        height: "5px",
+                                        width: "15px",
+                                        backgroundColor: "#ffb800",
+                                        display: "inline-block",
+                                        marginLeft: "4px"
+                                    }}></div>
+                                </div>
+                                <div style={{
+                                    height: "5px",
+                                    width: "30px",
+                                    backgroundColor: "#7233cc",
+                                    display: "inline-block",
+                                    margin: "3px",
+                                    marginLeft: "10px"
+                                }}></div>
+                                <div style={{ width: "100%", margin: "3px", display: "flex" }}>
+                                    <div style={{
+                                        height: "5px",
+                                        width: "40px",
+                                        backgroundColor: "#7233cc",
+                                        display: "inline-block",
+                                        marginLeft: "20px"
+                                    }}></div>
+                                    <div style={{
+                                        height: "5px",
+                                        width: "10px",
+                                        backgroundColor: "#66cc33",
+                                        display: "inline-block",
+                                    }}></div>
+                                </div>
+                                <div style={{ width: "100%", margin: "3px", display: "flex" }}>
+                                    <div style={{
+                                        height: "5px",
+                                        width: "40px",
+                                        backgroundColor: "#7233cc",
+                                        display: "inline-block",
+                                        marginLeft: "30px"
+                                    }}></div>
+                                    <div style={{
+                                        height: "5px",
+                                        width: "15px",
+                                        backgroundColor: "#66cc33",
+                                        display: "inline-block",
+                                    }}></div>
+                                </div>
+                                <div style={{
+                                    height: "5px",
+                                    width: "10px",
+                                    backgroundColor: "#7233cc",
+                                    display: "inline-block",
+                                    margin: "3px",
+                                    marginLeft: "33px",
+                                }}></div>
+                                <div style={{
+                                    height: "5px",
+                                    width: "50px",
+                                    backgroundColor: "#ffb800",
+                                    display: "inline-block",
+                                    margin: "3px",
+                                    marginLeft: "43px",
+                                }}></div>
+                                <div style={{
+                                    height: "5px",
+                                    width: "10px",
+                                    backgroundColor: "#7233cc",
+                                    display: "inline-block",
+                                    margin: "3px",
+                                    marginLeft: "33px",
+                                }}></div>
+                                <div style={{
+                                    height: "5px",
+                                    width: "7px",
+                                    backgroundColor: "#7233cc",
+                                    display: "inline-block",
+                                    margin: "3px",
+                                    marginLeft: "33px",
+                                }}></div>
+                                <div style={{ width: "100%", margin: "3px", display: "flex" }}>
+                                    <div style={{
+                                        height: "5px",
+                                        width: "25px",
+                                        backgroundColor: "#7233cc",
+                                        display: "inline-block",
+                                        marginLeft: "40px"
+                                    }}></div>
+                                    <div style={{
+                                        height: "5px",
+                                        width: "20px",
+                                        backgroundColor: "#66cc33",
+                                        display: "inline-block",
+                                    }}></div>
+                                </div>
+                                <div style={{ width: "100%", margin: "3px", display: "flex" }}>
+                                    <div style={{
+                                        height: "5px",
+                                        width: "15px",
+                                        backgroundColor: "#7233cc",
+                                        display: "inline-block",
+                                        marginLeft: "40px"
+                                    }}></div>
+                                    <div style={{
+                                        height: "5px",
+                                        width: "40px",
+                                        backgroundColor: "#66cc33",
+                                        display: "inline-block",
+                                    }}></div>
+                                </div>
+                                <div style={{ width: "100%", margin: "3px", display: "flex" }}>
+                                    <div style={{
+                                        height: "5px",
+                                        width: "20px",
+                                        backgroundColor: "#7233cc",
+                                        display: "inline-block",
+                                        marginLeft: "40px"
+                                    }}></div>
+                                    <div style={{
+                                        height: "5px",
+                                        width: "20px",
+                                        backgroundColor: "#66cc33",
+                                        display: "inline-block",
+                                    }}></div>
+                                </div>
+                                <div style={{ width: "100%", margin: "3px", display: "flex" }}>
+                                    <div style={{
+                                        height: "5px",
+                                        width: "12px",
+                                        backgroundColor: "#7233cc",
+                                        display: "inline-block",
+                                        marginLeft: "40px"
+                                    }}></div>
+                                    <div style={{
+                                        height: "5px",
+                                        width: "40px",
+                                        backgroundColor: "#66cc33",
+                                        display: "inline-block",
+                                    }}></div>
+                                </div>
+                                <div style={{
+                                    height: "5px",
+                                    width: "3px",
+                                    backgroundColor: "#7233cc",
+                                    display: "inline-block",
+                                    margin: "3px",
+                                    marginLeft: "33px",
+                                }}></div>
+                                <div style={{
+                                    height: "5px",
+                                    width: "30px",
+                                    backgroundColor: "#ffb800",
+                                    display: "inline-block",
+                                    margin: "3px",
+                                    marginLeft: "43px",
+                                }}></div>
+                                <div style={{
+                                    height: "5px",
+                                    width: "10px",
+                                    backgroundColor: "#7233cc",
+                                    display: "inline-block",
+                                    margin: "3px",
+                                    marginLeft: "33px",
+                                }}></div>
+                                <div style={{
+                                    height: "5px",
+                                    width: "15px",
+                                    backgroundColor: "#7233cc",
+                                    display: "inline-block",
+                                    margin: "3px",
+                                    marginLeft: "33px",
+                                }}></div>
+                                <div style={{
+                                    height: "5px",
+                                    width: "15px",
+                                    backgroundColor: "#7233cc",
+                                    display: "inline-block",
+                                    margin: "3px",
+                                    marginLeft: "23px",
+                                }}></div>
+                                <div style={{
+                                    height: "5px",
+                                    display: "inline-block",
+                                    margin: "3px",
+                                }}></div>
+                                <div style={{
+                                    height: "5px",
+                                    display: "inline-block",
+                                    margin: "3px",
+                                }}></div>
+                                <div style={{
+                                    height: "5px",
+                                    display: "inline-block",
+                                    margin: "3px",
+                                }}></div>
+                                <div style={{ width: "100%", margin: "3px", display: "flex" }}>
+                                    <div style={{
+                                        height: "5px",
+                                        width: "40px",
+                                        backgroundColor: "#7233cc",
+                                        display: "inline-block",
+                                    }}></div>
+                                    <div style={{
+                                        height: "5px",
+                                        width: "15px",
+                                        backgroundColor: "#ffb800",
+                                        display: "inline-block",
+                                        marginLeft: "4px"
+                                    }}></div>
+                                </div>
+                            </div>
+                        </div>
                         {/* Mini Preview and Terminal component */}
                         <div style={{
                             flexGrow: 1,
                             height: "100%",
                             backgroundColor: "#0000FF22",
+                            maxWidth: "33%",
                         }}>
+                            {/* Mock preview */}
                             <div style={{
                                 width: "100%",
                                 height: "50%",
@@ -309,21 +721,494 @@ const MockEditorWindow = () => {
                             }}>
                                 <div style={{
                                     position: "absolute",
+                                    top: "5px",
+                                    left: "5px",
+                                    width: "10px",
+                                    height: "10px",
+                                    borderRadius: "50%",
+                                    backgroundColor: theme.palette.utilBar.icons,
+                                }}></div>
+                                <div style={{
+                                    position: "absolute",
+                                    top: "5px",
+                                    right: "5px",
+                                    width: "10px",
+                                    height: "10px",
+                                    borderRadius: "50%",
+                                    backgroundColor: theme.palette.utilBar.icons,
+                                }}></div>
+                                <div style={{
+                                    height: "5px",
+                                    width: "120px",
+                                    backgroundColor: theme.palette.utilBar.icons,
+                                    display: "inline-block",
+                                    position: "absolute",
+                                    top: "7.5px",
+                                    left: "50%",
+                                    transform: "translate(-50%, 0%)",
+                                }}></div>
+                                <div style={{
+                                    position: "absolute",
                                     top: "20px",
                                     left: "0px",
                                     right: "0px",
                                     bottom: "0px",
                                     backgroundColor: "#282c34",
+                                    display: "flex",
+                                    flexDirection: "column",
+                                    justifyContent: "center",
+                                    alignItems: "center",
                                 }}>
-
+                                    <div style={{
+                                        height: "5px",
+                                        width: "90px",
+                                        backgroundColor: theme.palette.text.primary,
+                                        display: "inline-block",
+                                    }}></div>
+                                    <div style={{
+                                        height: "5px",
+                                        width: "30px",
+                                        backgroundColor: "#61dafb",
+                                        display: "inline-block",
+                                        marginTop: "10px",
+                                    }}></div>
                                 </div>
                             </div>
+                            {/* Mock terminal */}
                             <div style={{
                                 width: "100%",
                                 height: "50%",
                                 backgroundColor: theme.palette.utilBar.default,
+                                display: "flex",
+                                flexDirection: "column",
+                                justifyContent: "flex-start",
+                                alignItems: "flex-start",
                             }}>
+                                <div style={{ width: "100%", margin: "3px", display: "flex" }}>
+                                    <div style={{
+                                        height: "5px",
+                                        width: "30px",
+                                        backgroundColor: theme.palette.primary.main,
+                                        display: "inline-block",
+                                    }}></div>
+                                    <div style={{
+                                        height: "5px",
+                                        width: "10px",
+                                        backgroundColor: "#34e2e2",
+                                        display: "inline-block",
+                                        marginLeft: "4px"
+                                    }}></div>
+                                    <div style={{
+                                        height: "5px",
+                                        width: "40px",
+                                        backgroundColor: theme.palette.primary.main,
+                                        display: "inline-block",
+                                        marginLeft: "4px"
+                                    }}></div>
+                                    <div style={{
+                                        height: "5px",
+                                        width: "10px",
+                                        backgroundColor: "#34e2e2",
+                                        display: "inline-block",
+                                        marginLeft: "4px"
+                                    }}></div>
+                                    <div style={{
+                                        height: "5px",
+                                        width: "40px",
+                                        backgroundColor: theme.palette.primary.main,
+                                        display: "inline-block",
+                                        marginLeft: "4px"
+                                    }}></div>
+                                    <div style={{
+                                        height: "5px",
+                                        width: "10px",
+                                        backgroundColor: "#34e2e2",
+                                        display: "inline-block",
+                                        marginLeft: "4px"
+                                    }}></div>
+                                </div>
+                                <div style={{ width: "100%", margin: "3px", display: "flex" }}>
+                                    <div style={{
+                                        height: "5px",
+                                        width: "20px",
+                                        backgroundColor: theme.palette.primary.main,
+                                        display: "inline-block",
+                                    }}></div>
+                                    <div style={{
+                                        height: "5px",
+                                        width: "10px",
+                                        backgroundColor: "#34e2e2",
+                                        display: "inline-block",
+                                        marginLeft: "4px"
+                                    }}></div>
+                                    <div style={{
+                                        height: "5px",
+                                        width: "30px",
+                                        backgroundColor: theme.palette.primary.main,
+                                        display: "inline-block",
+                                        marginLeft: "4px"
+                                    }}></div>
+                                    <div style={{
+                                        height: "5px",
+                                        width: "10px",
+                                        backgroundColor: "#34e2e2",
+                                        display: "inline-block",
+                                        marginLeft: "4px"
+                                    }}></div>
+                                    <div style={{
+                                        height: "5px",
+                                        width: "30px",
+                                        backgroundColor: theme.palette.primary.main,
+                                        display: "inline-block",
+                                        marginLeft: "4px"
+                                    }}></div>
+                                    <div style={{
+                                        height: "5px",
+                                        width: "10px",
+                                        backgroundColor: "#34e2e2",
+                                        display: "inline-block",
+                                        marginLeft: "4px"
+                                    }}></div>
+                                    <div style={{
+                                        height: "5px",
+                                        width: "25px",
+                                        backgroundColor: theme.palette.primary.main,
+                                        display: "inline-block",
+                                        marginLeft: "4px"
+                                    }}></div>
+                                </div>
+                                <div style={{ width: "100%", margin: "3px", display: "flex" }}>
+                                    <div style={{
+                                        height: "5px",
+                                        width: "10px",
+                                        backgroundColor: theme.palette.primary.main,
+                                        display: "inline-block",
+                                    }}></div>
+                                    <div style={{
+                                        height: "5px",
+                                        width: "10px",
+                                        backgroundColor: "#34e2e2",
+                                        display: "inline-block",
+                                        marginLeft: "4px"
+                                    }}></div>
+                                    <div style={{
+                                        height: "5px",
+                                        width: "30px",
+                                        backgroundColor: theme.palette.primary.main,
+                                        display: "inline-block",
+                                        marginLeft: "4px"
+                                    }}></div>
+                                    <div style={{
+                                        height: "5px",
+                                        width: "10px",
+                                        backgroundColor: "#34e2e2",
+                                        display: "inline-block",
+                                        marginLeft: "4px"
+                                    }}></div>
+                                    <div style={{
+                                        height: "5px",
+                                        width: "30px",
+                                        backgroundColor: theme.palette.primary.main,
+                                        display: "inline-block",
+                                        marginLeft: "4px"
+                                    }}></div>
+                                    <div style={{
+                                        height: "5px",
+                                        width: "10px",
+                                        backgroundColor: "#34e2e2",
+                                        display: "inline-block",
+                                        marginLeft: "4px"
+                                    }}></div>
+                                    <div style={{
+                                        height: "5px",
+                                        width: "15px",
+                                        backgroundColor: theme.palette.primary.main,
+                                        display: "inline-block",
+                                        marginLeft: "4px"
+                                    }}></div>
+                                    <div style={{
+                                        height: "5px",
+                                        width: "15px",
+                                        backgroundColor: "#4e9a06",
+                                        display: "inline-block",
+                                        marginLeft: "4px"
+                                    }}></div>
+                                </div>
+                                <div style={{ width: "100%", margin: "3px", display: "flex" }}>
+                                    <div style={{
+                                        height: "5px",
+                                        width: "5px",
+                                        backgroundColor: "#4e9a06",
+                                        display: "inline-block",
+                                    }}></div>
+                                    <div style={{
+                                        height: "5px",
+                                        width: "5px",
+                                        backgroundColor: "#4e9a06",
+                                        display: "inline-block",
+                                        marginLeft: "4px"
+                                    }}></div>
+                                    <div style={{
+                                        height: "5px",
+                                        width: "5px",
+                                        backgroundColor: "#4e9a06",
+                                        display: "inline-block",
+                                        marginLeft: "4px"
+                                    }}></div>
+                                    <div style={{
+                                        height: "5px",
+                                        width: "5px",
+                                        backgroundColor: "#4e9a06",
+                                        display: "inline-block",
+                                        marginLeft: "4px"
+                                    }}></div>
+                                    <div style={{
+                                        height: "5px",
+                                        width: "5px",
+                                        backgroundColor: "#4e9a06",
+                                        display: "inline-block",
+                                        marginLeft: "4px"
+                                    }}></div>
+                                    <div style={{
+                                        height: "5px",
+                                        width: "5px",
+                                        backgroundColor: "#4e9a06",
+                                        display: "inline-block",
+                                        marginLeft: "4px"
+                                    }}></div>
+                                    <div style={{
+                                        height: "5px",
+                                        width: "5px",
+                                        backgroundColor: "#4e9a06",
+                                        display: "inline-block",
+                                        marginLeft: "4px"
+                                    }}></div>
+                                    <div style={{
+                                        height: "5px",
+                                        width: "5px",
+                                        backgroundColor: "#4e9a06",
+                                        display: "inline-block",
+                                        marginLeft: "4px"
+                                    }}></div>
+                                    <div style={{
+                                        height: "5px",
+                                        width: "5px",
+                                        backgroundColor: "#4e9a06",
+                                        display: "inline-block",
+                                        marginLeft: "4px"
+                                    }}></div>
+                                    <div style={{
+                                        height: "5px",
+                                        width: "5px",
+                                        backgroundColor: "#4e9a06",
+                                        display: "inline-block",
+                                        marginLeft: "4px"
+                                    }}></div>
+                                    <div style={{
+                                        height: "5px",
+                                        width: "5px",
+                                        backgroundColor: "#4e9a06",
+                                        display: "inline-block",
+                                        marginLeft: "4px"
+                                    }}></div>
+                                    <div style={{
+                                        height: "5px",
+                                        width: "5px",
+                                        backgroundColor: "#4e9a06",
+                                        display: "inline-block",
+                                        marginLeft: "4px"
+                                    }}></div>
+                                    <div style={{
+                                        height: "5px",
+                                        width: "5px",
+                                        backgroundColor: "#4e9a06",
+                                        display: "inline-block",
+                                        marginLeft: "4px"
+                                    }}></div>
+                                    <div style={{
+                                        height: "5px",
+                                        width: "5px",
+                                        backgroundColor: "#4e9a06",
+                                        display: "inline-block",
+                                        marginLeft: "4px"
+                                    }}></div>
+                                    <div style={{
+                                        height: "5px",
+                                        width: "5px",
+                                        backgroundColor: "#4e9a06",
+                                        display: "inline-block",
+                                        marginLeft: "4px"
+                                    }}></div>
+                                    <div style={{
+                                        height: "5px",
+                                        width: "5px",
+                                        backgroundColor: "#4e9a06",
+                                        display: "inline-block",
+                                        marginLeft: "4px"
+                                    }}></div>
+                                    <div style={{
+                                        height: "5px",
+                                        width: "5px",
+                                        backgroundColor: "#4e9a06",
+                                        display: "inline-block",
+                                        marginLeft: "4px"
+                                    }}></div>
+                                    <div style={{
+                                        height: "5px",
+                                        width: "5px",
+                                        backgroundColor: "#4e9a06",
+                                        display: "inline-block",
+                                        marginLeft: "4px"
+                                    }}></div>
+                                </div>
+                                <div style={{
+                                    height: "5px",
+                                    width: "calc(100% - 10px)",
+                                    // backgroundColor: "#555",
+                                    display: "inline-block",
+                                    margin: "3px",
+                                }}></div>
+                                <div style={{
+                                    height: "5px",
+                                    width: "30px",
+                                    backgroundColor: "#34e2e2",
+                                    display: "inline-block",
+                                    margin: "3px",
+                                }}></div>
 
+                                <div style={{ width: "100%", margin: "3px", display: "flex" }}>
+                                    <div style={{
+                                        height: "5px",
+                                        width: "5px",
+                                        backgroundColor: "#4e9a06",
+                                        display: "inline-block",
+                                    }}></div>
+                                    <div style={{
+                                        height: "5px",
+                                        width: "15px",
+                                        backgroundColor: theme.palette.primary.main,
+                                        display: "inline-block",
+                                        marginLeft: "4px"
+                                    }}></div>
+                                    <div style={{
+                                        height: "5px",
+                                        width: "15px",
+                                        backgroundColor: "#555",
+                                        display: "inline-block",
+                                        marginLeft: "4px"
+                                    }}></div>
+                                </div>
+                                <div style={{ width: "100%", margin: "3px", display: "flex" }}>
+                                    <div style={{
+                                        height: "5px",
+                                        width: "5px",
+                                        backgroundColor: "#4e9a06",
+                                        display: "inline-block",
+                                    }}></div>
+                                    <div style={{
+                                        height: "5px",
+                                        width: "25px",
+                                        backgroundColor: theme.palette.primary.main,
+                                        display: "inline-block",
+                                        marginLeft: "4px"
+                                    }}></div>
+                                    <div style={{
+                                        height: "5px",
+                                        width: "15px",
+                                        backgroundColor: "#555",
+                                        display: "inline-block",
+                                        marginLeft: "4px"
+                                    }}></div>
+                                </div>
+                                <div style={{ width: "100%", margin: "3px", display: "flex" }}>
+                                    <div style={{
+                                        height: "5px",
+                                        width: "5px",
+                                        backgroundColor: "#4e9a06",
+                                        display: "inline-block",
+                                    }}></div>
+                                    <div style={{
+                                        height: "5px",
+                                        width: "30px",
+                                        backgroundColor: theme.palette.primary.main,
+                                        display: "inline-block",
+                                        marginLeft: "4px"
+                                    }}></div>
+                                    <div style={{
+                                        height: "5px",
+                                        width: "15px",
+                                        backgroundColor: "#555",
+                                        display: "inline-block",
+                                        marginLeft: "4px"
+                                    }}></div>
+                                </div>
+                                <div style={{
+                                    height: "5px",
+                                    width: "calc(100% - 10px)",
+                                    // backgroundColor: "#555",
+                                    display: "inline-block",
+                                    margin: "3px",
+                                }}></div>
+                                <div style={{ width: "100%", margin: "3px", display: "flex" }}>
+                                    <div style={{
+                                        height: "5px",
+                                        width: "20px",
+                                        backgroundColor: "#ffb800",
+                                        display: "inline-block",
+                                    }}></div>
+                                    <div style={{
+                                        height: "5px",
+                                        width: "75px",
+                                        backgroundColor: theme.palette.primary.main,
+                                        display: "inline-block",
+                                        marginLeft: "4px"
+                                    }}></div>
+                                </div>
+                                <div style={{
+                                    height: "5px",
+                                    width: "30px",
+                                    backgroundColor: theme.palette.primary.main,
+                                    display: "inline-block",
+                                    margin: "3px",
+                                    marginLeft: "15px"
+                                }}></div>
+                                <div style={{ width: "100%", margin: "3px", display: "flex" }}>
+                                    <div style={{
+                                        height: "5px",
+                                        width: "25px",
+                                        backgroundColor: "#ffb800",
+                                        display: "inline-block",
+                                        marginLeft: "20px"
+                                    }}></div>
+                                    <div style={{
+                                        height: "5px",
+                                        width: "75px",
+                                        backgroundColor: theme.palette.primary.main,
+                                        display: "inline-block",
+                                        marginLeft: "4px"
+                                    }}></div>
+                                </div>
+                                <div style={{
+                                    height: "5px",
+                                    width: "30px",
+                                    backgroundColor: theme.palette.primary.main,
+                                    display: "inline-block",
+                                    margin: "3px"
+                                }}></div>
+                                <div style={{
+                                    height: "5px",
+                                    width: "25px",
+                                    backgroundColor: "#3465a4",
+                                    display: "inline-block",
+                                    margin: "3px"
+                                }}></div>
+                                <div style={{
+                                    height: "5px",
+                                    width: "5px",
+                                    backgroundColor: "#75507b",
+                                    display: "inline-block",
+                                    margin: "3px"
+                                }}></div>
                             </div>
                         </div>
                     </div>

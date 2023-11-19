@@ -230,7 +230,95 @@ export default function Home() {
               backgroundColor: "#FF000033",
               width: "100%",
               height: "70vh",
-            }}></div>
+              display: 'flex',
+              flexDirection: 'row',
+              justifyContent: 'flex-start',
+              alignItems: 'center',
+            }}>
+            <div style={{
+              height: '100%',
+              backgroundColor: "#0000FF33",
+              width: "45%"
+            }}>
+
+              <Typography variant='h2' style={{
+                fontFamily: 'Teko',
+                color: theme.palette.text.primary,
+                marginLeft: '1rem',
+              }}>
+                Tech Stack
+              </Typography>
+              <Typography variant='h6' style={{
+                color: theme.palette.text.primary,
+                marginLeft: '1rem',
+              }}>
+                Webbie was built using the following technologies
+              </Typography>
+              <div style={{
+                display: 'flex',
+                flexDirection: 'row',
+                justifyContent: 'flex-start',
+                alignItems: 'center',
+              }}>
+
+                <div style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'flex-start',
+                  alignItems: 'center',
+                  gap: '1rem',
+                  marginLeft: '1rem',
+                  width: "300px",
+                  backgroundColor: "#00FF0033",
+                }}>
+
+                  <Typography variant='h3' style={{
+                    fontFamily: 'Teko',
+                    color: theme.palette.text.primary,
+                    marginLeft: '1rem',
+                    alignSelf: 'flex-start',
+                  }}>
+                    Languages
+                  </Typography>
+                  <img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg" alt="Python" width="100" height="100" />
+                  <img src="https://upload.wikimedia.org/wikipedia/commons/6/6a/JavaScript-logo.png" alt="JavaScript" width="100" height="100" />
+                </div>
+                <div style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'flex-start',
+                  alignItems: 'center',
+                  gap: '1rem',
+                  marginLeft: '1rem',
+                  width: "300px",
+                  backgroundColor: "#00FF0033",
+                }}>
+                  <Typography variant='h3' style={{
+                    fontFamily: 'Teko',
+                    color: theme.palette.text.primary,
+                    marginLeft: '1rem',
+                    alignSelf: 'flex-start',
+                  }}>
+                    Frameworks
+                  </Typography>
+                  <img src="https://seeklogo.com/images/F/fastapi-logo-541BAA112F-seeklogo.com.png" alt="FastAPI" width="100" height="100" />
+                  <div style={{
+                    display: 'flex',
+                    flexDirection: 'row',
+                    justifyContent: 'flex-start',
+                    alignItems: 'center',
+                    alignSelf: "center",
+                    gap: '1rem',
+                  }}>
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/React-icon.svg/1280px-React-icon.svg.png" alt="React" height="100" />
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/8/8e/Nextjs-logo.svg" alt="Vue" width="150" />
+
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
           <div
             id="Frameworks"
             style={{

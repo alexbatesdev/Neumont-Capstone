@@ -52,7 +52,7 @@ export const Message = ({ message, index }) => {
         flexDirection: "row",
         width: "100%",
         alignItems: "flex-end",
-        justifyContent: message.role == "assistant" ? "flex-end" : "flex-start",
+        justifyContent: message.role != "assistant" ? "flex-end" : "flex-start",
     }
 
     const messageBubbleStyle = {
@@ -66,10 +66,10 @@ export const Message = ({ message, index }) => {
         width: "fit-content",
         color: message.role == "assistant" ? "black" : "white",
         borderRadius: "10px",
-        borderBottomRightRadius: message.role == "user" ? "10px" : "0",
-        borderBottomLeftRadius: message.role == "assistant" ? "10px" : "0",
+        borderBottomRightRadius: message.role != "user" ? "10px" : "0",
+        borderBottomLeftRadius: message.role != "assistant" ? "10px" : "0",
         backgroundColor: message.role == "assistant" ? color : theme.palette.tertiary.main,
-        alignSelf: message.role == "assistant" ? "flex-end" : "flex-start",
+        alignSelf: message.role != "assistant" ? "flex-end" : "flex-start",
         boxShadow: "0px 0px 10px 0px rgba(0,0,0,0.6)",
     }
 
@@ -77,7 +77,7 @@ export const Message = ({ message, index }) => {
         borderBottomLeftRadius: "10px",
         borderBottomRightRadius: "10px",
         overflowX: "auto",
-        maxWidth: "calc(100% - 16px)",
+        width: "calc(100% - 16px)",
         marginTop: "0",
     }
 

@@ -95,27 +95,7 @@ export const ConversationWindow = () => {
             const command = messageField.split(" ")[0].substring(1).toLowerCase();
             const command_args = messageField.split(" ").slice(1);
             const command_prompt = messageField.slice(1);
-            if (command == "clear") {
-                setMessageHistory([]);
-                return;
-            } else if (command == "preimport") {
-                if (command_args.length == 0) {
-                    return;
-                } else if (command_args[0] == "add") {
-                    // Set a contextual state variable to include the preimport code
-                    //console.log("adding: " + command_args.slice(1).join(" "));
-                } else if (command_args[0] == "remove") {
-                    // Set a contextual state variable to remove the preimport code
-                    //console.log("removing: " + command_args.slice(1).join(" "));
-                } else if (command_args[0] == "clear") {
-                    // Set a contextual state variable to clear the preimport code
-                    //console.log("clearing");
-                } else if (command_args[0] == "list") {
-                    // Return a list of the preimport code entries
-                    //console.log("listing");
-                }
-                return;
-            } else if (command == "refactor") {
+            if (command == "refactor") {
                 // Refactor a component 💭
                 // I don't know how I want to do this yet
                 // I could have the user input their code
@@ -271,9 +251,9 @@ export const ConversationWindow = () => {
         width: "fit-content",
         color: "black",
         borderRadius: "10px",
-        borderBottomRightRadius: "0",
-        backgroundColor: modelIsGPT4 ? theme.palette.secondary.main : theme.palette.primary.main,
-        alignSelf: "flex-end"
+        borderBottomLeftRadius: "0",
+        backgroundColor: modelIsGPT4 ? "#8d7eff" : "#45b288",
+        alignSelf: "flex-start"
     }
 
     const bottomBarStyle = {

@@ -11,34 +11,26 @@ from diagrams.programming.framework import React, Fastapi
 from diagrams.onprem.database import Mongodb
 from diagrams.onprem.queue import Kafka
 from diagrams.onprem.network import Ocelot, Kong
+from diagrams.programming.language import Nodejs
 
 with Diagram("Capstone Project Architecture", show=False):
     users = User("Users")
     frontend = React("Frontend")
 
     with Cluster("Backend"):
-        gateway = Kong("API Gateway")
-        serviceDiscovery = ApplicationDiscoveryService("Service Discovery")
-        gitlab = Gitlabci("Gitlab")
         ChatGPTInterface = Fastapi("ChatGPT Interface API")
+        accountAPI = Fastapi("Account API")
+        projectAPI = Fastapi("File Operations API")
         ChatGPT = Sagemaker("ChatGPT")
-        userAPI = Fastapi("User API")
-
-        with Cluster("Editor API Group"):
-            fileOperationsAPI = Fastapi("File Operations API")
-            metadataAPI = Fastapi("Project Metadata API")
-            editorAPI = Fastapi("Editor API")
-            queue = Kafka("Kafka Queue")
+        with Cluster("Authored by GPT"):
+            expressImageProxy = Nodejs("Express Image Proxy")
 
         with Cluster("Databases"):
             userDatabase = Mongodb("User Database")
             projectDatbase = Mongodb("Project Database")
 
-    users >> frontend >> gateway
-    gateway >> ChatGPTInterface >> ChatGPT
-    gateway >> userAPI >> userDatabase
-    gateway >> editorAPI >> queue
-    # queue >> fileOperationsAPI >> gitlab
-    fileOperationsAPI << queue
-    fileOperationsAPI >> gitlab
-    queue >> metadataAPI >> projectDatbase
+    users >> frontend
+    frontend >> ChatGPTInterface >> ChatGPT
+    frontend >> accountAPI >> userDatabase
+    frontend >> projectAPI >> projectDatbase
+    frontend >> expressImageProxy

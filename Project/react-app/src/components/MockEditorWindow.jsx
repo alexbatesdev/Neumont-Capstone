@@ -1,7 +1,7 @@
 
 import React, { useEffect } from 'react';
 import { AccountCircle, Close, Fullscreen, Minimize } from '@mui/icons-material'
-import { useTheme } from '@mui/material';
+import { Collapse, useTheme } from '@mui/material';
 
 const MockEditorWindow = () => {
     const theme = useTheme();
@@ -60,7 +60,7 @@ const MockEditorWindow = () => {
                 width: "550px",
                 height: "420px",
                 borderRadius: "10px",
-                backgroundColor: "#321175"
+                backgroundColor: "#130925",
             }}>
                 {/* Mock Window Icons */}
                 <Close style={{
@@ -281,7 +281,7 @@ const MockEditorWindow = () => {
                                 top: "31px",
                                 left: "0px",
                                 width: "100%",
-                                bottom: "31px",
+                                bottom: "38px",
                                 display: "flex",
                                 flexDirection: "column-reverse",
                                 justifyContent: "flex-start",
@@ -289,42 +289,52 @@ const MockEditorWindow = () => {
                                 overflow: "hidden",
                             }}>
                                 {mockMessages.map((message, index) => {
-
-                                    return (<div
-                                        key={message.messageID}
-                                        style={{
-                                            display: "inline-flex",
-                                            flexDirection: "column",
-                                            justifyContent: "flex-start",
-                                            alignItems: "flex-start",
-                                            marginTop: "8px",
-                                            marginLeft: "5px",
-                                            marginRight: "5px",
-                                            padding: "10px",
-                                            maxWidth: "calc(100% - 50px)",
-                                            width: "fit-content",
-                                            color: message.isUserMessage ? "black" : "white",
-                                            borderRadius: "10px",
-                                            borderBottomRightRadius: message.isUserMessage ? "0px" : "10px",
-                                            borderBottomLeftRadius: message.isUserMessage ? "10px" : "0px",
-                                            backgroundColor: message.isUserMessage ? theme.palette.tertiary.main : "#45b288",
-                                            alignSelf: message.isUserMessage ? "flex-end" : "flex-start",
-                                            boxShadow: "0px 0px 10px 0px rgba(0,0,0,0.6)",
-                                        }}>
-                                        {message.lines.map((line, index) => {
-                                            let color = message.isUserMessage ? "white" : "black";
-                                            return (<div key={index} style={{
-                                                height: "1px",
-                                                width: line + "px",
-                                                maxWidth: "calc(100% - 10px)",
-                                                borderTop: "2px solid " + color,
-                                                borderBottom: "2px solid " + color,
-                                                backgroundColor: color,
-                                                margin: "2px 0px",
-                                            }}></div>
-                                            )
-                                        })}
-                                    </div>)
+                                    let isCollapsed = index > 0;
+                                    return (
+                                        <Collapse
+                                            key={message.messageID}
+                                            in={isCollapsed}
+                                            sx={{
+                                                width: "100%",
+                                                flexShrink: 0,
+                                                position: "relative",
+                                            }}
+                                        >
+                                            <div
+                                                style={{
+                                                    display: "flex",
+                                                    flexDirection: "column",
+                                                    justifyContent: "flex-start",
+                                                    alignItems: "flex-start",
+                                                    marginTop: "8px",
+                                                    marginLeft: message.isUserMessage ? "auto" : "5px",
+                                                    marginRight: "5px",
+                                                    padding: "10px",
+                                                    maxWidth: "calc(100% - 50px)",
+                                                    width: "fit-content",
+                                                    color: message.isUserMessage ? "black" : "white",
+                                                    borderRadius: "10px",
+                                                    borderBottomRightRadius: message.isUserMessage ? "0px" : "10px",
+                                                    borderBottomLeftRadius: message.isUserMessage ? "10px" : "0px",
+                                                    backgroundColor: message.isUserMessage ? theme.palette.tertiary.main : "#45b288",
+                                                    boxShadow: "0px 0px 10px 0px rgba(0,0,0,0.6)",
+                                                }}>
+                                                {message.lines.map((line, index) => {
+                                                    let color = message.isUserMessage ? "white" : "black";
+                                                    return (<div key={index} style={{
+                                                        height: "1px",
+                                                        width: line + "px",
+                                                        maxWidth: "calc(100% - 10px)",
+                                                        borderTop: "2px solid " + color,
+                                                        borderBottom: "2px solid " + color,
+                                                        backgroundColor: color,
+                                                        margin: "2px 0px",
+                                                    }}></div>
+                                                    )
+                                                })}
+                                            </div>
+                                        </Collapse>
+                                    )
                                 })}
                             </div>
 

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useRef } from 'react'
 
 import Head from 'next/head'
 import Image from 'next/image'
@@ -10,13 +10,37 @@ import { AccountCircle, Close, Fullscreen, Minimize } from '@mui/icons-material'
 import { Scrollbar } from 'react-scrollbars-custom'
 import { useRouter } from 'next/router'
 import MockEditorWindow from '@/components/MockEditorWindow'
+import Xarrow from "react-xarrows";
 
+// React Icon
+import DevicesIcon from '@mui/icons-material/Devices';
+// Users Icon
+import PeopleIcon from '@mui/icons-material/People';
+// Fastapi Icon
+import BoltIcon from '@mui/icons-material/Bolt';
+// MongoDB Icon
+import SpaIcon from '@mui/icons-material/Spa';
+// Express Icon
+import StorageIcon from '@mui/icons-material/Storage';
+// External Resources Icon
+import LanguageIcon from '@mui/icons-material/Language';
 
 export default function Home() {
   const theme = useTheme()
   const session = useSession()
   const router = useRouter()
   const [accountHovered, setAccountHovered] = React.useState(false);
+
+  const userIconRef = useRef(null);
+  const reactIconRef = useRef(null);
+  const fastapiIconRef = useRef(null);
+  const fastapiIconRef2 = useRef(null);
+  const fastapiIconRef3 = useRef(null);
+  const mongoIconRef = useRef(null);
+  const mongoIconRef2 = useRef(null);
+  const expressIconRef = useRef(null);
+  const gptIconRef = useRef(null);
+  const internetIconRef = useRef(null);
 
   const iconDivStyle = (isHovering = false) => {
     const hoverBG = (isHovering) => isHovering ? theme.palette.background.paper : theme.palette.background.default;
@@ -90,7 +114,50 @@ export default function Home() {
               flexDirection: 'row',
               justifyContent: 'space-evenly',
               alignItems: 'center',
+            }}
+          >
+            <div style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '100%',
+              height: '100%',
+              backgroundColor: theme.palette.background.default,
+              overflow: 'hidden',
             }}>
+              <style>
+                {`
+                @keyframes rotate {
+                  from {
+                    transform: rotate(0deg);
+                  }
+                  to {
+                    transform: rotate(360deg);
+                  }
+                }
+                @keyframes rotate-text {
+                  0% { transform: rotateY(0deg); }
+                  25% { transform: rotateY(90deg); }
+                  50% { transform: rotateY(180deg); }
+                  75% { transform: rotateY(270deg); }
+                  100% { transform: rotateY(360deg); }
+                }
+                `}
+              </style>
+              <div style={{
+                position: 'absolute',
+                left: "calc(50% - 125vw)",
+                top: "calc(50% - 125vh)",
+                width: '250vw',
+                height: '250vh',
+                backgroundImage: 'url(/spiderweb.svg)',
+                backgroundSize: '110vw',
+                backgroundRepeat: 'no-repeat',
+                backgroundPosition: 'center',
+                backgroundColor: theme.palette.background.default,
+                animation: 'rotate 120s infinite linear',
+              }}></div>
+            </div>
             {/* Top bar start ------------------------------------ */}
             <div style={{
               display: 'flex',
@@ -189,6 +256,7 @@ export default function Home() {
             {/* Top bar end ------------------------------------ */}
             <div style={{
               maxWidth: '50%',
+              zIndex: 1,
             }}>
               <Typography variant='h1' style={{
                 fontFamily: 'Teko',
@@ -227,24 +295,23 @@ export default function Home() {
           <div
             id="TechStack"
             style={{
-              backgroundColor: "#FF000033",
+              backgroundColor: theme.palette.background.paper,
               width: "100%",
               height: "70vh",
               display: 'flex',
               flexDirection: 'row',
-              justifyContent: 'flex-start',
+              justifyContent: 'space-evenly',
               alignItems: 'center',
             }}>
             <div style={{
-              height: '100%',
-              backgroundColor: "#0000FF33",
-              width: "45%"
+              height: "calc(500px - 2rem)",
+              width: "550px",
+              padding: '1rem',
             }}>
 
               <Typography variant='h2' style={{
                 fontFamily: 'Teko',
                 color: theme.palette.text.primary,
-                marginLeft: '1rem',
               }}>
                 Tech Stack
               </Typography>
@@ -255,66 +322,500 @@ export default function Home() {
                 Webbie was built using the following technologies
               </Typography>
               <div style={{
-                display: 'flex',
-                flexDirection: 'row',
-                justifyContent: 'flex-start',
-                alignItems: 'center',
+                padding: '1rem',
               }}>
-
-                <div style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  justifyContent: 'flex-start',
-                  alignItems: 'center',
-                  gap: '1rem',
-                  marginLeft: '1rem',
-                  width: "300px",
-                  backgroundColor: "#00FF0033",
+                <Typography variant='h4' style={{
+                  fontFamily: 'Teko',
+                  color: theme.palette.text.primary,
                 }}>
-
-                  <Typography variant='h3' style={{
-                    fontFamily: 'Teko',
-                    color: theme.palette.text.primary,
-                    marginLeft: '1rem',
-                    alignSelf: 'flex-start',
-                  }}>
-                    Languages
-                  </Typography>
-                  <img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg" alt="Python" width="100" height="100" />
-                  <img src="https://upload.wikimedia.org/wikipedia/commons/6/6a/JavaScript-logo.png" alt="JavaScript" width="100" height="100" />
-                </div>
-                <div style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  justifyContent: 'flex-start',
-                  alignItems: 'center',
-                  gap: '1rem',
+                  Frontend
+                </Typography>
+                <Typography variant='body1' style={{
+                  color: theme.palette.text.primary,
                   marginLeft: '1rem',
-                  width: "300px",
-                  backgroundColor: "#00FF0033",
                 }}>
-                  <Typography variant='h3' style={{
-                    fontFamily: 'Teko',
-                    color: theme.palette.text.primary,
-                    marginLeft: '1rem',
-                    alignSelf: 'flex-start',
+                  <Link href={"https://react.dev"} target='_blank' style={{ color: theme.palette.primary.main }}>React</Link> - Frontend library
+                </Typography>
+                <Typography variant='body1' style={{
+                  color: theme.palette.text.primary,
+                  marginLeft: '1rem',
+                }}>
+                  <Link href={"https://nextjs.org"} target='_blank' style={{ color: theme.palette.primary.main }}>Next.JS</Link> - Fullstack React framework
+                </Typography>
+                <Typography variant='body1' style={{
+                  color: theme.palette.text.primary,
+                  marginLeft: '1rem',
+                }}>
+                  <Link href={"https://mui.com"} target='_blank' style={{ color: theme.palette.primary.main }}>Material UI</Link> - React UI and Icon library
+                </Typography>
+                <Typography variant='body1' style={{
+                  color: theme.palette.text.primary,
+                  marginLeft: '1rem',
+                }}>
+                  <Link href={"https://webcontainers.io"} target='_blank' style={{ color: theme.palette.primary.main }}>WebContainers</Link> - Powers the editor's live preview
+                </Typography>
+                <Typography variant='body1' style={{
+                  color: theme.palette.text.primary,
+                  marginLeft: '1rem',
+                }}>
+                  <Link href={"https://microsoft.github.io/monaco-editor/"} target='_blank' style={{ color: theme.palette.primary.main }}>Monaco</Link> - Powers the editor's code editor
+                </Typography>
+                <Typography variant='body1' style={{
+                  color: theme.palette.text.primary,
+                  marginLeft: '1rem',
+                }}>
+                  <Link href={"http://xtermjs.org"} target='_blank' style={{ color: theme.palette.primary.main }}>xTerm</Link> - Powers the editor's terminal interface
+                </Typography>
+              </div>
+              <div style={{
+                padding: '1rem',
+              }}>
+                <Typography variant='h4' style={{
+                  fontFamily: 'Teko',
+                  color: theme.palette.text.primary,
+                }}>
+                  Backend
+                </Typography>
+                <Typography variant='body1' style={{
+                  color: theme.palette.text.primary,
+                  marginLeft: '1rem',
+                }}>
+                  <Link href={"https://fastapi.tiangolo.com"} target='_blank' style={{ color: theme.palette.primary.main }}>Fastapi</Link> - Python Backend framework
+                </Typography>
+                <Typography variant='body1' style={{
+                  color: theme.palette.text.primary,
+                  marginLeft: '1rem',
+                }}>
+                  <Link href={"https://expressjs.com"} target='_blank' style={{ color: theme.palette.primary.main }}>Express</Link> - Backend framework for the image proxy (authored by GPT)
+                </Typography>
+                <Typography variant='body1' style={{
+                  color: theme.palette.text.primary,
+                  marginLeft: '1rem',
+                }}>
+                  <Link href={"https://www.mongodb.com"} target='_blank' style={{ color: theme.palette.primary.main }}>MongoDB</Link> - Databases
+                </Typography>
+              </div>
+            </div>
+            <div style={{
+              backgroundColor: theme.palette.background.default,
+              width: "800px",
+              height: "500px",
+              margin: '2rem 1rem',
+              borderRadius: '20px',
+              // border: `3px solid ${theme.palette.background.default}`
+              outline: `2px solid ${theme.palette.background.paper}`,
+              outlineOffset: '-5px',
+              position: 'relative',
+              overflow: 'hidden',
+            }}>
+              <PeopleIcon
+                ref={userIconRef}
+                style={{
+                  position: 'absolute',
+                  top: '25px',
+                  left: '40px',
+                  width: '75px',
+                  height: '75px',
+                  color: theme.palette.text.primary,
+                  padding: '10px',
+                }} />
+              <Typography variant='h4' style={{
+                fontFamily: 'Teko',
+                color: theme.palette.text.primary,
+                position: 'absolute',
+                top: '100px',
+                left: '60px',
+                backgroundColor: theme.palette.background.default,
+                zIndex: 1,
+              }}>
+                Users
+              </Typography>
+              {reactIconRef.current && userIconRef.current && (
+                <Xarrow
+                  start={userIconRef}
+                  end={reactIconRef}
+                  color={theme.palette.primary.main}
+                  strokeWidth={3}
+                  showHead={false}
+                />
+              )}
+              <DevicesIcon
+                ref={reactIconRef}
+                style={{
+                  position: 'absolute',
+                  top: '25px',
+                  left: '375px',
+                  width: '75px',
+                  height: '75px',
+                  color: theme.palette.text.primary,
+                  padding: '10px',
+                }} />
+              <Typography variant='h4'
+                style={{
+                  fontFamily: 'Teko',
+                  color: theme.palette.text.primary,
+                  position: 'absolute',
+                  top: '100px',
+                  left: '335px',
+                  backgroundColor: theme.palette.background.default,
+                  zIndex: 1,
+                }}>
+                Next.JS React App
+              </Typography>
+              {fastapiIconRef.current && reactIconRef.current && (
+                <Xarrow
+                  start={reactIconRef}
+                  end={fastapiIconRef}
+                  color={theme.palette.primary.main}
+                  strokeWidth={3}
+                  showHead={false}
+                />
+              )}
+              {fastapiIconRef2.current && reactIconRef.current && (
+                <Xarrow
+                  start={reactIconRef}
+                  end={fastapiIconRef2}
+                  color={theme.palette.primary.main}
+                  strokeWidth={3}
+                  showHead={false}
+                />
+              )}
+              {fastapiIconRef3.current && reactIconRef.current && (
+                <Xarrow
+                  start={reactIconRef}
+                  end={fastapiIconRef3}
+                  color={theme.palette.primary.main}
+                  strokeWidth={3}
+                  showHead={false}
+                />
+              )}
+              {expressIconRef.current && reactIconRef.current && (
+                <Xarrow
+                  start={reactIconRef}
+                  end={expressIconRef}
+                  endAnchor={"top"}
+                  color={theme.palette.primary.main}
+                  strokeWidth={3}
+                  showHead={false}
+                />
+              )}
+              <BoltIcon
+                ref={fastapiIconRef}
+                style={{
+                  position: 'absolute',
+                  top: '175px',
+                  left: '225px',
+                  width: '75px',
+                  height: '75px',
+                  color: theme.palette.text.primary,
+                  padding: '10px',
+                }} />
+              <Typography variant='h4'
+                style={{
+                  fontFamily: 'Teko',
+                  color: theme.palette.text.primary,
+                  position: 'absolute',
+                  top: '255px',
+                  left: '225px',
+                  backgroundColor: theme.palette.background.default,
+                  zIndex: 1,
+                }}>
+                Fastapi 1
+              </Typography>
+              {fastapiIconRef.current && fastapiIconRef2.current && (
+                <Xarrow
+                  start={fastapiIconRef}
+                  end={fastapiIconRef2}
+                  color={theme.palette.primary.main}
+                  strokeWidth={3}
+                  showHead={false}
+                />
+              )}
+              <BoltIcon
+                ref={fastapiIconRef2}
+                style={{
+                  position: 'absolute',
+                  top: '175px',
+                  left: '375px',
+                  width: '75px',
+                  height: '75px',
+                  color: theme.palette.text.primary,
+                  padding: '10px',
+                }} />
+              <Typography variant='h4'
+                style={{
+                  fontFamily: 'Teko',
+                  color: theme.palette.text.primary,
+                  position: 'absolute',
+                  top: '255px',
+                  left: '375px',
+                  backgroundColor: theme.palette.background.default,
+                  zIndex: 1,
+                }}>
+                Fastapi 2
+              </Typography>
+              <BoltIcon
+                ref={fastapiIconRef3}
+                style={{
+                  position: 'absolute',
+                  top: '175px',
+                  left: '525px',
+                  width: '75px',
+                  height: '75px',
+                  color: theme.palette.text.primary,
+                  padding: '10px',
+                }} />
+              <Typography variant='h4'
+                style={{
+                  fontFamily: 'Teko',
+                  color: theme.palette.text.primary,
+                  position: 'absolute',
+                  top: '255px',
+                  left: '525px',
+                  backgroundColor: theme.palette.background.default,
+                  zIndex: 1,
+                }}>
+                Fastapi 3
+              </Typography>
+              {fastapiIconRef.current && reactIconRef.current && (
+                <Xarrow
+                  start={fastapiIconRef}
+                  end={mongoIconRef}
+                  color={theme.palette.primary.main}
+                  strokeWidth={3}
+                  showHead={false}
+                />
+              )}
+              {fastapiIconRef2.current && reactIconRef.current && (
+                <Xarrow
+                  start={fastapiIconRef2}
+                  end={mongoIconRef2}
+                  color={theme.palette.primary.main}
+                  strokeWidth={3}
+                  showHead={false}
+                />
+              )}
+              {fastapiIconRef3.current && reactIconRef.current && (
+                <Xarrow
+                  start={fastapiIconRef3}
+                  end={gptIconRef}
+                  color={theme.palette.primary.main}
+                  strokeWidth={3}
+                  showHead={false}
+                />
+              )}
+              {expressIconRef.current && internetIconRef.current && (
+                <Xarrow
+                  start={expressIconRef}
+                  end={internetIconRef}
+                  color={theme.palette.primary.main}
+                  strokeWidth={3}
+                  showHead={false}
+                />
+              )}
+              <StorageIcon
+                ref={expressIconRef}
+                style={{
+                  position: 'absolute',
+                  top: '175px',
+                  left: '675px',
+                  width: '75px',
+                  height: '75px',
+                  color: theme.palette.text.primary,
+                  padding: '10px',
+                }} />
+              <Typography variant='h4'
+                style={{
+                  fontFamily: 'Teko',
+                  color: theme.palette.text.primary,
+                  position: 'absolute',
+                  top: '255px',
+                  left: '683px',
+                  backgroundColor: theme.palette.background.default,
+                  zIndex: 1,
+                }}>
+                Express
+              </Typography>
+              <SpaIcon
+                ref={mongoIconRef}
+                style={{
+                  position: 'absolute',
+                  top: '350px',
+                  left: '225px',
+                  width: '75px',
+                  height: '75px',
+                  color: theme.palette.text.primary,
+                  padding: '10px',
+                }} />
+              <Typography variant='h4'
+                style={{
+                  fontFamily: 'Teko',
+                  color: theme.palette.text.primary,
+                  position: 'absolute',
+                  top: '430px',
+                  left: '215px',
+                  backgroundColor: theme.palette.background.default,
+                  zIndex: 1,
+                }}>
+                MongoDB 1
+              </Typography>
+              <SpaIcon
+                ref={mongoIconRef2}
+                style={{
+                  position: 'absolute',
+                  top: '350px',
+                  left: '375px',
+                  width: '75px',
+                  height: '75px',
+                  color: theme.palette.text.primary,
+                  padding: '10px',
+                }} />
+              <Typography variant='h4'
+                style={{
+                  fontFamily: 'Teko',
+                  color: theme.palette.text.primary,
+                  position: 'absolute',
+                  top: '430px',
+                  left: '365px',
+                  backgroundColor: theme.palette.background.default,
+                  zIndex: 1,
+                }}>
+                MongoDB 2
+              </Typography>
+              <LanguageIcon
+                ref={gptIconRef}
+                style={{
+                  position: 'absolute',
+                  top: '350px',
+                  left: '525px',
+                  width: '75px',
+                  height: '75px',
+                  color: theme.palette.text.primary,
+                  padding: '10px',
+                }} />
+              <Typography variant='h4'
+                style={{
+                  fontFamily: 'Teko',
+                  color: theme.palette.text.primary,
+                  position: 'absolute',
+                  top: '430px',
+                  left: '553px',
+                  backgroundColor: theme.palette.background.default,
+                  zIndex: 1,
+                }}>
+                GPT
+              </Typography>
+              <LanguageIcon
+                ref={internetIconRef}
+                style={{
+                  position: 'absolute',
+                  top: '350px',
+                  left: '675px',
+                  width: '75px',
+                  height: '75px',
+                  color: theme.palette.text.primary,
+                  padding: '10px',
+                }} />
+              <Typography variant='h4'
+                style={{
+                  fontFamily: 'Teko',
+                  color: theme.palette.text.primary,
+                  position: 'absolute',
+                  top: '430px',
+                  left: '682px',
+                  backgroundColor: theme.palette.background.default,
+                  zIndex: 1,
+                }}>
+                Internet
+              </Typography>
+              <div style={{
+                position: 'absolute',
+                left: '1rem',
+                bottom: '1rem',
+                width: "150px",
+                height: "300px",
+                padding: '0.5rem',
+                backgroundColor: theme.palette.background.paper,
+                borderRadius: '10px',
+              }}>
+                <Typography variant='h4' style={{
+                  fontFamily: 'Teko',
+                  color: theme.palette.text.primary,
+                }}>
+                  Key
+                </Typography>
+                <Typography variant='body2' style={{
+                  color: theme.palette.text.primary,
+                  paddingBottom: "5px"
+                }}>
+                  <span style={{
+                    color: theme.palette.primary.main,
+                    fontWeight: "bold"
                   }}>
-                    Frameworks
-                  </Typography>
-                  <img src="https://seeklogo.com/images/F/fastapi-logo-541BAA112F-seeklogo.com.png" alt="FastAPI" width="100" height="100" />
-                  <div style={{
-                    display: 'flex',
-                    flexDirection: 'row',
-                    justifyContent: 'flex-start',
-                    alignItems: 'center',
-                    alignSelf: "center",
-                    gap: '1rem',
+                    Fastapi 1
+                  </span>
+                  <br />  - Account API
+                </Typography>
+                <Typography variant='body2' style={{
+                  color: theme.palette.text.primary,
+                  paddingBottom: "5px"
+                }}>
+                  <span style={{
+                    color: theme.palette.primary.main,
+                    fontWeight: "bold"
                   }}>
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/React-icon.svg/1280px-React-icon.svg.png" alt="React" height="100" />
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/8/8e/Nextjs-logo.svg" alt="Vue" width="150" />
-
-                  </div>
-                </div>
+                    Fastapi 2
+                  </span>
+                  <br />  - Project API
+                </Typography>
+                <Typography variant='body2' style={{
+                  color: theme.palette.text.primary,
+                  paddingBottom: "5px"
+                }}>
+                  <span style={{
+                    color: theme.palette.primary.main,
+                    fontWeight: "bold"
+                  }}>
+                    Fastapi 3
+                  </span>
+                  <br />  - GPT interface API
+                </Typography>
+                <Typography variant='body2' style={{
+                  color: theme.palette.text.primary,
+                  paddingBottom: "5px"
+                }}>
+                  <span style={{
+                    color: theme.palette.primary.main,
+                    fontWeight: "bold"
+                  }}>
+                    Express
+                  </span>
+                  <br />  - Image Proxy
+                </Typography>
+                <Typography variant='body2' style={{
+                  color: theme.palette.text.primary,
+                  paddingBottom: "5px"
+                }}>
+                  <span style={{
+                    color: theme.palette.primary.main,
+                    fontWeight: "bold"
+                  }}>
+                    MongoDB 1
+                  </span>
+                  <br />  - Account DB
+                </Typography>
+                <Typography variant='body2' style={{
+                  color: theme.palette.text.primary,
+                  paddingBottom: "5px"
+                }}>
+                  <span style={{
+                    color: theme.palette.primary.main,
+                    fontWeight: "bold"
+                  }}>
+                    MongoDB 2
+                  </span>
+                  <br />  - Project DB
+                </Typography>
               </div>
             </div>
 

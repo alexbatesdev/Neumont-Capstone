@@ -28,9 +28,9 @@ const fileTraverse = (directory, splitPath, fullTree, actionMethod, parameters =
 
     //If it's the last chunk,
     if (splitPathClone.length == 0) {
-        // //console.log("Triggering actionMethod");
-        // //console.log("directory: ", directory)
-        //console.log("Action method Path: ", path)
+        // console.log("Triggering actionMethod");
+        // console.log("directory: ", directory)
+        // console.log("Action method Path: ", path)
         let output = actionMethod(directory, path, ...parameters);
         // console.log("Output: ", output)
         if (output != undefined) {
@@ -141,14 +141,14 @@ const getDirectoryContents = async (webContainer, tree = {}, path = "") => {
 };
 
 const setDirectoryContents = (directory, path, tree) => {
-    //console.log("Setting directory contents")
-    //console.log("Path: ", path);
-    //console.log("Directory: ", directory);
-    //console.log("Directory witrh Path: ", directory[path])
-    //console.log("New Contents: ", tree);
+    // console.log("Setting directory contents")
+    // console.log("Path: ", path);
+    // console.log("New Contents: ", tree);
     if (path == "") return directory = tree;
     //console.log("Directory to override", directory[path].directory);
     if (tree == undefined || tree == null) tree = {};
+    // console.log("Directory: ", directory);
+    // console.log("Directory witrh Path: ", directory[path])
     directory[path].directory = tree;
     return;
 }

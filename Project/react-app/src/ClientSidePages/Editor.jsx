@@ -27,7 +27,7 @@ import { Download } from '@mui/icons-material';
 
 export default function Editor() {
     const theme = useTheme();
-    const { projectData, saveProject, isProjectSaved, setIsProjectSaved, hasEditAccess, handleDownloadProject } = useEditorContext();
+    const { projectData, saveProject, isProjectSaved, setIsProjectSaved, hasEditAccess, handleDownloadProject, hideWebContainerFrame } = useEditorContext();
     const { contextOpen, setContextOpen, contextCoords, setContextCoords, contextMenuItems, setContextMenuItems, contextMenuHelperOpen, setContextMenuHelperOpen, contextMenuHelper, setContextMenuHelper } = useContextMenu();
     const session = useSession();
     const [sidebarWidth, setSidebarWidth] = React.useState(330);
@@ -169,7 +169,7 @@ export default function Editor() {
                         <CodeEditor />
                         {projectData && (
                             <WebContainerContextProvider>
-                                <ResizableViewsVertical>
+                                <ResizableViewsVertical fullBottom={hideWebContainerFrame}>
                                     <WebContainerFrame />
                                     <WebContainerTerminal />
                                 </ResizableViewsVertical>

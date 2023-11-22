@@ -295,7 +295,7 @@ export const CodeEditor = () => {
     return (<>
         <div ref={tabBarRef} style={editorTabBarStyle}>
             <Typography variant="body1" sx={languageDisplayStyle}>
-                {openFilePaths && openFilePaths[openFilePathIndex] && openFilePaths[openFilePathIndex].path && resolveExtensionToLanguage(openFilePaths[openFilePathIndex].path.split('.')[2])}
+                {openFilePaths && openFilePaths[openFilePathIndex] && openFilePaths[openFilePathIndex].path && resolveExtensionToLanguage(openFilePaths[openFilePathIndex].path.split('.')[openFilePaths[openFilePathIndex].path.split('.').length - 1])}
             </Typography>
             <div style={tabFlexboxStyle}>
                 {codeEditorDiffMode &&
@@ -378,7 +378,7 @@ export const CodeEditor = () => {
             {(openFilePaths && openFilePaths[openFilePathIndex]) ? (
                 codeEditorDiffMode ? (
                     <DiffEditor
-                        language={resolveExtensionToLanguage(openFilePaths[openFilePathIndex].path.split('.')[2])}
+                        language={resolveExtensionToLanguage(openFilePaths[openFilePathIndex].path.split('.')[openFilePaths[openFilePathIndex].path.split('.').length - 1])}
                         original={openFilePaths[openFilePathIndex].contents}
                         modified={codeEditorDiffValue}
                         theme={'spooky'}
@@ -390,7 +390,7 @@ export const CodeEditor = () => {
                     />
                 ) : (
                     <Editor
-                        language={resolveExtensionToLanguage(openFilePaths[openFilePathIndex].path.split('.')[2])}
+                        language={resolveExtensionToLanguage(openFilePaths[openFilePathIndex].path.split('.')[openFilePaths[openFilePathIndex].path.split('.').length - 1])}
                         value={openFilePaths[openFilePathIndex].contents}
                         theme={'spooky'}
                         beforeMount={handleMonacoWillMount}

@@ -1,18 +1,38 @@
 import React, { useEffect } from 'react';
 
-import { Box, Input } from '@mui/material';
+import { Box, Input, Typography } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 
 import LoadingDisplay from './LoadingDisplay';
-import { useFiles } from '@/contexts/editor-context';
+import { useFiles, useWebContainer } from '@/contexts/editor-context';
 import { useWebContainerContext } from '@/contexts/webContainerContext';
 
 export const WebContainerFrame = ({ }) => {
     const theme = useTheme();
     const { files, setFiles, fileOperations } = useFiles();
     const { webContainer, setWebContainer, webContainerURL, setWebContainerURL, webContainerStatus, setWebContainerStatus } = useWebContainerContext();
+    const { hideWebContainerFrame, setHideWebContainerFrame } = useWebContainer();
+
+    if (hideWebContainerFrame) {
+        return (<>
+            <Typography variant='h3' sx={{
+                color: theme.palette.text.primary,
+                fontFamily: "Teko",
+                paddingTop: "1rem",
+                paddingLeft: "1rem"
+            }}>
+                Web Container Live Preview is hidden
+            </Typography>
+            <Typography variant='body1' sx={{
+                color: theme.palette.text.primary,
+                padding: "1rem"
+            }}>
+                This is because the web container does not have a start server command add one in the project settings and refresh the page, or if this project has no need to see a live preview, you can hide this message by dragging the divider between this window and the terminal below all the way up.
+            </Typography>
+        </>)
+    }
 
     useEffect(() => {
         return () => {

@@ -34,6 +34,8 @@ export const EditorContext = createContext({
     //The web container duh
     webContainer: null,
     setWebContainer: () => { },
+    hideWebContainerFrame: false,
+    setHideWebContainerFrame: () => { },
     //Project Wide settings
     projectData: {},
     setProjectData: () => { },
@@ -101,6 +103,8 @@ export const EditorContextProvider = ({
 
     const [contextMenuHelper, setContextMenuHelper] = useState(null);
 
+    const [hideWebContainerFrame, setHideWebContainerFrame] = useState(false);
+
     const saveProject = async () => {
         if (!hasEditAccess) {
             return;
@@ -144,6 +148,7 @@ export const EditorContextProvider = ({
         }).catch(err => {
             console.log(err)
             toast.error("Error creating conversation thread. Refresh the page to try again.")
+            setConversationThreadID(null)
         })
     }, [])
 
@@ -226,6 +231,8 @@ export const EditorContextProvider = ({
                 fileOperations,
                 webContainer,
                 setWebContainer,
+                hideWebContainerFrame,
+                setHideWebContainerFrame,
                 projectData,
                 setProjectData,
                 saveProject,
@@ -280,12 +287,12 @@ export const useFilePaths = () => {
 }
 
 export const useWebContainer = () => {
-    const { webContainer, setWebContainer } = useEditorContext();
-    return { webContainer, setWebContainer };
+    const { webContainer, setWebContainer, hideWebContainerFrame, setHideWebContainerFrame } = useEditorContext();
+    return { webContainer, setWebContainer, hideWebContainerFrame, setHideWebContainerFrame };
 }
 
 export const useProjectData = () => {
-    const { projectData, setProjectData } = useEditorContext();
+    const { projectData, setProjectData, isProjectSaved, setIsProjectSaved } = useEditorContext();
     return { projectData, setProjectData };
 }
 

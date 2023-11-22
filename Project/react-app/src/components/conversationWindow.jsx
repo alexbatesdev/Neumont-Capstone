@@ -319,12 +319,14 @@ export const ConversationWindow = () => {
                     value={messageField}
                     onChange={handleMessageFieldChange}
                     onKeyDown={handleKeyDown}
+                    disabled={conversationThreadID == null}
                 />
                 <Button
                     variant="contained"
                     color="tertiary"
                     onClick={handleSendMessage}
                     sx={submitButtonStyle}
+                    disabled={messageField.length == 0 || conversationThreadID == null}
                 >
                     <ArrowRightIcon fontSize="large" />
                 </Button>

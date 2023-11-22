@@ -1,3 +1,16 @@
+empty_file_template = {
+    "package.json": {
+        "file": {
+            "contents": """{
+                "name": "new project",
+                "version": "0.1.0",
+                "private": true
+            }"""
+        },
+    },
+}
+
+# Having this version saved me when the database was wiped
 react_file_template = {
     "src": {
         "directory": {

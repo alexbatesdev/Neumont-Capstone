@@ -191,7 +191,7 @@ const DependencyDisplay = ({ height, setHeight }) => {
                         onClick={handleRefresh}
                     />
                 </Typography>
-                {error ? <Typography variant="body1" style={{ padding: "10px" }}>package.json malformed</Typography> : (
+                {error ? <Typography variant="body1" style={{ padding: "10px" }}>package.json malformed or missing</Typography> : (
                     <div style={{ paddingBottom: "10px" }}>
                         {Object.keys(dependencies).map((dependency, index) => {
                             return (

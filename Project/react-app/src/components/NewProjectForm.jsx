@@ -21,7 +21,7 @@ const NewProjectForm = ({ setModalOpen }) => {
     const [hoveredIndex, setHoveredIndex] = useState(null);
     const [templates, setTemplates] = useState();
     const [selectedTemplateIndex, setSelectedTemplateIndex] = useState(-1);
-    const [serverStartCommand, setServerStartCommand] = useState("npm start");
+    const [serverStartCommand, setServerStartCommand] = useState("");
 
     useEffect(() => {
         const getTemplates = async () => {
@@ -59,17 +59,7 @@ const NewProjectForm = ({ setModalOpen }) => {
         setIsSubmitting(true);
         setSubmitError(null);
 
-        //Make sure required fields are filled out
-        if (projectName == "") {
-            toast.error("Project name cannot be empty");
-            setIsSubmitting(false);
-            return;
-        }
-        if (serverStartCommand == "") {
-            toast.error("Server start command cannot be empty");
-            setIsSubmitting(false);
-            return;
-        }
+
 
         // let url = (process.env.NEXT_PUBLIC_PROJECT_API_URL + "/new") + ((selectedTemplateIndex == 0 || selectedTemplateIndex == null) ? "" : ("/template/" + templates[selectedTemplateIndex].toLowerCase()));
         // I wrote ^^this^^ line myself, then I asked GPT to make it more readable. 
@@ -87,9 +77,10 @@ const NewProjectForm = ({ setModalOpen }) => {
                 Authorization: `Bearer ${session.data.token}`,
             },
             body: JSON.stringify({
-                project_name: projectName,
+                project_name: projectName == "" ? "Untitled Project" : projectName,
                 project_description: projectDescription,
                 is_private: isPrivate,
+                start_command: serverStartCommand,
             }),
         }).then((response) => {
             return response.json();
@@ -105,6 +96,12 @@ const NewProjectForm = ({ setModalOpen }) => {
             //console.log(error);
             toast.error("Error creating project");
         })
+    }
+
+    const none_template_file_structure = {
+        "package.json": {
+            "file": {}
+        },
     }
 
     return (
@@ -174,7 +171,6 @@ const NewProjectForm = ({ setModalOpen }) => {
                     variant='outlined'
                     value={serverStartCommand}
                     onChange={(e) => setServerStartCommand(e.target.value)}
-                    required
                 />
             </Collapse>
 
@@ -205,7 +201,10 @@ const NewProjectForm = ({ setModalOpen }) => {
                         <Typography
                             key={-1}
                             variant="body2"
-                            onClick={() => { setSelectedTemplateIndex(-1) }}
+                            onClick={() => {
+                                setSelectedTemplateIndex(-1)
+                                setServerStartCommand("")
+                            }}
                             onMouseEnter={() => { setHoveredIndex(-1) }}
                             onMouseLeave={() => { setHoveredIndex(null) }}
                             sx={listItemStyle(-1)}
@@ -217,7 +216,10 @@ const NewProjectForm = ({ setModalOpen }) => {
                                 <Typography
                                     key={i}
                                     variant="body2"
-                                    onClick={() => { setSelectedTemplateIndex(i) }}
+                                    onClick={() => {
+                                        setSelectedTemplateIndex(i)
+                                        setServerStartCommand(template.start_command)
+                                    }}
                                     onMouseEnter={() => { setHoveredIndex(i) }}
                                     onMouseLeave={() => { setHoveredIndex(null) }}
                                     sx={listItemStyle(i)}
@@ -236,7 +238,7 @@ const NewProjectForm = ({ setModalOpen }) => {
                     borderRadius: "5px",
                     border: "1px solid " + theme.palette.dragBar.default,
                 }}>
-                    <MiniFileTreeDisplay files={(selectedTemplateIndex >= 0) ? templates[selectedTemplateIndex].file_structure : null} />
+                    <MiniFileTreeDisplay files={(selectedTemplateIndex >= 0) ? templates[selectedTemplateIndex].file_structure : none_template_file_structure} />
                 </Box>
             </Box>
 

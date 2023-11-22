@@ -5,6 +5,7 @@ import { useTheme } from "@mui/material";
 import { WebContainer } from '@webcontainer/api';
 
 import { useEditorContext, useFiles, useProjectData, useWebContainer } from "./editor-context";
+import { toast } from "react-toastify";
 
 const WebContainerContext = createContext({
     fitAddon: null,
@@ -16,12 +17,13 @@ const WebContainerContext = createContext({
     setWebContainerStatus: () => { },
     webContainerURL: null,
     setWebContainerURL: () => { },
+    hideWebContainerFrame: false
 });
 
 export const WebContainerContextProvider = ({ children }) => {
     const theme = useTheme();
 
-    const { webContainer, setWebContainer } = useWebContainer();
+    const { webContainer, setWebContainer, hideWebContainerFrame, setHideWebContainerFrame } = useWebContainer();
     const { files } = useFiles();
     const { projectData } = useProjectData();
     const [webContainerStatus, setWebContainerStatus] = useState(0);
@@ -54,17 +56,17 @@ export const WebContainerContextProvider = ({ children }) => {
             });
             const fitAddon = new FitAddon();
             terminal_instance.loadAddon(fitAddon);
+            setFitAddon(fitAddon);
+            setTerminal_instance(terminal_instance);
             setupWebContainer(
                 files,
                 terminal_instance,
                 setWebContainer,
                 setWebContainerStatus,
                 setWebContainerURL,
-                projectData["start_command"]
+                projectData["start_command"],
+                setHideWebContainerFrame
             );
-
-            setFitAddon(fitAddon);
-            setTerminal_instance(terminal_instance);
         }
         if (!dynamicImportDone) {
             console.log("Pre WebContainer Setup")
@@ -85,6 +87,7 @@ export const WebContainerContextProvider = ({ children }) => {
                 setWebContainerStatus,
                 webContainerURL,
                 setWebContainerURL,
+                setHideWebContainerFrame,
             }}
         >
             {children}
@@ -113,7 +116,8 @@ const setupWebContainer = async (
     setWebContainer,
     setWebContainerStatus,
     setWebContainerURL,
-    start_command_string
+    start_command_string,
+    setHideWebContainerFrame
 ) => {
     console.log("Setting up web container")
     const webContainerInstance = await WebContainer.boot({
@@ -124,22 +128,40 @@ const setupWebContainer = async (
     console.log("Post mount");
     setWebContainer(webContainerInstance);
 
-    setWebContainerStatus(1)
-    const exitCode = await installDependencies(webContainerInstance, terminal_instance);
-    if (exitCode !== 0) {
-        throw new Error('Installation failed');
+    if (files["package.json"] != undefined) {
+        setWebContainerStatus(1)
+        const exitCode = await installDependencies(webContainerInstance, terminal_instance);
+        if (exitCode !== 0) {
+            toast.error("Failed to install dependencies");
+            setHideWebContainerFrame(true);
+            return;
+        }
+    } else {
+        toast.info("No package.json found");
+        setHideWebContainerFrame(true);
     }
 
-
-    setWebContainerStatus(2);
-    await runServer(webContainerInstance, setWebContainerURL, start_command_string);
+    if (start_command_string !== "") {
+        setWebContainerStatus(2);
+        await runServer(webContainerInstance, setWebContainerURL, start_command_string, terminal_instance);
+    } else {
+        toast.info("No server start command specified");
+        setHideWebContainerFrame(true);
+    }
 
     await startShell(webContainerInstance, terminal_instance);
 }
 
 const installDependencies = async (webContainerInstance, terminal_instance) => {
     console.log("Installing dependencies");
-    const installProcess = await webContainerInstance.spawn('pnpm', ['install']);
+    let installProcess;
+    try {
+
+        installProcess = await webContainerInstance.spawn('pnpm', ['install']);
+    } catch (error) {
+        toast.error("Failed to install dependencies");
+        return;
+    }
     installProcess.output.pipeTo(
         new WritableStream({
             write(data) {
@@ -151,17 +173,32 @@ const installDependencies = async (webContainerInstance, terminal_instance) => {
     return installProcess.exit;
 }
 
-const runServer = async (webContainerInstance, setWebContainerURL, start_command_string) => {
+const runServer = async (webContainerInstance, setWebContainerURL, start_command_string, terminal_instance) => {
     console.log("Running server");
     // Variable named start_command_string because it gets split at this step
     const command = start_command_string.split(" ")[0];
     const args = start_command_string.split(" ").slice(1);
 
     const startProcess = await webContainerInstance.spawn(command, args);
+    // // Remember to remove me 💭
+    // startProcess.output.pipeTo(
+    //     new WritableStream({
+    //         write(data) {
+    //             terminal_instance.write(data);
+    //         },
+    //     })
+    // )
+    // // Remember to remove me 💭
     webContainerInstance.on('server-ready', (port, url) => {
         setWebContainerURL(url);
         console.log(url)
     });
+    // // Remember to remove me 💭
+    // const shellInput = startProcess.input.getWriter();
+    // terminal_instance.onData((data) => {
+    //     shellInput.write(data);
+    // });
+    // // Remember to remove me 💭
 }
 
 const startShell = async (webContainerInstance, terminal_instance) => {

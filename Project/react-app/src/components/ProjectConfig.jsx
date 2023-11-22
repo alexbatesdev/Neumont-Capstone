@@ -167,7 +167,7 @@ const ProjectConfig = () => {
                 </Typography>
                 <TextField
                     color="secondary"
-                    label={projectData.start_command}
+                    label={possiblyEmptyValue(projectData.start_command, "No start command")}
                     variant="outlined"
                     size='small'
                     value={newStartCommand}

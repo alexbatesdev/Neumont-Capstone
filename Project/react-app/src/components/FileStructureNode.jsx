@@ -38,7 +38,9 @@ function FileStructureNode({ currentNodeTree, path, depth = 0 }) {
         // Context Menu hook
         contextOpen, setContextOpen, contextCoords, setContextCoords, contextMenuItems, setContextMenuItems, contextMenuHelperOpen, setContextMenuHelperOpen, contextMenuHelper, setContextMenuHelper,
         // Diff Editor Stuff
-        codeEditorDiffMode, setCodeEditorDiffMode, codeEditorDiffValue, setCodeEditorDiffValue
+        codeEditorDiffMode, setCodeEditorDiffMode, codeEditorDiffValue, setCodeEditorDiffValue,
+        // Project Data hook
+        isProjectSaved, setIsProjectSaved
     } = useEditorContext();
 
     if (currentNodeTree == undefined) {
@@ -109,6 +111,7 @@ function FileStructureNode({ currentNodeTree, path, depth = 0 }) {
                         setContextMenuHelperOpen(bool)
                         setContextMenuHelper(null)
                         setContextOpen(bool)
+                        setIsProjectSaved(false)
                     }} />)
                 }
             },
@@ -121,6 +124,7 @@ function FileStructureNode({ currentNodeTree, path, depth = 0 }) {
                         setContextMenuHelperOpen(bool)
                         setContextMenuHelper(null)
                         setContextOpen(bool)
+                        setIsProjectSaved(false)
                     }} />)
                 }
             },
@@ -129,6 +133,7 @@ function FileStructureNode({ currentNodeTree, path, depth = 0 }) {
                 method: () => {
                     webContainer.fs.rm(path, { recursive: true })
                     setContextOpen(false)
+                    setIsProjectSaved(false)
                 }
             }
         ])
@@ -157,6 +162,7 @@ function FileStructureNode({ currentNodeTree, path, depth = 0 }) {
                         setContextMenuHelper(null)
                         setContextOpen(bool)
                     }} />)
+                    setIsProjectSaved(false)
                 }
             },
             {
@@ -172,6 +178,7 @@ function FileStructureNode({ currentNodeTree, path, depth = 0 }) {
                     }
                     webContainer.fs.rm(path)
                     setContextOpen(false)
+                    setIsProjectSaved(false)
                 }
             },
             {
@@ -185,6 +192,7 @@ function FileStructureNode({ currentNodeTree, path, depth = 0 }) {
                         setCodeEditorDiffValue(fileOperations.getFileContents(files, path));
                     }
                     setContextOpen(false)
+                    setIsProjectSaved(false)
                 }
             }
         ])
@@ -194,6 +202,7 @@ function FileStructureNode({ currentNodeTree, path, depth = 0 }) {
             setContextCoords({ x: 0, y: 0 })
             setContextMenuHelper(null)
             // setContextMenuHelperOpen(false)
+            setIsProjectSaved(false)
         });
     }
 
@@ -204,10 +213,14 @@ function FileStructureNode({ currentNodeTree, path, depth = 0 }) {
             // ------------------------------------ If the path is node modules watch the root directory instead
             // This works because I don't want to watch the node modules directory, but I do want to watch the root directory (which doesn't get a FileStructureNode)
             // This personally feels like a very creative and good solution to the problem, but something unscaleable and would cause technical debt in the long term
+
+            let splitPath = path.split("/")
+            if (splitPath.includes(".next")) return;
+
             let pathNotModules = ((path == "./node_modules") ? "./" : path)
             let watcher = null;
             if (webContainer) {
-                // console.log("Watching " + pathNotModules)
+
                 watcher = webContainer.fs.watch(pathNotModules, (event, filename) => {
                     //if the filename starts with _tmp, ignore it
 
@@ -254,9 +267,9 @@ function FileStructureNode({ currentNodeTree, path, depth = 0 }) {
         fileKeys = fileKeys_folders.concat(fileKeys_files)
         // If the current node is a directory
         // Render a directory
-        if (path == "./node_modules") {
-            return null;
-        }
+        // if (path == "./node_modules") {
+        //     return null;
+        // }
 
 
         return (

@@ -9,7 +9,7 @@ from models.project_models import (
     File,
     ProjectCreate,
 )
-from reactFileTemplate import react_file_template
+from projectFileTemplates import react_file_template, empty_file_template
 
 from jose import JWTError, jwt
 
@@ -147,7 +147,7 @@ async def insert_new_project(
     body_dict = body.model_dump()
     body_dict["project_owner"] = user.account_id
     project = ProjectDataDB(**body_dict)
-    project.file_structure = Directory(react_file_template)
+    project.file_structure = Directory(empty_file_template)
     try:
         async with httpx.AsyncClient() as client:
             await client.post(
@@ -465,6 +465,7 @@ async def update_project_metadata(
     project.project_name = body.project_name
     project.project_description = body.project_description
     project.is_private = body.is_private
+    project.start_command = body.start_command
     # project.file_structure = body.file_structure
     project.is_private = body.is_private
     project.is_template = body.is_template

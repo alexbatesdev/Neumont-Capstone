@@ -83,14 +83,14 @@ const NewProjectForm = ({ setModalOpen }) => {
                 start_command: serverStartCommand,
             }),
         }).then((response) => {
+            if (!response.ok) {
+                toast.error("Error creating project");
+                return false
+            }
             return response.json();
         }).then((data) => {
-            //console.log(data);
-            if (data.error) {
-                toast.error(data.error);
-            } else {
-                window.location.href = "/editor/" + data.project_id;
-            }
+            if (!data) return;
+            window.location.href = "/editor/" + data.project_id;
         }
         ).catch((error) => {
             //console.log(error);

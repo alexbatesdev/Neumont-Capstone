@@ -40,7 +40,9 @@ import httpx
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Start
-    client = AsyncIOMotorClient("mongodb://admin:secret@Account-db:27017")
+    client = AsyncIOMotorClient(
+        f"mongodb://{config('ACCOUNT_DB_AUTH')}@{config('ACCOUNT_DB_NAME')}:{config('ACCOUNT_DB_PORT')}"
+    )
     await init_beanie(
         database=client.account,
         document_models=[AccountDB],

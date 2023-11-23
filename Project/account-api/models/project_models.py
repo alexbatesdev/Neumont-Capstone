@@ -5,8 +5,8 @@
 from datetime import datetime
 from tzlocal import get_localzone
 from pydantic import BaseModel, Field, root_validator, RootModel
-from typing import Dict, Union, Any, Type, Optional
-from beanie import Document
+from typing import Dict, Union, Any
+from beanie import Document, PydanticObjectId
 from uuid import UUID, uuid4
 from datetime import datetime
 
@@ -60,7 +60,11 @@ class ProjectData(ProjectCreate):
     last_modified_date: datetime = Field(default_factory=datetime.now)
     collaborators: list[UUID] = Field(default=[])
     # Filestructure needs to not be empty, at the very least it needs to have a package.json
-    file_structure: Optional[Directory] = Field(default=Directory({}))
+    file_structure: PydanticObjectId | None = Field(default=None)
+
+
+class ProjectDataWithFiles(ProjectData):
+    file_structure: Directory
 
 
 class ProjectDataDB(ProjectData, Document):

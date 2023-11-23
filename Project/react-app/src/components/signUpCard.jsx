@@ -74,7 +74,11 @@ export const SignUpCard = ({ }) => {
                     }
                 });
             }
-        })
+        }).catch(err => {
+            console.log(err);
+            setError("Error creating account");
+            toast.error("Error creating account")
+        });
     }
 
     const outerCardStyle = {

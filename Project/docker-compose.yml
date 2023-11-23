@@ -11,7 +11,6 @@ services:
       - LOG_LEVEL=DEBUG
       - PYTHONUNBUFFERED=1
   # next-frontend: # This container is not for development, but for production
-  #   container_name: react-frontend
   #   build: ./react-app
   #   ports:
   #     - "3000:3000"
@@ -24,7 +23,6 @@ services:
       - "8001:8000"
   account-db:
     image: mongo:latest
-    container_name: account-db
     ports:
       - "27017:27017"
     volumes:
@@ -41,7 +39,6 @@ services:
       - "8002:8000"
   project-db:
     image: mongo:latest
-    container_name: project-db
     ports:
       - "27018:27017"
     volumes:

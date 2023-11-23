@@ -821,18 +821,11 @@ export default function Home() {
 
           </div>
           <div
-            id="Frameworks"
+            id="Templates"
             style={{
               backgroundColor: "#00FF0033",
               width: "100%",
               height: "33vh",
-            }}></div>
-          <div
-            id="TryTheDemo"
-            style={{
-              backgroundColor: "#FF00FF33",
-              width: "100%",
-              height: "70vh",
             }}></div>
           <div
             id='Footer'

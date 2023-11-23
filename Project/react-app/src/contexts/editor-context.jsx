@@ -124,12 +124,10 @@ export const EditorContextProvider = ({
                 "Authorization": `Bearer ${session.data.token}`,
             },
             body: JSON.stringify(body)
-        })
-        if (response.status !== 200) {
-            console.log(response)
-            toast.error("Error saving project. Your session may have expired.")
+        }).catch(err => {
+            toast.error("Error saving project. Download your project to save preserve your work and try again later.")
             return
-        }
+        })
         setIsProjectSaved(true);
         toast.success("Project saved")
     }

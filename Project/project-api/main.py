@@ -8,6 +8,7 @@ from models.project_models import (
     Directory,
     File,
     ProjectCreate,
+    ProjectDataWithFiles,
 )
 from projectFileTemplates import react_file_template, empty_file_template
 
@@ -15,12 +16,15 @@ from jose import JWTError, jwt
 
 from decouple import config
 
-from motor.motor_asyncio import AsyncIOMotorClient
+from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorGridFSBucket
 from beanie import init_beanie
+from bson import ObjectId
 from datetime import datetime
 from uuid import UUID
 
 import httpx
+
+import json
 
 from pytz import utc
 from tzlocal import get_localzone
@@ -31,7 +35,11 @@ from models.account_models import AccountWithToken
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Start
-    client = AsyncIOMotorClient("mongodb://admin:secret@project-db:27017")
+    client = AsyncIOMotorClient(
+        f"mongodb://{config('PROJECT_DB_AUTH')}@{config('PROJECT_DB_NAME')}:{config('PROJECT_DB_PORT')}"
+    )
+    app.state.gridFS = AsyncIOMotorGridFSBucket(client.project, "projectFilesystem")
+
     await init_beanie(
         database=client.project,
         document_models=[ProjectDataDB],
@@ -131,6 +139,62 @@ def verify_item_found(project):
         )
 
 
+# GPT generated and entirely untested 😎
+async def upload_filestructure_to_gridfs(filesystem_json: Directory, project_id: UUID):
+    gridfs_bucket = app.state.gridFS
+
+    # Check if a file for this project already exists
+    cursor = gridfs_bucket.find({"filename": f"{project_id}_files.json"})
+    while await cursor.fetch_next:
+        existing_file = cursor.next_object()
+        gridfs_bucket.delete(existing_file._id)
+
+    filesystem_dict = filesystem_json.dict()
+
+    filesystem_bytes = json.dumps(filesystem_dict).encode()
+    file_id = await gridfs_bucket.upload_from_stream(
+        f"{project_id}_files.json", filesystem_bytes
+    )
+    return ObjectId(file_id)
+
+
+async def download_filestructure_from_gridfs(file_id: ObjectId):
+    gridfs_bucket = app.state.gridFS
+    grid_out = await gridfs_bucket.open_download_stream(file_id)
+    filesystem_bytes = await grid_out.read()
+    filesystem_json = json.loads(
+        filesystem_bytes.decode("utf-8")
+    )  # Convert bytes back to JSON
+    filestructure_model = Directory(**filesystem_json)
+    return filestructure_model
+
+
+async def project_to_project_out(project: ProjectDataDB):
+    project_out = ProjectDataWithFiles(
+        project_id=project.project_id,
+        project_owner=project.project_owner,
+        project_name=project.project_name,
+        project_description=project.project_description,
+        start_command=project.start_command,
+        creation_date=project.creation_date,
+        last_modified_date=project.last_modified_date,
+        is_private=project.is_private,
+        is_template=project.is_template,
+        collaborators=project.collaborators,
+        file_structure=await download_filestructure_from_gridfs(project.file_structure),
+    )
+
+    return project_out
+
+
+async def bulk_projects_out(projects: list[ProjectDataDB]):
+    output = []
+    for project in projects:
+        project_out = await project_to_project_out(project)
+        output.append(project_out)
+    return output
+
+
 # --------------------------------------------- Endpoints --------------------------------------------- #
 
 
@@ -147,7 +211,10 @@ async def insert_new_project(
     body_dict = body.model_dump()
     body_dict["project_owner"] = user.account_id
     project = ProjectDataDB(**body_dict)
-    project.file_structure = Directory(empty_file_template)
+    project.file_structure = await upload_filestructure_to_gridfs(
+        Directory(empty_file_template),
+        project.project_id,
+    )
     try:
         async with httpx.AsyncClient() as client:
             await client.post(
@@ -163,7 +230,7 @@ async def insert_new_project(
 
     try:
         await project.insert()
-    except:
+    except Exception as e:
         async with httpx.AsyncClient() as client:
             # undo the add_project_reference
             await client.post(
@@ -175,7 +242,9 @@ async def insert_new_project(
             detail="The project could not be created",
         )
 
-    return project
+    project_out = await project_to_project_out(project)
+
+    return project_out
 
 
 # new project from template
@@ -197,8 +266,12 @@ async def insert_react_template(
             detail="The project you are trying to use as a template is not a template",
         )
 
-    body_dict["file_structure"] = template.file_structure
     project = ProjectDataDB(**body_dict)
+
+    project.file_structure = await upload_filestructure_to_gridfs(
+        template.file_structure,
+        project.project_id,
+    )
 
     try:
         async with httpx.AsyncClient() as client:
@@ -228,7 +301,9 @@ async def insert_react_template(
             detail="The project could not be created",
         )
 
-    return project
+    project_out = await project_to_project_out(project)
+
+    return project_out
 
 
 # fork a project
@@ -245,8 +320,11 @@ async def fork_project(
     template = await ProjectDataDB.find_one({"project_id": project_id})
     verify_item_found(template)
 
-    body_dict["file_structure"] = template.file_structure
     project = ProjectDataDB(**body_dict)
+    project.file_structure = await upload_filestructure_to_gridfs(
+        template.file_structure,
+        project.project_id,
+    )
 
     try:
         async with httpx.AsyncClient() as client:
@@ -276,7 +354,9 @@ async def fork_project(
             detail="The project could not be created",
         )
 
-    return project
+    project_out = await project_to_project_out(project)
+
+    return project_out
 
 
 # get all projects
@@ -288,7 +368,9 @@ async def get_all_projects(user: AccountWithToken = Depends(verify_token)):
 
     verify_item_found(projects)
 
-    return projects
+    projects_out = await bulk_projects_out(projects)
+
+    return projects_out
 
 
 # get all templates
@@ -301,7 +383,9 @@ async def get_all_projects(user: AccountWithToken = Depends(verify_token)):
 
     verify_item_found(projects)
 
-    return projects
+    projects_out = await bulk_projects_out(projects)
+
+    return projects_out
 
 
 # get project by id
@@ -314,7 +398,10 @@ async def get_project(project_id: UUID):
             status_code=status.HTTP_403_FORBIDDEN,
             detail="You do not have permission to view this project, or you used the wrong endpoint",
         )
-    return project
+
+    project_out = await project_to_project_out(project)
+
+    return project_out
 
 
 # get private project by id
@@ -325,7 +412,10 @@ async def get_private_project(
     project = await ProjectDataDB.find_one({"project_id": project_id})
     verify_collaborator(project, user)
     verify_item_found(project)
-    return project
+
+    project_out = await project_to_project_out(project)
+
+    return project_out
 
 
 # get projects by owner
@@ -339,7 +429,9 @@ async def get_projects(
 
     verify_item_found(projects)
 
-    return projects
+    projects_out = await bulk_projects_out(projects)
+
+    return projects_out
 
 
 # get projects by owner
@@ -353,7 +445,9 @@ async def get_public_projects(project_owner: UUID):
 
     verify_item_found(projects)
 
-    return projects
+    projects_out = await bulk_projects_out(projects)
+
+    return projects_out
 
 
 # Get templates by owner
@@ -368,7 +462,9 @@ async def get_projects(
 
     verify_item_found(projects)
 
-    return projects
+    projects_out = await bulk_projects_out(projects)
+
+    return projects_out
 
 
 # entirely untested (Dave style 😎)
@@ -386,16 +482,19 @@ async def get_dashboard_projects(
     projects = projectsByOwner + projectsSharedWithUser
     verify_item_found(projects)
 
-    return projects
+    projects_out = await bulk_projects_out(projects)
+
+    return projects_out
 
 
 # update project
 @app.put("/by_id/{project_id}")
 async def update_project(
     project_id: UUID,
-    body: ProjectDataDB,
+    body: ProjectDataWithFiles,
     user: AccountWithToken = Depends(verify_token),
 ):
+    print("1")
     if project_id != body.project_id:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -415,6 +514,7 @@ async def update_project(
             detail="You do not have permission to edit this project",
         )
     verify_collaborator(project, user)
+    print("2")
 
     # project.project_id = body.project_id # Doesn't actually ever get changed
     # project.project_owner = body.project_owner # Doesn't actually ever get changed
@@ -423,13 +523,19 @@ async def update_project(
     project.creation_date = body.creation_date
     project.last_modified_date = datetime.now()
     project.is_private = body.is_private
-    project.file_structure = body.file_structure
+    project.file_structure = await upload_filestructure_to_gridfs(
+        body.file_structure,
+        project.project_id,
+    )
     project.is_private = body.is_private
     project.is_template = body.is_template
     project.collaborators = body.collaborators
-
+    print("-------------------------------------")
     await project.replace()
-    return project
+    print("=====================================")
+    project_out = await project_to_project_out(project)
+
+    return project_out
 
 
 # update project metadata
@@ -473,7 +579,10 @@ async def update_project_metadata(
 
     project.last_modified_date = datetime.now()
     await project.replace()
-    return project
+
+    project_out = await project_to_project_out(project)
+
+    return project_out
 
 
 # update project name
@@ -493,7 +602,10 @@ async def update_project_name(
     project.last_modified_date = datetime.now()
     project.project_name = new_name
     await project.replace()
-    return project
+
+    project_out = await project_to_project_out(project)
+
+    return project_out
 
 
 # update project description
@@ -515,7 +627,10 @@ async def update_project_description(
     project.project_description = new_description
     project.last_modified_date = datetime.now()
     await project.replace()
-    return project
+
+    project_out = await project_to_project_out(project)
+
+    return project_out
 
 
 # update project privacy
@@ -535,7 +650,10 @@ async def update_project_privacy(
     project.last_modified_date = datetime.now()
     project.is_private = new_privacy
     await project.replace()
-    return project
+
+    project_out = await project_to_project_out(project)
+
+    return project_out
 
 
 # update project file structure
@@ -548,9 +666,15 @@ async def update_project_file_structure(
     verify_item_found(project)
 
     project.last_modified_date = datetime.now()
-    project.file_structure = body
+    project.file_structure = await upload_filestructure_to_gridfs(
+        body,
+        project.project_id,
+    )
     await project.replace()
-    return project
+
+    project_out = await project_to_project_out(project)
+
+    return project_out
 
 
 # add collaborator
@@ -597,7 +721,9 @@ async def add_collaborator(
             detail="The collaborator could not be added",
         )
 
-    return project
+    project_out = await project_to_project_out(project)
+
+    return project_out
 
 
 # remove collaborator
@@ -623,7 +749,10 @@ async def remove_collaborator(
     project.last_modified_date = datetime.now()
     project.collaborators.remove(collaborator)
     await project.replace()
-    return project
+
+    project_out = await project_to_project_out(project)
+
+    return project_out
 
 
 # set project is_template
@@ -643,7 +772,10 @@ async def set_project_is_template(
     project.last_modified_date = datetime.now()
     project.is_template = is_template
     await project.replace()
-    return project
+
+    project_out = await project_to_project_out(project)
+
+    return project_out
 
 
 # update project owner - this is for account merging
@@ -663,7 +795,10 @@ async def update_project_owner(
     project.last_modified_date = datetime.now()
     project.project_owner = new_owner
     await project.replace()
-    return project
+
+    project_out = await project_to_project_out(project)
+
+    return project_out
 
 
 # delete all projects by owner
@@ -679,6 +814,7 @@ async def delete_projects(
     projects = await ProjectDataDB.find({"project_owner": project_owner}).to_list()
     verify_item_found(projects)
     for project in projects:
+        app.state.gridFS.delete(project.file_structure)
         await project.delete()
 
 
@@ -690,4 +826,5 @@ async def delete_project(
     project = await ProjectDataDB.find_one({"project_id": project_id})
     verify_owner(project, user)
     verify_item_found(project)
+    app.state.gridFS.delete(project.file_structure)
     await project.delete()

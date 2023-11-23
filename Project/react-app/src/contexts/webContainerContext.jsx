@@ -124,7 +124,12 @@ const setupWebContainer = async (
         workdirName: 'react-app'
     });
     console.log("Post create");
-    webContainerInstance.mount(files)
+    try {
+        webContainerInstance.mount(files)
+    } catch (error) {
+        toast.error("Failed to mount files");
+        return;
+    }
     console.log("Post mount");
     setWebContainer(webContainerInstance);
 

@@ -191,7 +191,7 @@ export default function Home() {
               marginTop: "10px",
               textAlign: 'center',
             }}>
-              Try out a template
+              Try one of our templates
             </Typography>
             <div style={{
               display: 'flex',
@@ -211,8 +211,10 @@ export default function Home() {
                   outline: "solid 3px black",
                   outlineOffset: "-2px",
                 }} />
+              <IndexTemplateButton text='Basic Web' iconDivBackgroundImage={'url("https://logos-download.com/wp-content/uploads/2017/07/HTML5_badge.png")'} />
               <IndexTemplateButton text='Node.JS' iconDivBackgroundImage={'url("/nodejs-icon.png")'} />
-
+              <IndexTemplateButton text='Vue' iconDivBackgroundImage={'url("https://upload.wikimedia.org/wikipedia/commons/9/95/Vue.js_Logo_2.svg")'} />
+              <IndexTemplateButton text='Angular' iconDivBackgroundImage={'url("https://upload.wikimedia.org/wikipedia/commons/c/cf/Angular_full_color_logo.svg")'} />
             </div>
           </div>
           <div
@@ -268,7 +270,7 @@ export default function Home() {
             <Typography variant='h4' color={theme.palette.text.primary} fontFamily={"Teko"} sx={{ pr: 1 }}>
               Contact:
             </Typography>
-            <FooterContactBadge Icon={GitHubIcon} text='mcbuzzerr' url='https://github.com/mcbuzzerr' />
+            <FooterContactBadge Icon={GitHubIcon} text='Mcbuzzerr' url='https://github.com/mcbuzzerr' />
             <FooterContactBadge Icon={LinkedInIcon} text='AlexBatesDev' url='https://www.linkedin.com/in/alexbatesdev/' />
             <FooterContactBadge Icon={EmailIcon} text='AlexBates.Dev@gmail.com' copyOnClick />
             <Typography variant='h5' color={theme.palette.primary.main} fontFamily={"Teko"} style={{

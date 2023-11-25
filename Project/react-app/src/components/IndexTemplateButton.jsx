@@ -46,7 +46,8 @@ const IndexTemplateButton = ({ text, iconDivBackgroundImage, onClick = () => { }
             <Typography variant='h5' style={{
                 color: theme.palette.text.primary,
                 fontFamily: 'Teko',
-                paddingTop: "4px"
+                paddingTop: "4px",
+                textWrap: "nowrap"
             }}>
                 {text}
             </Typography>

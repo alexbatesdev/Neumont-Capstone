@@ -343,13 +343,6 @@ async def search(search_term: str):
 
 
 # entirelly untested 😎
-# - verify email
-@app.get("/verify_email/{JW_token_probably}")
-async def verify_email(JW_token_probably: str):
-    pass
-
-
-# entirelly untested 😎
 # - change password
 @app.post("/change_password")
 async def change_password(
@@ -598,3 +591,58 @@ async def remove_template(
     current_user.my_templates.remove(project_id)
     await current_user.save()
     return {"template_list": current_user.my_templates}
+
+
+# Following - Currently untested 😎
+@app.post("/follow/{account_id}")
+async def follow_account(
+    current_user: Annotated[AccountDB, Depends(get_current_user)], account_id: UUID
+):
+    if account_id is None:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Account id required",
+        )
+    if account_id in current_user.following:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Account already followed",
+        )
+    current_user.following.append(account_id)
+    await current_user.save()
+    return {"following_list": current_user.following}
+
+
+@app.delete("/unfollow/{account_id}")
+async def unfollow_account(
+    current_user: Annotated[AccountDB, Depends(get_current_user)], account_id: UUID
+):
+    if account_id is None:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Account id required",
+        )
+    if account_id not in current_user.following:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Account not in following list",
+        )
+    current_user.following.remove(account_id)
+    await current_user.save()
+    return {"following_list": current_user.following}
+
+
+@app.get("/following/{account_id}")
+async def get_following(account_id: UUID):
+    if account_id is None:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Account id required",
+        )
+    Account = await AccountDB.find_one({"account_id": account_id})
+    verify_account_found(Account)
+    following_list = []
+    for account_id in Account.following:
+        following_list.append(await AccountDB.find_one({"account_id": account_id}))
+
+    return {"following_list": following_list}

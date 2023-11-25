@@ -57,6 +57,7 @@ class AccountOut(BaseModel):
     my_templates: Optional[List[UUID]] = Field([])
     isAdmin: Optional[bool] = Field(False)
     openai_api_key: Optional[str] = Field(None)
+    following: Optional[List[UUID]] = Field([])
 
 
 class Account(AccountOut):

@@ -130,10 +130,10 @@ const CollaboratorsConfigWindow = ({ collaborators }) => {
                 </div>
             </Collapse>
             <Collapse in={expanded} sx={{ width: "100%" }}>
-                {collaborators.length == 0 && <Typography sx={{ width: "calc(100% - 20px)", padding: "10px" }}>
+                {collaborators && collaborators.length == 0 && <Typography sx={{ width: "calc(100% - 20px)", padding: "10px" }}>
                     No collaborators
                 </Typography>}
-                {collaborators.map((collaborator, index) => {
+                {collaborators && collaborators.map((collaborator, index) => {
                     return <ProfileMiniAccordion profile_id={collaborator} showRemoveCollaborator={hasEditAccess} />
                 })}
             </Collapse>

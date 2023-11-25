@@ -69,7 +69,7 @@ export const EditorContextProvider = ({
     const [conversationThreadID, setConversationThreadID] = useState(null);
 
 
-    const [files, setFiles] = useState(project_in.file_structure);
+    const [files, setFiles] = useState(project_in ? project_in.file_structure : {});
 
     const [webContainer, setWebContainer] = useState(null);
 

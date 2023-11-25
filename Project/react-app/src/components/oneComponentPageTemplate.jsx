@@ -59,7 +59,6 @@ export function OneComponentTemplate({ children, title }) {
             <Head>
                 <title>{title}</title>
                 <meta name="description" content={title + " Page"} />
-                <link rel="icon" href="/favicon.ico" />
             </Head>
 
             <style>

@@ -4,43 +4,24 @@ import Head from 'next/head'
 import Image from 'next/image'
 import Link from 'next/link'
 
-import { Button, Collapse, Typography, useTheme } from '@mui/material'
+import { Button, Collapse, Divider, Typography, useTheme } from '@mui/material'
 import { signOut, useSession } from 'next-auth/react'
-import { AccountCircle, Close, Fullscreen, Minimize } from '@mui/icons-material'
 import { Scrollbar } from 'react-scrollbars-custom'
 import { useRouter } from 'next/router'
 import MockEditorWindow from '@/components/MockEditorWindow'
-import Xarrow from "react-xarrows";
+import TechStackPanel from '@/components/TechStackPanel'
+import IndexTopBar from '@/components/IndexTopBar'
+import IndexTemplateButton from '@/components/IndexTemplateButton'
+import FooterContactBadge from '@/components/FooterContactBadge'
 
-// React Icon
-import DevicesIcon from '@mui/icons-material/Devices';
-// Users Icon
-import PeopleIcon from '@mui/icons-material/People';
-// Fastapi Icon
-import BoltIcon from '@mui/icons-material/Bolt';
-// MongoDB Icon
-import SpaIcon from '@mui/icons-material/Spa';
-// Express Icon
-import StorageIcon from '@mui/icons-material/Storage';
-// External Resources Icon
-import LanguageIcon from '@mui/icons-material/Language';
+import EmailIcon from '@mui/icons-material/Email';
+import GitHubIcon from '@mui/icons-material/GitHub';
+import LinkedInIcon from '@mui/icons-material/LinkedIn';
 
 export default function Home() {
   const theme = useTheme()
   const session = useSession()
   const router = useRouter()
-  const [accountHovered, setAccountHovered] = React.useState(false);
-
-  const userIconRef = useRef(null);
-  const reactIconRef = useRef(null);
-  const fastapiIconRef = useRef(null);
-  const fastapiIconRef2 = useRef(null);
-  const fastapiIconRef3 = useRef(null);
-  const mongoIconRef = useRef(null);
-  const mongoIconRef2 = useRef(null);
-  const expressIconRef = useRef(null);
-  const gptIconRef = useRef(null);
-  const internetIconRef = useRef(null);
 
   const iconDivStyle = (isHovering = false) => {
     const hoverBG = (isHovering) => isHovering ? theme.palette.background.paper : theme.palette.background.default;
@@ -76,18 +57,6 @@ export default function Home() {
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="true" />
         <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@500&family=Teko&display=swap" rel="stylesheet" />
       </Head>
-      <style>
-        {`
-          @keyframes rotate-text {
-            0% { transform: rotateY(0deg); }
-            25% { transform: rotateY(90deg); }
-            50% { transform: rotateY(180deg); }
-            75% { transform: rotateY(270deg); }
-            100% { transform: rotateY(360deg); }
-          }
-        `}
-      </style>
-
       <Scrollbar
         noScrollX
         style={{
@@ -135,13 +104,6 @@ export default function Home() {
                     transform: rotate(360deg);
                   }
                 }
-                @keyframes rotate-text {
-                  0% { transform: rotateY(0deg); }
-                  25% { transform: rotateY(90deg); }
-                  50% { transform: rotateY(180deg); }
-                  75% { transform: rotateY(270deg); }
-                  100% { transform: rotateY(360deg); }
-                }
                 `}
               </style>
               <div style={{
@@ -159,100 +121,7 @@ export default function Home() {
               }}></div>
             </div>
             {/* Top bar start ------------------------------------ */}
-            <div style={{
-              display: 'flex',
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              padding: '1rem 2rem',
-              width: 'calc(100% - 4rem)',
-              height: '60px',
-              position: 'absolute',
-              top: 0,
-            }}>
-              <div>
-                <Typography variant='h4' style={{
-                  fontFamily: 'Teko',
-                  color: theme.palette.text.primary,
-                  marginLeft: '1rem',
-                }}>
-                  Web
-                  <span style={{
-                    color: theme.palette.primary.main,
-                  }}>
-                    <span style={{
-                      display: "inline-block",
-                      animation: "rotate-text 8s infinite",
-                      transformOrigin: "50% 50%",
-                    }}>
-                      bi
-                    </span>
-                    e
-                  </span>
-                </Typography>
-              </div>
-              <div style={{
-                flexGrow: 1,
-                display: 'flex',
-                flexDirection: 'row',
-                justifyContent: 'center',
-                alignItems: 'center',
-                color: theme.palette.text.primary,
-                // fontSize: '2rem',
-                gap: '2rem',
-              }}>
-                <Typography variant='body2'
-                  onClick={() => window.location.href = "#TechStack"}
-                  sx={{
-                    color: theme.palette.text.primary,
-                    cursor: 'pointer',
-                    transition: '0.2s ease-in-out',
-                    "&:hover": {
-                      color: theme.palette.primary.main
-                    }
-                  }}>
-                  Tech Stack
-                </Typography>
-
-                <Typography variant='body2'
-                  onClick={() => window.location.href = "#Frameworks"}
-                  sx={{
-                    color: theme.palette.text.primary,
-                    cursor: 'pointer',
-                    transition: '0.2s ease-in-out',
-                    "&:hover": {
-                      color: theme.palette.primary.main
-                    }
-                  }}>
-                  Frameworks
-                </Typography>
-
-                <Typography variant='body2'
-                  onClick={() => window.location.href = "/editor/326ebf85-b329-41da-ad85-a1365e719273"}
-                  sx={{
-                    color: theme.palette.text.primary,
-                    cursor: 'pointer',
-                    transition: '0.2s ease-in-out',
-                    "&:hover": {
-                      color: theme.palette.primary.main
-                    }
-                  }}>
-                  Try the demo
-                </Typography>
-              </div>
-              <div>
-                <Button
-                  variant='filled'
-                  color='primary'
-                  style={{
-                    backgroundColor: theme.palette.primary.main,
-                    marginRight: '1rem',
-                  }}
-                  onClick={() => router.push("/access")}>
-                  Sign In
-                </Button>
-              </div>
-            </div>
+            <IndexTopBar />
             {/* Top bar end ------------------------------------ */}
             <div style={{
               maxWidth: '50%',
@@ -303,538 +172,112 @@ export default function Home() {
               justifyContent: 'space-evenly',
               alignItems: 'center',
             }}>
-            <div style={{
-              height: "calc(500px - 2rem)",
-              width: "550px",
-              padding: '1rem',
-            }}>
-
-              <Typography variant='h2' style={{
-                fontFamily: 'Teko',
-                color: theme.palette.text.primary,
-              }}>
-                Tech Stack
-              </Typography>
-              <Typography variant='h6' style={{
-                color: theme.palette.text.primary,
-                marginLeft: '1rem',
-              }}>
-                Webbie was built using the following technologies
-              </Typography>
-              <div style={{
-                padding: '1rem',
-              }}>
-                <Typography variant='h4' style={{
-                  fontFamily: 'Teko',
-                  color: theme.palette.text.primary,
-                }}>
-                  Frontend
-                </Typography>
-                <Typography variant='body1' style={{
-                  color: theme.palette.text.primary,
-                  marginLeft: '1rem',
-                }}>
-                  <Link href={"https://react.dev"} target='_blank' style={{ color: theme.palette.primary.main }}>React</Link> - Frontend library
-                </Typography>
-                <Typography variant='body1' style={{
-                  color: theme.palette.text.primary,
-                  marginLeft: '1rem',
-                }}>
-                  <Link href={"https://nextjs.org"} target='_blank' style={{ color: theme.palette.primary.main }}>Next.JS</Link> - Fullstack React framework
-                </Typography>
-                <Typography variant='body1' style={{
-                  color: theme.palette.text.primary,
-                  marginLeft: '1rem',
-                }}>
-                  <Link href={"https://mui.com"} target='_blank' style={{ color: theme.palette.primary.main }}>Material UI</Link> - React UI and Icon library
-                </Typography>
-                <Typography variant='body1' style={{
-                  color: theme.palette.text.primary,
-                  marginLeft: '1rem',
-                }}>
-                  <Link href={"https://webcontainers.io"} target='_blank' style={{ color: theme.palette.primary.main }}>WebContainers</Link> - Powers the editor's live preview
-                </Typography>
-                <Typography variant='body1' style={{
-                  color: theme.palette.text.primary,
-                  marginLeft: '1rem',
-                }}>
-                  <Link href={"https://microsoft.github.io/monaco-editor/"} target='_blank' style={{ color: theme.palette.primary.main }}>Monaco</Link> - Powers the editor's code editor
-                </Typography>
-                <Typography variant='body1' style={{
-                  color: theme.palette.text.primary,
-                  marginLeft: '1rem',
-                }}>
-                  <Link href={"http://xtermjs.org"} target='_blank' style={{ color: theme.palette.primary.main }}>xTerm</Link> - Powers the editor's terminal interface
-                </Typography>
-              </div>
-              <div style={{
-                padding: '1rem',
-              }}>
-                <Typography variant='h4' style={{
-                  fontFamily: 'Teko',
-                  color: theme.palette.text.primary,
-                }}>
-                  Backend
-                </Typography>
-                <Typography variant='body1' style={{
-                  color: theme.palette.text.primary,
-                  marginLeft: '1rem',
-                }}>
-                  <Link href={"https://fastapi.tiangolo.com"} target='_blank' style={{ color: theme.palette.primary.main }}>Fastapi</Link> - Python Backend framework
-                </Typography>
-                <Typography variant='body1' style={{
-                  color: theme.palette.text.primary,
-                  marginLeft: '1rem',
-                }}>
-                  <Link href={"https://expressjs.com"} target='_blank' style={{ color: theme.palette.primary.main }}>Express</Link> - Backend framework for the image proxy (authored by GPT)
-                </Typography>
-                <Typography variant='body1' style={{
-                  color: theme.palette.text.primary,
-                  marginLeft: '1rem',
-                }}>
-                  <Link href={"https://www.mongodb.com"} target='_blank' style={{ color: theme.palette.primary.main }}>MongoDB</Link> - Databases
-                </Typography>
-              </div>
-            </div>
-            <div style={{
-              backgroundColor: theme.palette.background.default,
-              width: "800px",
-              height: "500px",
-              margin: '2rem 1rem',
-              borderRadius: '20px',
-              // border: `3px solid ${theme.palette.background.default}`
-              outline: `2px solid ${theme.palette.background.paper}`,
-              outlineOffset: '-5px',
-              position: 'relative',
-              overflow: 'hidden',
-            }}>
-              <PeopleIcon
-                ref={userIconRef}
-                style={{
-                  position: 'absolute',
-                  top: '25px',
-                  left: '40px',
-                  width: '75px',
-                  height: '75px',
-                  color: theme.palette.text.primary,
-                  padding: '10px',
-                }} />
-              <Typography variant='h4' style={{
-                fontFamily: 'Teko',
-                color: theme.palette.text.primary,
-                position: 'absolute',
-                top: '100px',
-                left: '60px',
-                backgroundColor: theme.palette.background.default,
-                zIndex: 1,
-              }}>
-                Users
-              </Typography>
-              {reactIconRef.current && userIconRef.current && (
-                <Xarrow
-                  start={userIconRef}
-                  end={reactIconRef}
-                  color={theme.palette.primary.main}
-                  strokeWidth={3}
-                  showHead={false}
-                />
-              )}
-              <DevicesIcon
-                ref={reactIconRef}
-                style={{
-                  position: 'absolute',
-                  top: '25px',
-                  left: '375px',
-                  width: '75px',
-                  height: '75px',
-                  color: theme.palette.text.primary,
-                  padding: '10px',
-                }} />
-              <Typography variant='h4'
-                style={{
-                  fontFamily: 'Teko',
-                  color: theme.palette.text.primary,
-                  position: 'absolute',
-                  top: '100px',
-                  left: '335px',
-                  backgroundColor: theme.palette.background.default,
-                  zIndex: 1,
-                }}>
-                Next.JS React App
-              </Typography>
-              {fastapiIconRef.current && reactIconRef.current && (
-                <Xarrow
-                  start={reactIconRef}
-                  end={fastapiIconRef}
-                  color={theme.palette.primary.main}
-                  strokeWidth={3}
-                  showHead={false}
-                />
-              )}
-              {fastapiIconRef2.current && reactIconRef.current && (
-                <Xarrow
-                  start={reactIconRef}
-                  end={fastapiIconRef2}
-                  color={theme.palette.primary.main}
-                  strokeWidth={3}
-                  showHead={false}
-                />
-              )}
-              {fastapiIconRef3.current && reactIconRef.current && (
-                <Xarrow
-                  start={reactIconRef}
-                  end={fastapiIconRef3}
-                  color={theme.palette.primary.main}
-                  strokeWidth={3}
-                  showHead={false}
-                />
-              )}
-              {expressIconRef.current && reactIconRef.current && (
-                <Xarrow
-                  start={reactIconRef}
-                  end={expressIconRef}
-                  endAnchor={"top"}
-                  color={theme.palette.primary.main}
-                  strokeWidth={3}
-                  showHead={false}
-                />
-              )}
-              <BoltIcon
-                ref={fastapiIconRef}
-                style={{
-                  position: 'absolute',
-                  top: '175px',
-                  left: '225px',
-                  width: '75px',
-                  height: '75px',
-                  color: theme.palette.text.primary,
-                  padding: '10px',
-                }} />
-              <Typography variant='h4'
-                style={{
-                  fontFamily: 'Teko',
-                  color: theme.palette.text.primary,
-                  position: 'absolute',
-                  top: '255px',
-                  left: '225px',
-                  backgroundColor: theme.palette.background.default,
-                  zIndex: 1,
-                }}>
-                Fastapi 1
-              </Typography>
-              {fastapiIconRef.current && fastapiIconRef2.current && (
-                <Xarrow
-                  start={fastapiIconRef}
-                  end={fastapiIconRef2}
-                  color={theme.palette.primary.main}
-                  strokeWidth={3}
-                  showHead={false}
-                />
-              )}
-              <BoltIcon
-                ref={fastapiIconRef2}
-                style={{
-                  position: 'absolute',
-                  top: '175px',
-                  left: '375px',
-                  width: '75px',
-                  height: '75px',
-                  color: theme.palette.text.primary,
-                  padding: '10px',
-                }} />
-              <Typography variant='h4'
-                style={{
-                  fontFamily: 'Teko',
-                  color: theme.palette.text.primary,
-                  position: 'absolute',
-                  top: '255px',
-                  left: '375px',
-                  backgroundColor: theme.palette.background.default,
-                  zIndex: 1,
-                }}>
-                Fastapi 2
-              </Typography>
-              <BoltIcon
-                ref={fastapiIconRef3}
-                style={{
-                  position: 'absolute',
-                  top: '175px',
-                  left: '525px',
-                  width: '75px',
-                  height: '75px',
-                  color: theme.palette.text.primary,
-                  padding: '10px',
-                }} />
-              <Typography variant='h4'
-                style={{
-                  fontFamily: 'Teko',
-                  color: theme.palette.text.primary,
-                  position: 'absolute',
-                  top: '255px',
-                  left: '525px',
-                  backgroundColor: theme.palette.background.default,
-                  zIndex: 1,
-                }}>
-                Fastapi 3
-              </Typography>
-              {fastapiIconRef.current && reactIconRef.current && (
-                <Xarrow
-                  start={fastapiIconRef}
-                  end={mongoIconRef}
-                  color={theme.palette.primary.main}
-                  strokeWidth={3}
-                  showHead={false}
-                />
-              )}
-              {fastapiIconRef2.current && reactIconRef.current && (
-                <Xarrow
-                  start={fastapiIconRef2}
-                  end={mongoIconRef2}
-                  color={theme.palette.primary.main}
-                  strokeWidth={3}
-                  showHead={false}
-                />
-              )}
-              {fastapiIconRef3.current && reactIconRef.current && (
-                <Xarrow
-                  start={fastapiIconRef3}
-                  end={gptIconRef}
-                  color={theme.palette.primary.main}
-                  strokeWidth={3}
-                  showHead={false}
-                />
-              )}
-              {expressIconRef.current && internetIconRef.current && (
-                <Xarrow
-                  start={expressIconRef}
-                  end={internetIconRef}
-                  color={theme.palette.primary.main}
-                  strokeWidth={3}
-                  showHead={false}
-                />
-              )}
-              <StorageIcon
-                ref={expressIconRef}
-                style={{
-                  position: 'absolute',
-                  top: '175px',
-                  left: '675px',
-                  width: '75px',
-                  height: '75px',
-                  color: theme.palette.text.primary,
-                  padding: '10px',
-                }} />
-              <Typography variant='h4'
-                style={{
-                  fontFamily: 'Teko',
-                  color: theme.palette.text.primary,
-                  position: 'absolute',
-                  top: '255px',
-                  left: '683px',
-                  backgroundColor: theme.palette.background.default,
-                  zIndex: 1,
-                }}>
-                Express
-              </Typography>
-              <SpaIcon
-                ref={mongoIconRef}
-                style={{
-                  position: 'absolute',
-                  top: '350px',
-                  left: '225px',
-                  width: '75px',
-                  height: '75px',
-                  color: theme.palette.text.primary,
-                  padding: '10px',
-                }} />
-              <Typography variant='h4'
-                style={{
-                  fontFamily: 'Teko',
-                  color: theme.palette.text.primary,
-                  position: 'absolute',
-                  top: '430px',
-                  left: '215px',
-                  backgroundColor: theme.palette.background.default,
-                  zIndex: 1,
-                }}>
-                MongoDB 1
-              </Typography>
-              <SpaIcon
-                ref={mongoIconRef2}
-                style={{
-                  position: 'absolute',
-                  top: '350px',
-                  left: '375px',
-                  width: '75px',
-                  height: '75px',
-                  color: theme.palette.text.primary,
-                  padding: '10px',
-                }} />
-              <Typography variant='h4'
-                style={{
-                  fontFamily: 'Teko',
-                  color: theme.palette.text.primary,
-                  position: 'absolute',
-                  top: '430px',
-                  left: '365px',
-                  backgroundColor: theme.palette.background.default,
-                  zIndex: 1,
-                }}>
-                MongoDB 2
-              </Typography>
-              <LanguageIcon
-                ref={gptIconRef}
-                style={{
-                  position: 'absolute',
-                  top: '350px',
-                  left: '525px',
-                  width: '75px',
-                  height: '75px',
-                  color: theme.palette.text.primary,
-                  padding: '10px',
-                }} />
-              <Typography variant='h4'
-                style={{
-                  fontFamily: 'Teko',
-                  color: theme.palette.text.primary,
-                  position: 'absolute',
-                  top: '430px',
-                  left: '553px',
-                  backgroundColor: theme.palette.background.default,
-                  zIndex: 1,
-                }}>
-                GPT
-              </Typography>
-              <LanguageIcon
-                ref={internetIconRef}
-                style={{
-                  position: 'absolute',
-                  top: '350px',
-                  left: '675px',
-                  width: '75px',
-                  height: '75px',
-                  color: theme.palette.text.primary,
-                  padding: '10px',
-                }} />
-              <Typography variant='h4'
-                style={{
-                  fontFamily: 'Teko',
-                  color: theme.palette.text.primary,
-                  position: 'absolute',
-                  top: '430px',
-                  left: '682px',
-                  backgroundColor: theme.palette.background.default,
-                  zIndex: 1,
-                }}>
-                Internet
-              </Typography>
-              <div style={{
-                position: 'absolute',
-                left: '1rem',
-                bottom: '1rem',
-                width: "150px",
-                height: "300px",
-                padding: '0.5rem',
-                backgroundColor: theme.palette.background.paper,
-                borderRadius: '10px',
-              }}>
-                <Typography variant='h4' style={{
-                  fontFamily: 'Teko',
-                  color: theme.palette.text.primary,
-                }}>
-                  Key
-                </Typography>
-                <Typography variant='body2' style={{
-                  color: theme.palette.text.primary,
-                  paddingBottom: "5px"
-                }}>
-                  <span style={{
-                    color: theme.palette.primary.main,
-                    fontWeight: "bold"
-                  }}>
-                    Fastapi 1
-                  </span>
-                  <br />  - Account API
-                </Typography>
-                <Typography variant='body2' style={{
-                  color: theme.palette.text.primary,
-                  paddingBottom: "5px"
-                }}>
-                  <span style={{
-                    color: theme.palette.primary.main,
-                    fontWeight: "bold"
-                  }}>
-                    Fastapi 2
-                  </span>
-                  <br />  - Project API
-                </Typography>
-                <Typography variant='body2' style={{
-                  color: theme.palette.text.primary,
-                  paddingBottom: "5px"
-                }}>
-                  <span style={{
-                    color: theme.palette.primary.main,
-                    fontWeight: "bold"
-                  }}>
-                    Fastapi 3
-                  </span>
-                  <br />  - GPT interface API
-                </Typography>
-                <Typography variant='body2' style={{
-                  color: theme.palette.text.primary,
-                  paddingBottom: "5px"
-                }}>
-                  <span style={{
-                    color: theme.palette.primary.main,
-                    fontWeight: "bold"
-                  }}>
-                    Express
-                  </span>
-                  <br />  - Image Proxy
-                </Typography>
-                <Typography variant='body2' style={{
-                  color: theme.palette.text.primary,
-                  paddingBottom: "5px"
-                }}>
-                  <span style={{
-                    color: theme.palette.primary.main,
-                    fontWeight: "bold"
-                  }}>
-                    MongoDB 1
-                  </span>
-                  <br />  - Account DB
-                </Typography>
-                <Typography variant='body2' style={{
-                  color: theme.palette.text.primary,
-                  paddingBottom: "5px"
-                }}>
-                  <span style={{
-                    color: theme.palette.primary.main,
-                    fontWeight: "bold"
-                  }}>
-                    MongoDB 2
-                  </span>
-                  <br />  - Project DB
-                </Typography>
-              </div>
-            </div>
-
+            <TechStackPanel />
           </div>
           <div
             id="Templates"
             style={{
-              backgroundColor: "#00FF0033",
               width: "100%",
-              height: "33vh",
-            }}></div>
+              height: "25vh",
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'flex-start',
+              alignItems: 'center',
+            }}>
+            <Typography variant='h3' style={{
+              color: theme.palette.text.primary,
+              fontFamily: 'Teko',
+              padding: '1rem',
+              marginTop: "10px",
+              textAlign: 'center',
+            }}>
+              Try out a template
+            </Typography>
+            <div style={{
+              display: 'flex',
+              flexDirection: 'row',
+              justifyContent: 'center',
+              gap: '1rem',
+              width: '100%',
+              flexGrow: 1
+            }}>
+
+              {/* set onClick to open template projects when they are made/finalized 💭 */}
+              <IndexTemplateButton text='React' iconDivBackgroundImage='url("https://upload.wikimedia.org/wikipedia/commons/a/a7/React-icon.svg")' />
+              <IndexTemplateButton text='Next.JS' iconDivBackgroundImage='url("https://seekicon.com/free-icon-download/next-js_1.svg")'
+                customButtonIconStyle={{
+                  backgroundColor: "white",
+                  borderRadius: '50%',
+                  outline: "solid 3px black",
+                  outlineOffset: "-2px",
+                }} />
+              <IndexTemplateButton text='Node.JS' iconDivBackgroundImage={'url("/nodejs-icon.png")'} />
+
+            </div>
+          </div>
           <div
             id='Footer'
-            onClick={() => window.location.href = "#top"}
             style={{
-              backgroundColor: "#FFFFFF33",
+              backgroundColor: "#130925",
               width: "100%",
-              height: "30vh",
-            }}></div>
+              display: 'flex',
+              flexDirection: 'row',
+              justifyContent: 'flex-start',
+              alignItems: 'center',
+              padding: '1rem 2rem',
+            }}>
+            <div>
+              <style>
+                {`
+          @keyframes rotate-text {
+            0% { transform: rotateY(0deg); }
+            25% { transform: rotateY(90deg); }
+            50% { transform: rotateY(180deg); }
+            75% { transform: rotateY(270deg); }
+            100% { transform: rotateY(360deg); }
+          }
+                `}
+              </style>
+              <Typography variant='h3' style={{
+                fontFamily: 'Teko',
+                color: theme.palette.text.primary,
+                marginLeft: '1rem',
+              }}>
+                Web
+                <span style={{
+                  color: theme.palette.primary.main,
+                }}>
+                  <span style={{
+                    display: "inline-block",
+                    animation: "rotate-text 8s infinite",
+                    transformOrigin: "50% 50%",
+                  }}>
+                    bi
+                  </span>
+                  e
+                </span>
+              </Typography>
+            </div>
+            <Divider orientation='vertical' flexItem style={{
+              marginLeft: '1rem',
+              marginRight: '1rem',
+              height: '50px',
+              width: '1px',
+              backgroundColor: theme.palette.text.primary,
+            }} />
+            <Typography variant='h4' color={theme.palette.text.primary} fontFamily={"Teko"} sx={{ pr: 1 }}>
+              Contact:
+            </Typography>
+            <FooterContactBadge Icon={GitHubIcon} text='mcbuzzerr' url='https://github.com/mcbuzzerr' />
+            <FooterContactBadge Icon={LinkedInIcon} text='AlexBatesDev' url='https://www.linkedin.com/in/alexbatesdev/' />
+            <FooterContactBadge Icon={EmailIcon} text='AlexBates.Dev@gmail.com' copyOnClick />
+            <Typography variant='h5' color={theme.palette.primary.main} fontFamily={"Teko"} style={{
+              marginLeft: 'auto',
+              marginRight: '1rem',
+            }}>
+              Alex Bates &copy; {new Date().getFullYear()}
+            </Typography>
+          </div>
         </div>
       </Scrollbar >
 

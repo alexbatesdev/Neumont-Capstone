@@ -292,7 +292,7 @@ const MockEditorWindow = () => {
                                     let isCollapsed = index > 0;
                                     return (
                                         <Collapse
-                                            key={message.messageID}
+                                            key={"message-" + message.messageID}
                                             in={isCollapsed}
                                             sx={{
                                                 width: "100%",
@@ -321,7 +321,7 @@ const MockEditorWindow = () => {
                                                 }}>
                                                 {message.lines.map((line, index) => {
                                                     let color = message.isUserMessage ? "white" : "black";
-                                                    return (<div key={index} style={{
+                                                    return (<div key={"line-" + index} style={{
                                                         height: "1px",
                                                         width: line + "px",
                                                         maxWidth: "calc(100% - 10px)",
@@ -453,14 +453,16 @@ const MockEditorWindow = () => {
                                 alignItems: "center",
                             }}>
                                 {Array(24).fill(0).map((_, index) => {
-                                    return (<div style={{
-                                        height: "5px",
-                                        width: "5px",
-                                        borderRadius: "50%",
-                                        backgroundColor: "#555",
-                                        display: "inline-block",
-                                        margin: "3px",
-                                    }}></div>)
+                                    return (<div
+                                        key={"indicator-" + index}
+                                        style={{
+                                            height: "5px",
+                                            width: "5px",
+                                            borderRadius: "50%",
+                                            backgroundColor: "#555",
+                                            display: "inline-block",
+                                            margin: "3px",
+                                        }}></div>)
                                 })}
                             </div>
                             {/* Lines of mock code */}

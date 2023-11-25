@@ -148,7 +148,7 @@ const setupWebContainer = async (
 
     if (start_command_string !== "") {
         setWebContainerStatus(2);
-        await runServer(webContainerInstance, setWebContainerURL, start_command_string, terminal_instance);
+        await runServer(webContainerInstance, setWebContainerURL, start_command_string);
     } else {
         toast.info("No server start command specified");
         setHideWebContainerFrame(true);
@@ -178,32 +178,19 @@ const installDependencies = async (webContainerInstance, terminal_instance) => {
     return installProcess.exit;
 }
 
-const runServer = async (webContainerInstance, setWebContainerURL, start_command_string, terminal_instance) => {
+const runServer = async (webContainerInstance, setWebContainerURL, start_command_string) => {
     console.log("Running server");
-    // Variable named start_command_string because it gets split at this step
-    const command = start_command_string.split(" ")[0];
-    const args = start_command_string.split(" ").slice(1);
+    if (start_command_string) {
+        // Variable named start_command_string because it gets split at this step
+        const command = start_command_string.split(" ")[0];
+        const args = start_command_string.split(" ").slice(1);
 
-    const startProcess = await webContainerInstance.spawn(command, args);
-    // // Remember to remove me 💭
-    // startProcess.output.pipeTo(
-    //     new WritableStream({
-    //         write(data) {
-    //             terminal_instance.write(data);
-    //         },
-    //     })
-    // )
-    // // Remember to remove me 💭
-    webContainerInstance.on('server-ready', (port, url) => {
-        setWebContainerURL(url);
-        console.log(url)
-    });
-    // // Remember to remove me 💭
-    // const shellInput = startProcess.input.getWriter();
-    // terminal_instance.onData((data) => {
-    //     shellInput.write(data);
-    // });
-    // // Remember to remove me 💭
+        const startProcess = await webContainerInstance.spawn(command, args);
+        webContainerInstance.on('server-ready', (port, url) => {
+            setWebContainerURL(url);
+            console.log(url)
+        });
+    }
 }
 
 const startShell = async (webContainerInstance, terminal_instance) => {

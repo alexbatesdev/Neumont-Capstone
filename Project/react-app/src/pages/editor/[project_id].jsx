@@ -45,10 +45,15 @@ export default function Page() {
                 return;
             }
             //console.log(session.data)
-            let endpointURL = `${process.env.NEXT_PUBLIC_PROJECT_API_URL}/by_id/${project_id}`
+            let is_private = router.query.private;
+
+            let endpointURL = `${process.env.NEXT_PUBLIC_PROJECT_API_URL}/${is_private ? "private/" : ""}by_id/${project_id}`
             console.log(endpointURL)
             const response = await fetch(endpointURL, {
-                method: 'GET'
+                method: 'GET',
+                headers: is_private ? {
+                    "Authorization": `Bearer ${session.data.token}`,
+                } : {}
             }).then(res => {
                 if (!res.ok) {
                     toast.error("Error loading project. Refresh the page to try again.")

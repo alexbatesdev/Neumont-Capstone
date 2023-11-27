@@ -77,30 +77,23 @@ const ProfileView = () => {
         signOut()
     }
 
+    console.log(profile)
+    console.log(session)
+
     return (
         <Box sx={{
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'flex-start',
             alignItems: 'flex-start',
-            gap: '1rem',
             padding: '1rem',
             backgroundColor: theme.palette.background.paper,
-            borderRadius: "7px",
-            width: "450px"
+            // borderRadius: "7px",
+            width: "calc(100% - 2rem)",
         }}>
-            <Typography variant="h4">Profile</Typography>
-            {profile && <>
-                <Typography onClick={() => {
-                    navigator.clipboard.writeText(profile.account_id)
-                    toast.success("Copied ID to clipboard")
-                }} variant='h6'>ID: <span style={{
-                    fontFamily: 'monospace',
-                    backgroundColor: theme.palette.background.default,
-                    padding: '0.25rem',
-                    borderRadius: '3px',
-                    fontSize: '0.95rem',
-                }}>{profile.account_id}</span></Typography>
+            {profile && (<>
+                <Typography variant="h4">{profile.name}</Typography>
+                <Typography variant="h5">{profile.email}</Typography>
                 <div style={{
                     display: 'flex',
                     flexDirection: 'row',
@@ -108,17 +101,41 @@ const ProfileView = () => {
                     alignItems: 'center',
                     gap: '1rem',
                 }}>
+                    <Typography variant='h6'>{profile.projects.length} Projects</Typography>
+                    <Typography variant='h6'>{profile.following.length} Following</Typography>
+
+                </div>
+            </>)}
+            {editMode && <>
+                <Typography onClick={() => {
+                    navigator.clipboard.writeText(profile.account_id)
+                    toast.success("Copied ID to clipboard")
+                }} variant='h6' style={{
+                    fontFamily: 'monospace',
+                    backgroundColor: theme.palette.background.default,
+                    padding: '0px 4px',
+                    borderRadius: '3px',
+                    fontSize: '0.95rem',
+                }}>{profile.account_id}</Typography>
+                <div style={{
+                    display: 'flex',
+                    flexDirection: 'row',
+                    justifyContent: 'flex-start',
+                    alignItems: 'center',
+                    gap: '1rem',
+                    marginTop: "1rem"
+                }}>
                     <TextField variant='outlined' value={newName} disabled={!editMode} onChange={(event) => setNewName(event.target.value)} label="Name" />
                     <TextField variant='outlined' value={newEmail} disabled={!editMode} onChange={(event) => setNewEmail(event.target.value)} label="Email" />
                 </div>
-                {/* <Typography variant='h6'>API Key: </Typography> */}
-                <TextField variant='outlined' fullWidth value={newAPIKey} disabled={!editMode} onChange={(event) => setNewAPIKey(event.target.value)} label="OpenAI api key (Needed to access GPT 4)" />
+                <TextField variant='outlined' fullWidth value={newAPIKey} disabled={!editMode} onChange={(event) => setNewAPIKey(event.target.value)} label="OpenAI api key (Needed to access GPT 4)" sx={{ mt: "1rem" }} />
                 <div style={{
                     display: 'flex',
                     flexDirection: 'row',
                     justifyContent: 'flex-end',
                     width: "100%",
                     gap: '1rem',
+                    marginTop: "1rem"
                 }}>
                     {editMode && <Button
                         variant='contained'
@@ -174,9 +191,11 @@ const ProfileView = () => {
                         <Button variant='contained' color='secondary' onClick={handleCancel}>Cancel</Button>
                         <Button variant='contained' color='primary' onClick={handleSave}>Save</Button>
                     </>}
-                    {!editMode && <Button variant="contained" onClick={() => setEditMode(!editMode)}>Edit</Button>}
                 </div>
             </>}
+            {!editMode && (session.data && profile) && session.data.user.account_id == profile.account_id && <Button variant="contained" onClick={() => setEditMode(!editMode)} sx={{
+                marginTop: 1
+            }}>Edit</Button>}
 
         </Box >
     );

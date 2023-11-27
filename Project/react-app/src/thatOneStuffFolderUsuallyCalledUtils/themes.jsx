@@ -10,7 +10,7 @@ export const theme = createTheme({
             main: '#8d7eff',  // Was secondary color (a pastel purple)
         },
         secondary: {
-            main: '#56cbf9',  // New tertiary color (a bright cyan)
+            main: '#efd708',  // New tertiary color (a bright cyan)
         },
         tertiary: {
             main: '#364EE0',  // New secondary color (a brilliant blue)

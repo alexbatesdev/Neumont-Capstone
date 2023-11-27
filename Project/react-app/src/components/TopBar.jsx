@@ -10,9 +10,11 @@ import { useEditorContext, useProjectData } from "@/contexts/editor-context";
 import ShareIcon from '@mui/icons-material/Share';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { TopBarContextProvider } from "@/contexts/topbar-hover-context";
+import { signOut, useSession } from "next-auth/react";
 
 const TopBar = ({ children, titleText, backLocation, alternate = false, showSignIn = false, hideBack = false }) => {
     const theme = useTheme();
+    const session = useSession();
     const router = useRouter();
     const [hoverIndex, setHoverIndex] = useState(null);
     const { saveProject } = useEditorContext();
@@ -72,13 +74,18 @@ const TopBar = ({ children, titleText, backLocation, alternate = false, showSign
                             hoverIndex={hoverIndex}
                             setHoverIndex={setHoverIndex}
                             Icon={AccountCircleIcon}
-                            text={"Sign in"}
+                            text={session.status == "authenticated" ? "Sign Out" : "Sign In"}
                             // Add a url parameter that will redirect to the current page after signing in 💭
-                            onClick={() => { router.push('/access') }}
+                            onClick={() => {
+                                if (session.status == "authenticated") {
+                                    signOut();
+                                } else {
+                                    router.push('/access');
+                                }
+                            }}
                             buttonIndex={-1}
-                            openWidth={70}
+                            openWidth={75}
                             inReverse
-                            alwaysOpen
                         />
                     }
                 </span>

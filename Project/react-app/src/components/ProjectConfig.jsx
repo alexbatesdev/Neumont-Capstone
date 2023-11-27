@@ -72,8 +72,8 @@ const ProjectConfig = () => {
 
     const projectID = projectData.project_id;
     const projectOwner = projectData.project_owner;
-    const [newProjectName, setNewProjectName] = React.useState("");
-    const [newProjectDescription, setNewProjectDescription] = React.useState("");
+    const [newProjectName, setNewProjectName] = React.useState(projectData.project_name);
+    const [newProjectDescription, setNewProjectDescription] = React.useState(projectData.project_description);
 
     const [newIsTemplate, setNewIsTemplate] = React.useState(projectData.is_template);
     const [newIsPrivate, setNewIsPrivate] = React.useState(projectData.is_private);
@@ -133,13 +133,9 @@ const ProjectConfig = () => {
                 </Typography>
             </div>
             <div style={innerWrapperStyle}>
-                <Typography variant='body1'>
-                    Project Name:
-                </Typography>
-
                 <TextField
                     color="secondary"
-                    label={possiblyEmptyValue(projectData.project_name, "Untitled Project")}
+                    label="Project Name"
                     variant="outlined"
                     size='small'
                     value={newProjectName}
@@ -147,12 +143,9 @@ const ProjectConfig = () => {
                     onChange={(e) => { setNewProjectName(e.target.value) }}
                     disabled={!hasEditAccess}
                 />
-                <Typography variant='subtitle2'>
-                    Project Description:
-                </Typography>
                 <TextField
                     color="secondary"
-                    label={possiblyEmptyValue(projectData.project_description, "No description")}
+                    label="Project Description"
                     variant="outlined"
                     size='small'
                     multiline
@@ -162,12 +155,9 @@ const ProjectConfig = () => {
                     onChange={(e) => { setNewProjectDescription(e.target.value) }}
                     disabled={!hasEditAccess}
                 />
-                <Typography variant='subtitle2'>
-                    Start Command:
-                </Typography>
                 <TextField
                     color="secondary"
-                    label={possiblyEmptyValue(projectData.start_command, "No start command")}
+                    label="Start Command"
                     variant="outlined"
                     size='small'
                     value={newStartCommand}

@@ -124,7 +124,7 @@ export const ConversationWindow = () => {
         setIsLoading(true);
 
         // Send message to backend
-        const URL = "http://localhost:8000/prompt/" + conversationThreadID
+        const URL = process.env.NEXT_PUBLIC_GPT_INTERFACE_API_URL + "/prompt/" + conversationThreadID
         fetch(URL, {
             method: "POST",
             body: JSON.stringify(body),
@@ -212,7 +212,7 @@ export const ConversationWindow = () => {
         backgroundColor: "grey",
         backgroundSize: "cover",
         backgroundPosition: "center",
-        backgroundImage: "url(http://localhost:3001/proxy-image?url=https://upload.wikimedia.org/wikipedia/commons/0/04/ChatGPT_logo.svg)",
+        backgroundImage: `url(${process.env.NEXT_PUBLIC_IMG_PROXY}https://upload.wikimedia.org/wikipedia/commons/0/04/ChatGPT_logo.svg)`,
         filter: modelIsGPT4 ? "invert(1) brightness(1.3) contrast(3) hue-rotate(275deg) brightness(1.2)" : "invert(1) brightness(1.3) contrast(1.3) hue-rotate(171deg) brightness(1.2)",
     }
 

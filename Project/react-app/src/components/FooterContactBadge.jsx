@@ -15,7 +15,7 @@ const FooterContactBadge = ({ Icon, text, url, copyOnClick = false }) => {
         flexDirection: "row",
         justifyContent: "center",
         alignItems: "center",
-        color: theme.palette.text.primary,
+        color: theme.palette.primary.main,
     };
 
     const collapseStyle = {

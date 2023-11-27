@@ -90,7 +90,7 @@ const NewProjectForm = ({ setModalOpen }) => {
             return response.json();
         }).then((data) => {
             if (!data) return;
-            window.location.href = "/editor/" + data.project_id;
+            window.location.href = "/editor/" + data.project_id + (isPrivate ? "?private=true" : "");
         }
         ).catch((error) => {
             //console.log(error);

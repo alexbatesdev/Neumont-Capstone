@@ -61,6 +61,7 @@ class ProjectData(ProjectCreate):
     collaborators: list[UUID] = Field(default=[])
     # Filestructure needs to not be empty, at the very least it needs to have a package.json
     file_structure: PydanticObjectId | None = Field(default=None)
+    forks: list[UUID] = Field(default=[])
 
 
 class ProjectDataWithFiles(ProjectData):

@@ -149,10 +149,9 @@ export default function Home() {
               }}>
                 Webbie is a web IDE that lets you develop and share web projects from your browser.
               </Typography>
-              <Button variant='filled' color='primary'
+              <Button color='secondary' variant='contained'
                 onClick={() => window.location.href = "/editor/326ebf85-b329-41da-ad85-a1365e719273"}
-                style={{
-                  backgroundColor: theme.palette.primary.main,
+                sx={{
                   marginTop: '1rem',
                 }}>
                 Try the demo
@@ -196,9 +195,10 @@ export default function Home() {
             <div style={{
               display: 'flex',
               flexDirection: 'row',
-              justifyContent: 'center',
+              justifyContent: 'space-evenly',
               gap: '1rem',
-              width: '100%',
+              width: 'calc(100% - 2rem)',
+              padding: '0 1rem',
               flexGrow: 1
             }}>
 
@@ -215,6 +215,7 @@ export default function Home() {
               <IndexTemplateButton text='Node.JS' iconDivBackgroundImage={'url("/nodejs-icon.png")'} />
               <IndexTemplateButton text='Vue' iconDivBackgroundImage={'url("https://upload.wikimedia.org/wikipedia/commons/9/95/Vue.js_Logo_2.svg")'} />
               <IndexTemplateButton text='Angular' iconDivBackgroundImage={'url("https://upload.wikimedia.org/wikipedia/commons/c/cf/Angular_full_color_logo.svg")'} />
+              <IndexTemplateButton text='Svelte' iconDivBackgroundImage={'url("https://upload.wikimedia.org/wikipedia/commons/1/1b/Svelte_Logo.svg")'} />
             </div>
           </div>
           <div

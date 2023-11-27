@@ -10,6 +10,7 @@ const IndexTemplateButton = ({ text, iconDivBackgroundImage, onClick = () => { }
     const buttonBodyStyle = {
         height: "3rem",
         aspectRatio: "2.5/1",
+        flexGrow: 1,
         backgroundColor: !hover ? theme.palette.background.paper : theme.palette.background.alternateDark,
         borderRadius: '3px',
         border: `1px solid ${theme.palette.utilBar.icons}`,
@@ -47,7 +48,8 @@ const IndexTemplateButton = ({ text, iconDivBackgroundImage, onClick = () => { }
                 color: theme.palette.text.primary,
                 fontFamily: 'Teko',
                 paddingTop: "4px",
-                textWrap: "nowrap"
+                textWrap: "nowrap",
+                userSelect: "none",
             }}>
                 {text}
             </Typography>

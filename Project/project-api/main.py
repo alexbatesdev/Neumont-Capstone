@@ -181,6 +181,7 @@ async def project_to_project_out(project: ProjectDataDB):
         is_private=project.is_private,
         is_template=project.is_template,
         collaborators=project.collaborators,
+        forks=project.forks,
         file_structure=await download_filestructure_from_gridfs(project.file_structure),
     )
 
@@ -320,11 +321,27 @@ async def fork_project(
     template = await ProjectDataDB.find_one({"project_id": project_id})
     verify_item_found(template)
 
-    project = ProjectDataDB(**body_dict)
+    project = ProjectDataDB(
+        **body_dict,
+        creation_date=datetime.now(),
+    )
+    template_filestructure = await download_filestructure_from_gridfs(
+        template.file_structure
+    )
     project.file_structure = await upload_filestructure_to_gridfs(
-        template.file_structure,
+        template_filestructure,
         project.project_id,
     )
+    template.forks.append(project.project_id)
+    print(template.forks)
+    try:
+        await template.save()
+    except Exception as e:
+        print(e)
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="The project could not be created",
+        )
 
     try:
         async with httpx.AsyncClient() as client:
@@ -483,7 +500,7 @@ async def get_dashboard_projects(
     verify_item_found(projects)
 
     projects_out = await bulk_projects_out(projects)
-
+    print(projects_out)
     return projects_out
 
 
@@ -530,6 +547,7 @@ async def update_project(
     project.is_private = body.is_private
     project.is_template = body.is_template
     project.collaborators = body.collaborators
+    project.forks = body.forks
     print("-------------------------------------")
     await project.replace()
     print("=====================================")
@@ -576,6 +594,7 @@ async def update_project_metadata(
     project.is_private = body.is_private
     project.is_template = body.is_template
     project.collaborators = body.collaborators
+    project.forks = body.forks
 
     project.last_modified_date = datetime.now()
     await project.replace()

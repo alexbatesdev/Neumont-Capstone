@@ -11,6 +11,8 @@ import ProjectList from '@/components/ProjectList'
 import { useRouter } from 'next/router'
 import ProfileView from '@/components/ProfileView'
 import TopBar from '@/components/TopBar'
+import { toast } from 'react-toastify'
+import { Scrollbar } from 'react-scrollbars-custom'
 
 export default function Home() {
     const theme = useTheme()
@@ -29,6 +31,8 @@ export default function Home() {
                         "Authorization": `Bearer ${session.data.token}`,
                         "content-type": "application/json",
                     }
+                }).catch(err => {
+                    toast.error("Error loading dashboard. Refresh the page to try again.")
                 })
                 if (response.status !== 200) {
                     console.log(response)
@@ -36,7 +40,10 @@ export default function Home() {
                 }
                 const data = await response.json()
                 console.log(data)
-                setProjects(data)
+                const sortedByLastUpdated = data.sort((a, b) => {
+                    return new Date(b.last_modified_date) - new Date(a.last_modified_date)
+                })
+                setProjects(sortedByLastUpdated)
             }
             getProjects()
         }
@@ -68,29 +75,28 @@ export default function Home() {
             <main style={{
                 // backgroundColor: "#FF0000",
                 color: theme.palette.text.primary,
-                minHeight: '100vh',
+                height: '100vh',
                 display: 'flex',
                 flexDirection: 'column',
                 justifyContent: 'flex-start',
-                alignItems: 'center',
-                // gap: '2rem',
+                alignItems: 'flex-start',
                 position: 'relative',
                 overflow: 'hidden',
-                gap: '1rem',
             }}>
 
                 <TopBar
                     alternate
                     titleText={"Dashboard"}
                     backLocation={"/"}
+                    showSignIn
                 >
 
                 </TopBar>
                 <div style={{
                     position: 'absolute',
-                    top: "-60%",
-                    // left: "-75%",
-                    // transform: "translate(-50%, -50%)",
+                    top: "50%",
+                    left: "50%",
+                    transform: "translate(-50%, -50%)",
                     width: '250vw',
                     height: '250vh',
                     zIndex: -1,
@@ -99,20 +105,46 @@ export default function Home() {
                     backgroundRepeat: 'no-repeat',
                     backgroundPosition: 'center',
                     backgroundColor: theme.palette.background.default,
-                    animation: 'rotate 120s infinite linear',
+                    // animation: 'rotate 120s infinite linear',
 
                 }}></div>
                 <div style={{
-                    width: 'calc(100% - 2rem)',
+                    width: '100%',
                     display: 'flex',
                     flexDirection: 'row',
-                    gap: '1rem',
                     justifyContent: 'flex-start',
                     alignItems: 'flex-start',
-
+                    height: '100%',
                 }}>
-                    <ProfileView />
-                    <ProjectList projects={projects} setProjects={setProjects} />
+                    <div style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '1rem',
+                        justifyContent: 'flex-start',
+                        alignItems: 'flex-start',
+                        height: 'calc(100% - 2rem)',
+                        padding: '1rem 0.5rem 1rem 1rem',
+                        width: '370px',
+                        minWidth: '370px',
+                    }}>
+
+                        <ProfileView />
+                    </div>
+                    <Scrollbar>
+
+                        <div style={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            gap: '1rem',
+                            justifyContent: 'flex-start',
+                            alignItems: 'flex-start',
+                            height: 'calc(100% - 2rem)',
+                            padding: '1rem 1rem 1rem 0.5rem',
+                            flexGrow: 1,
+                        }}>
+                            <ProjectList projects={projects} setProjects={setProjects} />
+                        </div>
+                    </Scrollbar>
                 </div>
 
 

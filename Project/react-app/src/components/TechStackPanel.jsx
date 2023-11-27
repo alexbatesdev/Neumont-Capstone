@@ -69,37 +69,55 @@ const TechStackPanel = () => {
                         color: theme.palette.text.primary,
                         marginLeft: '1rem',
                     }}>
-                        <Link href={"https://react.dev"} target='_blank' style={{ color: theme.palette.primary.main }}>React</Link> - Frontend library
+                        <Link href={"https://react.dev"} target='_blank' style={{
+                            color: theme.palette.secondary.main,
+                            textDecorationColor: theme.palette.secondary.main
+                        }}>React</Link> - Frontend library
                     </Typography>
                     <Typography variant='body1' style={{
                         color: theme.palette.text.primary,
                         marginLeft: '1rem',
                     }}>
-                        <Link href={"https://nextjs.org"} target='_blank' style={{ color: theme.palette.primary.main }}>Next.JS</Link> - Fullstack React framework
+                        <Link href={"https://nextjs.org"} target='_blank' style={{
+                            color: theme.palette.secondary.main,
+                            textDecorationColor: theme.palette.secondary.main
+                        }}>Next.JS</Link> - Fullstack React framework
                     </Typography>
                     <Typography variant='body1' style={{
                         color: theme.palette.text.primary,
                         marginLeft: '1rem',
                     }}>
-                        <Link href={"https://mui.com"} target='_blank' style={{ color: theme.palette.primary.main }}>Material UI</Link> - React UI and Icon library
+                        <Link href={"https://mui.com"} target='_blank' style={{
+                            color: theme.palette.secondary.main,
+                            textDecorationColor: theme.palette.secondary.main
+                        }}>Material UI</Link> - React UI and Icon library
                     </Typography>
                     <Typography variant='body1' style={{
                         color: theme.palette.text.primary,
                         marginLeft: '1rem',
                     }}>
-                        <Link href={"https://webcontainers.io"} target='_blank' style={{ color: theme.palette.primary.main }}>WebContainers</Link> - Powers the editor's live preview
+                        <Link href={"https://webcontainers.io"} target='_blank' style={{
+                            color: theme.palette.secondary.main,
+                            textDecorationColor: theme.palette.secondary.main
+                        }}>WebContainers</Link> - Powers the editor's live preview
                     </Typography>
                     <Typography variant='body1' style={{
                         color: theme.palette.text.primary,
                         marginLeft: '1rem',
                     }}>
-                        <Link href={"https://microsoft.github.io/monaco-editor/"} target='_blank' style={{ color: theme.palette.primary.main }}>Monaco</Link> - Powers the editor's code editor
+                        <Link href={"https://microsoft.github.io/monaco-editor/"} target='_blank' style={{
+                            color: theme.palette.secondary.main,
+                            textDecorationColor: theme.palette.secondary.main
+                        }}>Monaco</Link> - Powers the editor's code editor
                     </Typography>
                     <Typography variant='body1' style={{
                         color: theme.palette.text.primary,
                         marginLeft: '1rem',
                     }}>
-                        <Link href={"http://xtermjs.org"} target='_blank' style={{ color: theme.palette.primary.main }}>xTerm</Link> - Powers the editor's terminal interface
+                        <Link href={"http://xtermjs.org"} target='_blank' style={{
+                            color: theme.palette.secondary.main,
+                            textDecorationColor: theme.palette.secondary.main
+                        }}>xTerm</Link> - Powers the editor's terminal interface
                     </Typography>
                 </div>
                 <div style={{
@@ -115,19 +133,28 @@ const TechStackPanel = () => {
                         color: theme.palette.text.primary,
                         marginLeft: '1rem',
                     }}>
-                        <Link href={"https://fastapi.tiangolo.com"} target='_blank' style={{ color: theme.palette.primary.main }}>Fastapi</Link> - Python Backend framework
+                        <Link href={"https://fastapi.tiangolo.com"} target='_blank' style={{
+                            color: theme.palette.secondary.main,
+                            textDecorationColor: theme.palette.secondary.main
+                        }}>Fastapi</Link> - Python Backend framework
                     </Typography>
                     <Typography variant='body1' style={{
                         color: theme.palette.text.primary,
                         marginLeft: '1rem',
                     }}>
-                        <Link href={"https://expressjs.com"} target='_blank' style={{ color: theme.palette.primary.main }}>Express</Link> - Backend framework for the image proxy (authored by GPT)
+                        <Link href={"https://expressjs.com"} target='_blank' style={{
+                            color: theme.palette.secondary.main,
+                            textDecorationColor: theme.palette.secondary.main
+                        }}>Express</Link> - Backend framework for the image proxy (authored by GPT)
                     </Typography>
                     <Typography variant='body1' style={{
                         color: theme.palette.text.primary,
                         marginLeft: '1rem',
                     }}>
-                        <Link href={"https://www.mongodb.com"} target='_blank' style={{ color: theme.palette.primary.main }}>MongoDB</Link> - Databases
+                        <Link href={"https://www.mongodb.com"} target='_blank' style={{
+                            color: theme.palette.secondary.main,
+                            textDecorationColor: theme.palette.secondary.main
+                        }}>MongoDB</Link> - Databases
                     </Typography>
                 </div>
             </div>
@@ -253,11 +280,11 @@ const TechStackPanel = () => {
                     color: theme.palette.text.primary,
                     position: 'absolute',
                     top: '255px',
-                    left: '225px',
+                    left: '210px',
                     backgroundColor: theme.palette.background.default,
                     zIndex: 1,
                 }}>
-                Fastapi 1
+                Account API
             </Typography>
             {fastapiIconRef.current && fastapiIconRef2.current && (
                 <Xarrow
@@ -285,11 +312,11 @@ const TechStackPanel = () => {
                     color: theme.palette.text.primary,
                     position: 'absolute',
                     top: '255px',
-                    left: '375px',
+                    left: '365px',
                     backgroundColor: theme.palette.background.default,
                     zIndex: 1,
                 }}>
-                Fastapi 2
+                Project API
             </Typography>
             <BoltIcon
                 ref={fastapiIconRef3}
@@ -308,11 +335,11 @@ const TechStackPanel = () => {
                     color: theme.palette.text.primary,
                     position: 'absolute',
                     top: '255px',
-                    left: '525px',
+                    left: '515px',
                     backgroundColor: theme.palette.background.default,
                     zIndex: 1,
                 }}>
-                Fastapi 3
+                My GPT API
             </Typography>
             {fastapiIconRef.current && reactIconRef.current && (
                 <Xarrow
@@ -367,11 +394,11 @@ const TechStackPanel = () => {
                     color: theme.palette.text.primary,
                     position: 'absolute',
                     top: '255px',
-                    left: '683px',
+                    left: '660px',
                     backgroundColor: theme.palette.background.default,
                     zIndex: 1,
                 }}>
-                Express
+                Image Proxy
             </Typography>
             <SpaIcon
                 ref={mongoIconRef}
@@ -394,7 +421,7 @@ const TechStackPanel = () => {
                     backgroundColor: theme.palette.background.default,
                     zIndex: 1,
                 }}>
-                MongoDB 1
+                Account DB
             </Typography>
             <SpaIcon
                 ref={mongoIconRef2}
@@ -413,11 +440,11 @@ const TechStackPanel = () => {
                     color: theme.palette.text.primary,
                     position: 'absolute',
                     top: '430px',
-                    left: '365px',
+                    left: '370px',
                     backgroundColor: theme.palette.background.default,
                     zIndex: 1,
                 }}>
-                MongoDB 2
+                Project DB
             </Typography>
             <LanguageIcon
                 ref={gptIconRef}
@@ -470,7 +497,7 @@ const TechStackPanel = () => {
                 left: '1rem',
                 bottom: '1rem',
                 width: "150px",
-                height: "300px",
+                height: "235px",
                 padding: '0.5rem',
                 backgroundColor: theme.palette.background.paper,
                 borderRadius: '10px',
@@ -486,35 +513,13 @@ const TechStackPanel = () => {
                     paddingBottom: "5px"
                 }}>
                     <span style={{
-                        color: theme.palette.primary.main,
+                        color: theme.palette.secondary.main,
                         fontWeight: "bold"
                     }}>
-                        Fastapi 1
+                        Fastapi
                     </span>
                     <br />  - Account API
-                </Typography>
-                <Typography variant='body2' style={{
-                    color: theme.palette.text.primary,
-                    paddingBottom: "5px"
-                }}>
-                    <span style={{
-                        color: theme.palette.primary.main,
-                        fontWeight: "bold"
-                    }}>
-                        Fastapi 2
-                    </span>
                     <br />  - Project API
-                </Typography>
-                <Typography variant='body2' style={{
-                    color: theme.palette.text.primary,
-                    paddingBottom: "5px"
-                }}>
-                    <span style={{
-                        color: theme.palette.primary.main,
-                        fontWeight: "bold"
-                    }}>
-                        Fastapi 3
-                    </span>
                     <br />  - GPT interface API
                 </Typography>
                 <Typography variant='body2' style={{
@@ -522,7 +527,7 @@ const TechStackPanel = () => {
                     paddingBottom: "5px"
                 }}>
                     <span style={{
-                        color: theme.palette.primary.main,
+                        color: theme.palette.secondary.main,
                         fontWeight: "bold"
                     }}>
                         Express
@@ -534,23 +539,12 @@ const TechStackPanel = () => {
                     paddingBottom: "5px"
                 }}>
                     <span style={{
-                        color: theme.palette.primary.main,
+                        color: theme.palette.secondary.main,
                         fontWeight: "bold"
                     }}>
-                        MongoDB 1
+                        MongoDB
                     </span>
                     <br />  - Account DB
-                </Typography>
-                <Typography variant='body2' style={{
-                    color: theme.palette.text.primary,
-                    paddingBottom: "5px"
-                }}>
-                    <span style={{
-                        color: theme.palette.primary.main,
-                        fontWeight: "bold"
-                    }}>
-                        MongoDB 2
-                    </span>
                     <br />  - Project DB
                 </Typography>
             </div>

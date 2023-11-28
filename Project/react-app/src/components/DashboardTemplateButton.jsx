@@ -13,6 +13,7 @@ const DashboardTemplateButton = ({ text, iconDivBackgroundImage, onClick = () =>
         borderRadius: '3px',
         padding: '10px 5px 5px 5px',
         // width: "75px",
+        minWidth: "80px",
         height: "50px",
         // Sometimes I understand the hate for css
         // With just flexGrow: 1 the buttons fill as much space as they can
@@ -21,6 +22,7 @@ const DashboardTemplateButton = ({ text, iconDivBackgroundImage, onClick = () =>
         flexGrow: 1,
         // but for some reason aspectRatio with any value ensures that they all grow to be the same size
 
+        overflow: 'hidden',
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'space-around',

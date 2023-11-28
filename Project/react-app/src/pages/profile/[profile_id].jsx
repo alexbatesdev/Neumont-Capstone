@@ -126,7 +126,7 @@ export default function Page() {
                     {
                         profileData && (<>
                             <ProfileView profile_in={profileData} />
-                            <FollowingView following_list={profileData.following} />
+                            <FollowingView following_account_id={profileData.account_id} />
                         </>)}
                 </div>
                 <Scrollbar>

@@ -506,8 +506,6 @@ async def get_projects(
 
     projects = filter_out_private_projects(projects, user)
 
-    verify_item_found(projects)
-
     projects_out = await bulk_projects_out(projects)
 
     return projects_out
@@ -521,8 +519,6 @@ async def get_public_projects(project_owner: UUID):
     for project in projects:
         if project.is_private:
             projects.remove(project)
-
-    verify_item_found(projects)
 
     projects_out = await bulk_projects_out(projects)
 
@@ -539,14 +535,11 @@ async def get_projects(
     projects = filter_out_private_projects(projects, user)
     projects = filter_in_templates(projects, user)
 
-    verify_item_found(projects)
-
     projects_out = await bulk_projects_out(projects)
 
     return projects_out
 
 
-# entirely untested (Dave style 😎)
 @app.get("/get_dashboard/{current_user_ID}")
 async def get_dashboard_projects(
     current_user_ID: UUID, user: AccountWithToken = Depends(verify_token)
@@ -559,7 +552,6 @@ async def get_dashboard_projects(
     ).to_list()
 
     projects = projectsByOwner + projectsSharedWithUser
-    verify_item_found(projects)
 
     projects_out = await bulk_projects_out(projects)
     print(projects_out)
@@ -919,7 +911,7 @@ async def delete_project(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="The project could not be deleted",
         )
-    
+
     try:
         app.state.gridFS.delete(project.file_structure)
         await project.delete()

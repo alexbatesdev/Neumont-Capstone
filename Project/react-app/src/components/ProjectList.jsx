@@ -123,9 +123,6 @@ const ProjectList = ({ projects, setProjects, viewOnly = false }) => {
             return (
                 <div
                     key={"Project-" + project.project_id + "-" + index}
-                    onMouseEnter={() => setHoverIndex(index)}
-                    onMouseLeave={() => setHoverIndex(-1)}
-                    onClick={() => window.location.href = `/editor/${project.project_id}` + ((project.is_private) ? "?private=true" : "")}
                     style={{
                         width: "calc(100% - 2rem)",
                         height: "100px",
@@ -147,9 +144,17 @@ const ProjectList = ({ projects, setProjects, viewOnly = false }) => {
                         overflow: "hidden",
                         gap: "1rem",
                     }}>
-                        <Typography variant="h5" sx={{
-                            maxWidth: "64%",
-                        }}>{project.project_name}</Typography>
+                        <Typography variant="h5"
+                            onClick={() => window.location.href = `/editor/${project.project_id}` + ((project.is_private) ? "?private=true" : "")}
+                            sx={{
+                                maxWidth: "64%",
+                                "&:hover": {
+                                    cursor: "pointer",
+                                    color: theme.palette.secondary.main,
+                                    textDecoration: "underline",
+                                },
+                                // transition: "0.2s ease-in-out",
+                            }}>{project.project_name}</Typography>
                         <div style={{
                             display: "flex",
                             flexDirection: "row",

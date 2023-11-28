@@ -2,14 +2,13 @@ import { useTheme } from '@mui/material';
 import { Box, Button, Card, Modal, TextField, Typography } from '@mui/material';
 import { signOut, useSession } from 'next-auth/react';
 import React, { useEffect } from 'react';
-import VerifiedUserIcon from '@mui/icons-material/VerifiedUser';
 import { toast } from 'react-toastify';
 import EditIcon from '@mui/icons-material/Edit';
 import { Share } from '@mui/icons-material';
 
 const ProfileView = ({ profile_in }) => {
     const theme = useTheme();
-    const session = useSession();
+    const session = useSession()
     const [profile, setProfile] = React.useState(null);
     const [newName, setNewName] = React.useState('');
     const [newEmail, setNewEmail] = React.useState('');
@@ -17,7 +16,10 @@ const ProfileView = ({ profile_in }) => {
     const [editMode, setEditMode] = React.useState(false);
     const [modalOpen, setModalOpen] = React.useState(false);
 
+
+
     useEffect(() => {
+        console.log(session)
         const getProfile = async () => {
             let response = await fetch(`${process.env.NEXT_PUBLIC_ACCOUNT_API_URL}/me`, {
                 headers: {
@@ -39,8 +41,6 @@ const ProfileView = ({ profile_in }) => {
         }
         if (session.data && !profile_in) getProfile()
         else if (profile_in) {
-            console.log("====================================")
-            console.log(profile_in)
             setProfile(profile_in)
             setNewName(profile_in.name)
             setNewEmail(profile_in.email)
@@ -61,6 +61,7 @@ const ProfileView = ({ profile_in }) => {
                 toast.error("Error updating profile")
             } else {
                 toast.success("Profile updated")
+                // update()
             }
         })
         setEditMode(false)
@@ -87,8 +88,49 @@ const ProfileView = ({ profile_in }) => {
         signOut()
     }
 
-    console.log(profile)
-    console.log(session)
+    const handleFollow = async () => {
+        let response = await fetch(`${process.env.NEXT_PUBLIC_ACCOUNT_API_URL}/follow/${profile.account_id}`, {
+            method: 'POST',
+            headers: {
+                "Authorization": `Bearer ${session.data.token}`,
+                "Content-Type": "application/json"
+            }
+        }).then(async res => {
+            if (res.status !== 200) {
+                toast.error("Error following user")
+            } else {
+                toast.success("Followed user")
+                session.update(await res.json())
+            }
+        }).catch(err => {
+            console.log(err)
+            toast.error("Error following user")
+        })
+    }
+
+    const handleUnfollow = async () => {
+        let response = await fetch(`${process.env.NEXT_PUBLIC_ACCOUNT_API_URL}/unfollow/${profile.account_id}`, {
+            method: 'DELETE',
+            headers: {
+                "Authorization": `Bearer ${session.data.token}`,
+                "Content-Type": "application/json"
+            }
+        }).then(async res => {
+            if (res.status !== 200) {
+                toast.error("Error unfollowing user")
+            } else {
+                toast.success("Unfollowed user")
+                session.update(await res.json())
+            }
+        }).catch(err => {
+            console.log(err)
+            toast.error("Error unfollowing user")
+        })
+    }
+
+    // Demoted to stretch goal 💭
+    // const handleInvite = async () => {
+    // }
 
     return (
         <Box sx={{
@@ -135,8 +177,44 @@ const ProfileView = ({ profile_in }) => {
                 }}>
                     <Typography variant='h6'>{profile.projects?.length} Projects</Typography>
                     <Typography variant='h6'>{profile.following?.length} Following</Typography>
-
                 </div>
+                {
+                    session.data?.user.account_id !== profile.account_id &&
+                    session.status === "authenticated" &&
+                    <div style={{
+                        display: 'flex',
+                        flexDirection: 'row',
+                        justifyContent: 'flex-start',
+                        alignItems: 'center',
+                        gap: '1rem',
+                    }}>
+
+                        <Button
+                            variant={session.data?.user.following.includes(profile.account_id) ? 'outlined' : 'contained'}
+                            color='tertiary'
+                            size='small'
+                            onClick={() => {
+                                if (session.data?.user.following.includes(profile.account_id)) handleUnfollow()
+                                else handleFollow()
+                            }}
+                            sx={{
+                                marginTop: '1rem'
+                            }}>
+                            {session.data?.user.following.includes(profile.account_id) ? 'Unfollow' : 'Follow'}
+                        </Button>
+                        {/* Demoted to stretch goal 💭*/}
+                        {/* <Button
+                            variant='outlined'
+                            color='secondary'
+                            size='small'
+                            onClick={handleInvite}
+                            sx={{
+                                marginTop: '1rem'
+                            }}>
+                            Invite to project
+                        </Button> */}
+                    </div>
+                }
             </>)}
             {editMode && <>
                 <Typography onClick={() => {

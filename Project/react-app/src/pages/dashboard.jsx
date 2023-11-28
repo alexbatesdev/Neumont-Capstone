@@ -42,7 +42,7 @@ export default function Home() {
                     toast.error("Error loading dashboard. Refresh the page to try again.")
                 })
 
-                const sortedByLastUpdated = response.sort((a, b) => {
+                const sortedByLastUpdated = response?.sort((a, b) => {
                     return new Date(b.last_modified_date) - new Date(a.last_modified_date)
                 })
                 setProjects(sortedByLastUpdated)
@@ -98,7 +98,7 @@ export default function Home() {
                     backgroundRepeat: 'no-repeat',
                     backgroundPosition: 'center',
                     animation: 'rotate 120s infinite linear',
-
+                    color: "#130925" // This line doesn't change anything, but this is the hex code of the web svg
                 }}></div>
                 <TopBar
                     alternate
@@ -130,7 +130,7 @@ export default function Home() {
                     }}>
 
                         <ProfileView />
-                        <FollowingView following_list={session.data?.user.following} />
+                        <FollowingView following_account_id={session.data?.user.account_id} />
                     </div>
                     <Scrollbar>
 

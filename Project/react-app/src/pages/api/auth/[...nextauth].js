@@ -22,8 +22,8 @@ export const authOptions = {
                 password: { label: "Password", type: "password", name: "password" }
             },
             async authorize(credentials) {
-                console.log("Credentials Authorize")
-                console.log(credentials)
+                // console.log("Credentials Authorize")
+                // console.log(credentials)
                 // Hit Endpoint here
                 if (!credentials || !credentials.email || !credentials.password) return null
 
@@ -64,8 +64,8 @@ export const authOptions = {
                     }).then(res => res.json()).then(data => {
                         user = data.user
                     })
-                    console.log("ASwSwadasdasdSSDAHSDHASHDASHHH")
-                    console.log(user)
+                    // console.log("ASwSwadasdasdSSDAHSDHASHDASHHH")
+                    // console.log(user)
 
                     if (!user) {
                         console.log("Failed to login: no user")
@@ -94,18 +94,24 @@ export const authOptions = {
 
             return true
         },
-        async jwt({ token, user, account, profile, isNewUser }) {
+        async jwt({ token, user, account, profile, isNewUser, trigger, session }) {
             // console.log("JWT Callback")
             // console.log(token)
             // console.log(user)
             // console.log(account)
             // console.log(profile)
             // console.log(isNewUser)
-
-
+            // console.log(trigger)
+            // console.log(session)
 
             if (user) {
                 token = user;
+            }
+
+
+            if (trigger === "update" && session?.following_list) {
+                console.log("Updating Session")
+                token.user.following = session.following_list
             }
 
             return token

@@ -13,6 +13,7 @@ import ProfileView from '@/components/ProfileView'
 import TopBar from '@/components/TopBar'
 import { toast } from 'react-toastify'
 import { Scrollbar } from 'react-scrollbars-custom'
+import FollowingView from '@/components/FollowingView'
 
 export default function Home() {
     const theme = useTheme()
@@ -22,7 +23,6 @@ export default function Home() {
     const [projects, setProjects] = React.useState([])
 
     useEffect(() => {
-        console.log(session)
         if (session.data) {
             const getProjects = async () => {
                 const response = await fetch(`${process.env.NEXT_PUBLIC_PROJECT_API_URL}/get_dashboard/${session.data.user.account_id}`, {
@@ -31,16 +31,18 @@ export default function Home() {
                         "Authorization": `Bearer ${session.data.token}`,
                         "content-type": "application/json",
                     }
+                }).then((data) => {
+                    console.log(data)
+                    if (data.status === 200) {
+                        return data.json()
+                    } else {
+                        toast.error("Error loading dashboard. Refresh the page to try again.")
+                    }
                 }).catch(err => {
                     toast.error("Error loading dashboard. Refresh the page to try again.")
                 })
-                if (response.status !== 200) {
-                    console.log(response)
-                    return
-                }
-                const data = await response.json()
-                console.log(data)
-                const sortedByLastUpdated = data.sort((a, b) => {
+
+                const sortedByLastUpdated = response.sort((a, b) => {
                     return new Date(b.last_modified_date) - new Date(a.last_modified_date)
                 })
                 setProjects(sortedByLastUpdated)
@@ -82,8 +84,22 @@ export default function Home() {
                 alignItems: 'flex-start',
                 position: 'relative',
                 overflow: 'hidden',
+                backgroundColor: theme.palette.background.default,
             }}>
+                <div style={{
+                    position: 'absolute',
+                    top: "-50%",
+                    left: "-50%",
+                    width: '200vw',
+                    height: '200vh',
+                    zIndex: 0,
+                    backgroundImage: 'url(/spiderweb.svg)',
+                    backgroundSize: 'contain',
+                    backgroundRepeat: 'no-repeat',
+                    backgroundPosition: 'center',
+                    animation: 'rotate 120s infinite linear',
 
+                }}></div>
                 <TopBar
                     alternate
                     titleText={"Dashboard"}
@@ -93,28 +109,13 @@ export default function Home() {
 
                 </TopBar>
                 <div style={{
-                    position: 'absolute',
-                    top: "50%",
-                    left: "50%",
-                    transform: "translate(-50%, -50%)",
-                    width: '250vw',
-                    height: '250vh',
-                    zIndex: -1,
-                    backgroundImage: 'url(/spiderweb.svg)',
-                    backgroundSize: '110vw',
-                    backgroundRepeat: 'no-repeat',
-                    backgroundPosition: 'center',
-                    backgroundColor: theme.palette.background.default,
-                    // animation: 'rotate 120s infinite linear',
-
-                }}></div>
-                <div style={{
                     width: '100%',
                     display: 'flex',
                     flexDirection: 'row',
                     justifyContent: 'flex-start',
                     alignItems: 'flex-start',
                     height: '100%',
+                    zIndex: 1,
                 }}>
                     <div style={{
                         display: 'flex',
@@ -129,6 +130,7 @@ export default function Home() {
                     }}>
 
                         <ProfileView />
+                        <FollowingView following_list={session.data?.user.following} />
                     </div>
                     <Scrollbar>
 

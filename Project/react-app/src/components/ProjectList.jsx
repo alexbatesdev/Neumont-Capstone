@@ -60,18 +60,69 @@ const timeAgo = (datetimeString) => {
     }
 }
 
+
 const ProjectList = ({ projects, setProjects, viewOnly = false }) => {
     const theme = useTheme();
     const session = useSession();
-    const [modalOpen, setModalOpen] = React.useState(false);
+    const [modalOpen, setModalOpen] = React.useState(null);
+    const [deleteTarget, setDeleteTarget] = React.useState(null);
     const [hoverIndex, setHoverIndex] = React.useState(-1);
+
+    const handleFork = async (project) => {
+        const body = {
+            "project_name": `${project.project_name} (forked)`,
+            "project_description": project.project_description,
+            "is_private": project.is_private,
+            "is_template": project.is_template,
+            "start_command": project.start_command,
+        }
+
+        const response = await fetch(`${process.env.NEXT_PUBLIC_PROJECT_API_URL}/fork/${project.project_id}`, {
+            method: 'POST',
+            body: JSON.stringify(body),
+            headers: {
+                "Authorization": `Bearer ${session.data.token}`,
+                "content-type": "application/json",
+            }
+        }).then((data) => {
+            if (data.status === 200) {
+                return data.json()
+            } else {
+                toast.error("Error forking project. Refresh the page to try again.")
+            }
+        }).catch(err => {
+            toast.error("Error forking project. Refresh the page to try again.")
+        })
+        window.location.href = `/editor/${response.project_id}`
+
+    }
+
+    const handleDelete = async () => {
+        await fetch(`${process.env.NEXT_PUBLIC_PROJECT_API_URL}/by_id/${deleteTarget.project_id}`, {
+            method: 'DELETE',
+            headers: {
+                "Authorization": `Bearer ${session.data.token}`,
+                "content-type": "application/json",
+            }
+        }).then((data) => {
+            if (data.status === 200) {
+                setProjects(projects.filter(project => project.project_id !== deleteTarget.project_id))
+                setDeleteTarget(null);
+            } else {
+                toast.error("Error deleting project. Refresh the page to try again.")
+            }
+        }).catch(err => {
+            toast.error("Error deleting project. Refresh the page to try again.")
+        })
+    }
+
 
     return (<>
         {!viewOnly && <CreateProjectBar />}
         {projects && projects.map((project, index) => {
             return (
                 <div
-                    key={"Project-" + project.id + "-" + index}
+                    key={"Project-" + project.project_id + "-" + index}
                     onMouseEnter={() => setHoverIndex(index)}
                     onMouseLeave={() => setHoverIndex(-1)}
                     onClick={() => window.location.href = `/editor/${project.project_id}` + ((project.is_private) ? "?private=true" : "")}
@@ -132,7 +183,7 @@ const ProjectList = ({ projects, setProjects, viewOnly = false }) => {
                         gap: "1rem",
                     }}>
                         <Scrollbar noScrollX style={{
-                            width: "50%"
+                            width: "400px"
                         }}>
                             <Typography variant="caption" sx={{
                                 flexGrow: 1,
@@ -167,94 +218,151 @@ const ProjectList = ({ projects, setProjects, viewOnly = false }) => {
                             </div>
                         </div>
                     </div>
-                    <MoreHorizIcon sx={{
+                    {modalOpen == project.project_id && <div style={{
                         position: "absolute",
                         top: "0.5rem",
-                        right: "0.5rem",
-                        color: theme.palette.text.primary,
-                        "&:hover": {
-                            color: theme.palette.primary.main,
-                            cursor: "pointer",
-                        },
-                        transition: "color 0.1s ease-in-out",
-                    }} />
+                        right: "2rem",
+                        minWidth: "125px",
+                        // border: "3px solid " + theme.palette.utilBar.icons,
+                        backgroundColor: (project.is_private ? theme.palette.background.alternateDark : theme.palette.background.paper),
+                        // borderRadius: "5px",
+                        zIndex: 5,
+                        boxShadow: "0px 0px 10px 0px rgba(0,0,0,0.75)",
+                    }}>
+                        <Typography variant="body1" sx={{
+                            padding: "0.5rem 1rem",
+                            "&:hover": {
+                                cursor: "pointer",
+                                color: theme.palette.secondary.main,
+                                filter: "brightness(1.5)",
+                            },
+                            transition: "color 0.2s ease-in-out",
+                            backgroundColor: "inherit",
+                        }} onClick={(e) => {
+                            e.stopPropagation();
+                            setModalOpen(null);
+                            window.location.href = `/editor/${project.project_id}` + ((project.is_private) ? "?private=true" : "");
+                        }}>Open</Typography>
+                        <Typography variant="body1" sx={{
+                            padding: "0.5rem 1rem",
+                            "&:hover": {
+                                cursor: "pointer",
+                                color: theme.palette.secondary.main,
+                                filter: "brightness(1.5)"
+                            },
+                            transition: "color 0.2s ease-in-out",
+                            backgroundColor: "inherit"
+                        }} onClick={(e) => {
+                            e.stopPropagation();
+                            setModalOpen(null);
+                            navigator.clipboard.writeText(process.env.NEXT_PUBLIC_FRONTEND_BASE_URL + "/editor/" + project.project_id + (project.is_private ? "?private=true" : ""));
+                            toast.success("Copied link to clipboard!");
+                        }}>Share</Typography>
+                        {session.status == "authenticated" &&
+                            <Typography variant="body1" sx={{
+                                padding: "0.5rem 1rem",
+                                "&:hover": {
+                                    cursor: "pointer",
+                                    color: theme.palette.secondary.main,
+                                    filter: "brightness(1.5)"
+                                },
+                                transition: "color 0.2s ease-in-out",
+                                backgroundColor: "inherit"
+                            }} onClick={(e) => {
+                                e.stopPropagation();
+                                setModalOpen(null);
+                                handleFork(project);
+                            }}>Fork</Typography>
+                        }
+                        {!viewOnly &&
+                            <Typography variant="body1" sx={{
+                                padding: "0.5rem 1rem",
+                                "&:hover": {
+                                    cursor: "pointer",
+                                    color: theme.palette.secondary.main,
+                                    filter: "brightness(1.5)"
+                                },
+                                color: theme.palette.error.main,
+                                transition: "color 0.2s ease-in-out",
+                                backgroundColor: "inherit"
+                            }} onClick={(e) => {
+                                e.stopPropagation();
+                                setModalOpen(null);
+                                setDeleteTarget(project);
+                            }}>Delete</Typography>
+                        }
+                    </div>}
+                    <MoreHorizIcon
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            console.log(project.project_id)
+                            if (modalOpen == project.project_id) {
+                                setModalOpen(null);
+                                document.removeEventListener("click", (event) => {
+                                    setModalOpen(null);
+                                }, { once: true })
+                            } else {
+                                setModalOpen(project.project_id);
+                                document.addEventListener("click", (event) => {
+                                    setModalOpen(null);
+                                }, { once: true })
+                            }
+                        }}
+                        sx={{
+                            position: "absolute",
+                            top: "0.5rem",
+                            right: "0.5rem",
+                            color: theme.palette.text.primary,
+                            "&:hover": {
+                                cursor: "pointer",
+                                color: theme.palette.secondary.main,
+                            },
+                            transition: "color 0.2s ease-in-out",
+                        }} />
                 </div>
             )
         })}
-    </>)
-
-    // project.is_private ? theme.palette.background.default : theme.palette.background.paper
-    return (<>
-        <TableContainer component={Box} sx={{
-            width: "90%",
-            overflow: "auto",
-            backgroundColor: theme.palette.background.paper,
-            // borderRadius: "7px",
-            marginBottom: "1rem",
-        }}>
-            <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                <TableHead>
-                    <TableRow>
-                        <TableCell color="primary">Project Name</TableCell>
-                        <TableCell color="primary" align="right">Last Updated</TableCell>
-                        <TableCell color="primary" align="right">Created</TableCell>
-                        <TableCell color="primary" align="center">
-                            {!viewOnly && <>
-                                <Button variant="contained" color="tertiary" onClick={() => setModalOpen(true)}>Create Project</Button>
-                                <Modal open={modalOpen} onClose={() => setModalOpen(false)}>
-                                    <div style={{
-                                        position: "absolute",
-                                        top: "50%",
-                                        left: "50%",
-                                        transform: "translate(-50%, -50%)",
-                                    }}>
-                                        <NewProjectForm setModalOpen={setModalOpen} />
-                                    </div>
-                                </Modal>
-                            </>
-                            }
-                        </TableCell>
-                    </TableRow>
-                </TableHead>
-                <TableBody>
-                    {projects && projects.map((project) => (
-                        <TableRow
-                            key={project.id}
-                            sx={{
-                                '&:last-child td, &:last-child th': { border: 0 },
-                                backgroundColor: project.is_private ? theme.palette.background.default : theme.palette.background.paper,
-                            }}
-                        >
-                            <TableCell component="th" scope="row">
-                                {project.project_name}
-                            </TableCell>
-                            <TableCell align="right">
-                                {formatDate(project.last_modified_date)}
-                            </TableCell>
-                            <TableCell align="right">
-                                {formatDate(project.creation_date)}
-                            </TableCell>
-                            <TableCell align="right" sx={{ display: "flex", flexDirection: "row", justifyContent: "space-evenly", alignItems: "center" }}>
-                                <Button variant="contained" color="primary" sx={{ color: theme.palette.text.primary }} onClick={() => window.location.href = `/editor/${project.project_id}`}>Open</Button>
-                                <ShareIcon
-                                    onClick={() => {
-                                        navigator.clipboard.writeText(`${process.env.NEXT_PUBLIC_FRONTEND_BASE_URL}/editor/${project.project_id}`)
-                                        toast.success("Copied link to clipboard")
-                                    }}
-                                    sx={{
-                                        "&:hover": {
-                                            color: theme.palette.primary.main,
-                                            cursor: "pointer",
-                                        },
-                                        transition: "color 0.1s ease-in-out",
-                                    }} />
-                            </TableCell>
-                        </TableRow>
-                    ))}
-                </TableBody>
-            </Table>
-        </TableContainer>
-    </>)
+        {deleteTarget && <>
+            {/* Copilot snippet, I might make this prettier, but for now it does the job, also I added the methods that actually do things, only the layout is copilot */}
+            <Modal open={deleteTarget} onClose={() => setModalOpen(false)}>
+                <div style={{
+                    position: "absolute",
+                    top: "50%",
+                    left: "50%",
+                    transform: "translate(-50%, -50%)",
+                }}>
+                    <Card sx={{
+                        display: "flex",
+                        flexDirection: "column",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        gap: "1rem",
+                        padding: "1rem",
+                        width: "450px",
+                        // height: "250px"
+                    }}>
+                        <Typography variant="body1">Are you sure you want to delete {deleteTarget.project_name}?</Typography>
+                        <div style={{
+                            display: "flex",
+                            flexDirection: "row",
+                            justifyContent: "center",
+                            alignItems: "center",
+                            gap: "1rem",
+                            width: "100%"
+                        }}>
+                            <Button variant="contained" color="error" sx={{
+                                width: "25%"
+                            }} onClick={handleDelete}>Delete</Button>
+                            <Button variant="contained" color="tertiary" sx={{
+                                width: "75%"
+                            }} onClick={() => setDeleteTarget(null)}>Cancel</Button>
+                        </div>
+                    </Card>
+                </div>
+            </Modal>
+            {/* Copilot snippet over, also it was my idea to use a mui Modal, I just didn't want to think about styling right now. Weird tense changes, but that's how it be with cross-time messages. Aren't all messages cross time? */}
+        </>}
+    </>);
 }
 
 export default ProjectList;

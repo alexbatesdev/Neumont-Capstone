@@ -4,16 +4,18 @@ import { signOut, useSession } from 'next-auth/react';
 import React, { useEffect } from 'react';
 import VerifiedUserIcon from '@mui/icons-material/VerifiedUser';
 import { toast } from 'react-toastify';
+import EditIcon from '@mui/icons-material/Edit';
+import { Share } from '@mui/icons-material';
 
-const ProfileView = () => {
+const ProfileView = ({ profile_in }) => {
     const theme = useTheme();
     const session = useSession();
     const [profile, setProfile] = React.useState(null);
     const [newName, setNewName] = React.useState('');
     const [newEmail, setNewEmail] = React.useState('');
+    const [newAPIKey, setNewAPIKey] = React.useState('');
     const [editMode, setEditMode] = React.useState(false);
     const [modalOpen, setModalOpen] = React.useState(false);
-    const [newAPIKey, setNewAPIKey] = React.useState('');
 
     useEffect(() => {
         const getProfile = async () => {
@@ -35,7 +37,15 @@ const ProfileView = () => {
             setNewEmail(data.user.email)
             setNewAPIKey(data.user.openai_api_key)
         }
-        if (session.data) getProfile()
+        if (session.data && !profile_in) getProfile()
+        else if (profile_in) {
+            console.log("====================================")
+            console.log(profile_in)
+            setProfile(profile_in)
+            setNewName(profile_in.name)
+            setNewEmail(profile_in.email)
+            setNewAPIKey(profile_in.openai_api_key)
+        }
     }, [session])
 
     const handleSave = async () => {
@@ -90,9 +100,31 @@ const ProfileView = () => {
             backgroundColor: theme.palette.background.paper,
             // borderRadius: "7px",
             width: "calc(100% - 2rem)",
+            position: "relative",
         }}>
             {profile && (<>
-                <Typography variant="h4">{profile.name}</Typography>
+                <div style={{
+                    display: 'flex',
+                    flexDirection: 'row',
+                    justifyContent: 'flex-start',
+                    alignItems: 'center',
+                    gap: '1rem',
+                }}>
+                    <Typography variant="h4">{profile.name}</Typography>
+                    <Share
+                        onClick={() => {
+                            navigator.clipboard.writeText(`${process.env.NEXT_PUBLIC_FRONTEND_BASE_URL}/profile/${profile.account_id}`)
+                            toast.success("Copied profile link to clipboard")
+                        }}
+                        sx={{
+                            color: theme.palette.text.primary,
+                            cursor: "pointer",
+                            "&:hover": {
+                                color: theme.palette.secondary.main,
+                            },
+                            transition: "color 0.2s ease-in-out",
+                        }} />
+                </div>
                 <Typography variant="h5">{profile.email}</Typography>
                 <div style={{
                     display: 'flex',
@@ -101,8 +133,8 @@ const ProfileView = () => {
                     alignItems: 'center',
                     gap: '1rem',
                 }}>
-                    <Typography variant='h6'>{profile.projects.length} Projects</Typography>
-                    <Typography variant='h6'>{profile.following.length} Following</Typography>
+                    <Typography variant='h6'>{profile.projects?.length} Projects</Typography>
+                    <Typography variant='h6'>{profile.following?.length} Following</Typography>
 
                 </div>
             </>)}
@@ -193,9 +225,23 @@ const ProfileView = () => {
                     </>}
                 </div>
             </>}
-            {!editMode && (session.data && profile) && session.data.user.account_id == profile.account_id && <Button variant="contained" onClick={() => setEditMode(!editMode)} sx={{
-                marginTop: 1
-            }}>Edit</Button>}
+            {!editMode
+                && (session.data && profile)
+                && session.data.user.account_id == profile.account_id
+                && <EditIcon onClick={() => setEditMode(!editMode)} sx={{
+                    position: 'absolute',
+                    right: "0.5rem",
+                    top: "0.5rem",
+                    color: theme.palette.text.primary,
+                    cursor: "pointer",
+                    "&:hover": {
+                        color: theme.palette.secondary.main,
+                    },
+                    transition: "color 0.2s ease-in-out",
+                }}>
+                    Edit
+                </EditIcon>
+            }
 
         </Box >
     );

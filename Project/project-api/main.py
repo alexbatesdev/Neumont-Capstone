@@ -10,7 +10,11 @@ from models.project_models import (
     ProjectCreate,
     ProjectDataWithFiles,
 )
-from projectFileTemplates import react_file_template, empty_file_template
+from projectFileTemplates import (
+    react_file_template,
+    empty_file_template,
+    next_file_template,
+)
 
 from jose import JWTError, jwt
 
@@ -125,7 +129,7 @@ def verify_collaborator(project: ProjectDataDB, user: AccountWithToken):
 
 
 def verify_owner(project: ProjectDataDB, user: AccountWithToken):
-    if str(user.account_id) != project.project_owner and not user.isAdmin:
+    if str(user.account_id) != str(project.project_owner) and not user.isAdmin:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="You do not have permission to edit this project",
@@ -250,7 +254,7 @@ async def insert_new_project(
 
 # new project from template
 @app.post("/new/from_template/{template_id}")
-async def insert_react_template(
+async def insert_template(
     body: ProjectCreate,
     template_id: UUID,
     user: AccountWithToken = Depends(verify_token),
@@ -307,6 +311,64 @@ async def insert_react_template(
     return project_out
 
 
+# new project from template
+@app.post("/old/from_template/{template_name}")
+async def insert_react_template(
+    body: ProjectCreate,
+    template_name: str,
+    user: AccountWithToken = Depends(verify_token),
+):
+    body_dict = body.model_dump()
+
+    body_dict["project_owner"] = user.account_id
+
+    if template_name == "react":
+        file_structure = Directory(react_file_template)
+    elif template_name == "empty":
+        file_structure = Directory(empty_file_template)
+    elif template_name == "next":
+        file_structure = Directory(next_file_template)
+
+    project = ProjectDataDB(**body_dict)
+
+    project.file_structure = await upload_filestructure_to_gridfs(
+        file_structure,
+        project.project_id,
+    )
+
+    try:
+        async with httpx.AsyncClient() as client:
+            await client.post(
+                # I should be future proofing like this more, also another technical debt relief round will be getting old hardcoded URLs 💭
+                f"http://{config('ACCOUNT_API_HOST')}:{config('ACCOUNT_API_PORT')}/add_project_reference/{str(project.project_id)}",
+                headers={"Authorization": f"Bearer {user.access_token}"},
+            )
+    except Exception as e:
+        print(e)
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="The project could not be created",
+        )
+
+    try:
+        await project.insert()
+    except Exception as e:
+        print(e)
+        async with httpx.AsyncClient() as client:
+            await client.post(
+                # I should be future proofing like this more, also another technical debt relief round will be getting old hardcoded URLs 💭
+                f"http://{config('ACCOUNT_API_HOST')}:{config('ACCOUNT_API_PORT')}/remove_project_reference/{str(project.project_id)}"
+            )
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="The project could not be created",
+        )
+
+    project_out = await project_to_project_out(project)
+
+    return project_out
+
+
 # fork a project
 @app.post("/fork/{project_id}")
 async def fork_project(
@@ -317,13 +379,13 @@ async def fork_project(
     body_dict = body.model_dump()
 
     body_dict["project_owner"] = user.account_id
+    body_dict["creation_date"] = datetime.now()
 
     template = await ProjectDataDB.find_one({"project_id": project_id})
     verify_item_found(template)
 
     project = ProjectDataDB(
         **body_dict,
-        creation_date=datetime.now(),
     )
     template_filestructure = await download_filestructure_from_gridfs(
         template.file_structure
@@ -845,5 +907,29 @@ async def delete_project(
     project = await ProjectDataDB.find_one({"project_id": project_id})
     verify_owner(project, user)
     verify_item_found(project)
-    app.state.gridFS.delete(project.file_structure)
-    await project.delete()
+
+    try:
+        async with httpx.AsyncClient() as client:
+            await client.delete(
+                # I should be future proofing like this more, also another technical debt relief round will be getting old hardcoded URLs 💭
+                f"http://{config('ACCOUNT_API_HOST')}:{config('ACCOUNT_API_PORT')}/remove_project_reference/{str(project.project_id)}"
+            )
+    except:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="The project could not be deleted",
+        )
+    
+    try:
+        app.state.gridFS.delete(project.file_structure)
+        await project.delete()
+    except:
+        async with httpx.AsyncClient() as client:
+            await client.post(
+                # I should be future proofing like this more, also another technical debt relief round will be getting old hardcoded URLs 💭
+                f"http://{config('ACCOUNT_API_HOST')}:{config('ACCOUNT_API_PORT')}/add_project_reference/{str(project.project_id)}"
+            )
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="The project could not be deleted",
+        )

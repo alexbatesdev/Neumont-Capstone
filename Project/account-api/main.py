@@ -275,7 +275,6 @@ async def get_user_by_email(email: EmailStr):
     return AccountOut(**Account.model_dump())
 
 
-# Entirely untested 😎
 # get user by id
 @app.get("/by_id/{account_id}")
 async def get_user_by_id(account_id: UUID):

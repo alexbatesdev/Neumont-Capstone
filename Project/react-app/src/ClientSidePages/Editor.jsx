@@ -77,7 +77,7 @@ export default function Editor() {
             "project_description": projectData.project_description,
             "is_private": projectData.is_private,
             "is_template": projectData.is_template,
-            "creation_date": projectData.creation_date,
+            "start_command": projectData.start_command,
         }
 
         let response = await fetch(`${process.env.NEXT_PUBLIC_PROJECT_API_URL}/fork/${projectData.project_id}`, {
@@ -87,13 +87,16 @@ export default function Editor() {
                 "Authorization": `Bearer ${session.data.token}`,
                 "content-type": "application/json",
             }
+        }).then((data) => {
+            if (data.status === 200) {
+                return data.json()
+            } else {
+                toast.error("Error forking project. Refresh the page to try again.")
+            }
+        }).catch(err => {
+            toast.error("Error forking project. Refresh the page to try again.")
         })
-        if (response.status !== 200) {
-            console.log(response)
-            return
-        }
-        let data = await response.json()
-        window.location.href = `/editor/${data.project_id}`
+        window.location.href = `/editor/${response.project_id}`
     }
 
     const shareProject = () => {

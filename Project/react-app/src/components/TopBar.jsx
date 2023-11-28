@@ -29,6 +29,7 @@ const TopBar = ({ children, titleText, backLocation, alternate = false, showSign
         justifyContent: 'space-between',
         alignItems: 'center',
         backgroundColor: alternate ? theme.palette.background.paper : theme.palette.background.default,
+        zIndex: 5,
     }
 
     const handleBack = () => {

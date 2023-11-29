@@ -186,6 +186,15 @@ const runServer = async (webContainerInstance, setWebContainerURL, start_command
         const args = start_command_string.split(" ").slice(1);
 
         const startProcess = await webContainerInstance.spawn(command, args);
+        startProcess.output.pipeTo(
+            new WritableStream({
+                write(data) {
+                    console.log(data);
+                    //console.log("Writing data");
+                    // terminal_instance.write(data);
+                },
+            })
+        )
         webContainerInstance.on('server-ready', (port, url) => {
             setWebContainerURL(url);
             console.log(url)

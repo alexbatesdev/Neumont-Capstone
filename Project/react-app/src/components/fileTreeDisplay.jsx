@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
 import { Typography } from '@mui/material';
 import { useTheme } from '@mui/material/styles'; // Import useTheme from Material-UI
@@ -112,6 +112,32 @@ const FileTreeDisplay = () => {
         }
         asyncFunc();
     }
+
+    const handleDirectoryUpdate = async (path) => {
+        // console.log("Updating directory: " + pathNotModules)
+
+        let directoryContents = await fileOperations.getDirectory(webContainer, "./")
+        if (directoryContents == null) directoryContents = {}
+        // console.log(directoryContents);
+        // console.log("Call set Directory from FileStructureNode")
+        fileOperations.setDirectory(files, "./", directoryContents).then((value) => {
+            const newValue = { ...value }
+            setFiles(newValue)
+        })
+    }
+
+    useEffect(() => {
+        let watcher = null;
+        if (webContainer) {
+            watcher = webContainer.fs.watch('./', (event, filename) => {
+                console.log("HandleDirectoryUpdate PATH: ", "./")
+                handleDirectoryUpdate("./")
+            })
+        }
+        return () => {
+
+        }
+    }, [webContainer])
 
     return (
         <div style={outerWrapperStyle}>

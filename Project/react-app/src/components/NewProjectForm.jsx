@@ -7,17 +7,13 @@ import { useRouter } from 'next/router';
 import MiniFileTreeDisplay from './MiniFileTreeDisplay';
 import { toast } from 'react-toastify';
 
-const NewProjectForm = ({ setModalOpen }) => {
+const NewProjectForm = ({ setModalOpen, initialTemplateID }) => {
     const theme = useTheme();
     const session = useSession();
-    const router = useRouter();
-
     const [projectName, setProjectName] = useState("");
     const [projectDescription, setProjectDescription] = useState("");
     const [advancedOptionsExpanded, setAdvancedOptionsExpanded] = useState(false);
     const [isPrivate, setIsPrivate] = useState(false);
-    const [isSubmitting, setIsSubmitting] = useState(false);
-    const [submitError, setSubmitError] = useState(null);
     const [hoveredIndex, setHoveredIndex] = useState(null);
     const [templates, setTemplates] = useState();
     const [selectedTemplateIndex, setSelectedTemplateIndex] = useState(-1);
@@ -25,7 +21,7 @@ const NewProjectForm = ({ setModalOpen }) => {
 
     useEffect(() => {
         const getTemplates = async () => {
-            const response = await fetch(process.env.NEXT_PUBLIC_PROJECT_API_URL + "/all/templates", {
+            const response = await fetch(process.env.NEXT_PUBLIC_PROJECT_API_URL + `/by_owner/${session.data.user.account_id}/templates/`, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
@@ -38,7 +34,14 @@ const NewProjectForm = ({ setModalOpen }) => {
                 return;
             }
             const data = await response.json();
-            // console.log(data);
+            console.log(data);
+            console.log(initialTemplateID);
+            for (let i = 0; i < data.length; i++) {
+                if (data[i].project_id == initialTemplateID) {
+                    setSelectedTemplateIndex(i);
+                    break;
+                }
+            }
             setTemplates(data);
         }
         getTemplates();
@@ -50,16 +53,12 @@ const NewProjectForm = ({ setModalOpen }) => {
             fontSize: "20px",
             padding: "5px 0",
             paddingLeft: "0.5rem",
-            backgroundColor: (i == hoveredIndex || i == selectedTemplateIndex) ? theme.palette.background.paper : (i % 2 == 0) ? theme.palette.background.default : "None",
+            backgroundColor: (i == hoveredIndex || i == selectedTemplateIndex) ? theme.palette.background.alternate : (i % 2 == 0) ? "inherit" : "None",
             userSelect: "none",
         }
     }
 
     const handleCreateProject = (event) => {
-        setIsSubmitting(true);
-        setSubmitError(null);
-
-
 
         // let url = (process.env.NEXT_PUBLIC_PROJECT_API_URL + "/new") + ((selectedTemplateIndex == 0 || selectedTemplateIndex == null) ? "" : ("/template/" + templates[selectedTemplateIndex].toLowerCase()));
         // I wrote ^^this^^ line myself, then I asked GPT to make it more readable. 
@@ -105,7 +104,7 @@ const NewProjectForm = ({ setModalOpen }) => {
     }
 
     return (
-        <Card sx={{
+        <Box sx={{
             width: "500px",
             height: "600px",
             padding: "1rem",
@@ -113,7 +112,7 @@ const NewProjectForm = ({ setModalOpen }) => {
             flexDirection: "column",
             justifyContent: "flex-start",
             alignItems: "flex-start",
-            backgroundColor: theme.palette.background.default,
+            backgroundColor: theme.palette.background.paper,
             color: theme.palette.text.primary,
             border: "2px solid " + theme.palette.dragBar.default,
             position: "relative",
@@ -144,7 +143,7 @@ const NewProjectForm = ({ setModalOpen }) => {
                 <Button
                     sx={{ height: "56px", width: "150px", alignSelf: "flex-end" }}
                     variant="outlined"
-                    color="secondary"
+                    color="tertiary"
                     onClick={() => setAdvancedOptionsExpanded(!advancedOptionsExpanded)}
                 >
                     {advancedOptionsExpanded ? "Close" : "Open"} Advanced
@@ -192,25 +191,13 @@ const NewProjectForm = ({ setModalOpen }) => {
                         flexGrow: 1,
                         border: "1px solid " + theme.palette.dragBar.default,
                         borderRadius: "5px",
+                        backgroundColor: theme.palette.background.alternateDark,
                     }}>
                     <Stack sx={{
                         height: "calc(100% - 0.5rem)",
                         width: "100%",
                         paddingLeft: 0,
                     }}>
-                        <Typography
-                            key={-1}
-                            variant="body2"
-                            onClick={() => {
-                                setSelectedTemplateIndex(-1)
-                                setServerStartCommand("")
-                            }}
-                            onMouseEnter={() => { setHoveredIndex(-1) }}
-                            onMouseLeave={() => { setHoveredIndex(null) }}
-                            sx={listItemStyle(-1)}
-                        >
-                            None
-                        </Typography>
                         {
                             templates && templates.map((template, i) => (
                                 <Typography
@@ -285,7 +272,7 @@ const NewProjectForm = ({ setModalOpen }) => {
                     </Button>
                 </Stack>
             </Box>
-        </Card >
+        </Box >
     );
 };
 

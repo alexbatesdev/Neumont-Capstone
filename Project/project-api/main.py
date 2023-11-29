@@ -103,8 +103,18 @@ def filter_out_private_projects(projects: list[ProjectDataDB], user: AccountWith
     return output
 
 
-def filter_in_templates(projects: list[ProjectDataDB], user: AccountWithToken):
+async def filter_in_templates(projects: list[ProjectDataDB], user: AccountWithToken):
     output = []
+
+    global_templates = await ProjectDataDB.find({"project_owner": None}).to_list()
+
+    print("Getting Global Templates")
+    for project in global_templates:
+        if not project.is_template and project not in projects:
+            continue
+        else:
+            print(project.project_name)
+            output.append(project)
 
     for project in projects:
         if not project.is_template:
@@ -273,8 +283,12 @@ async def insert_template(
 
     project = ProjectDataDB(**body_dict)
 
+    template_filestructure = await download_filestructure_from_gridfs(
+        template.file_structure
+    )
+
     project.file_structure = await upload_filestructure_to_gridfs(
-        template.file_structure,
+        template_filestructure,
         project.project_id,
     )
 
@@ -454,11 +468,11 @@ async def get_all_projects(user: AccountWithToken = Depends(verify_token)):
 
 # get all templates
 @app.get("/all/templates")
-async def get_all_projects(user: AccountWithToken = Depends(verify_token)):
+async def get_all_templates(user: AccountWithToken = Depends(verify_token)):
     projects = await ProjectDataDB.find({}).to_list()
 
     projects = filter_out_private_projects(projects, user)
-    projects = filter_in_templates(projects, user)
+    projects = await filter_in_templates(projects, user)
 
     verify_item_found(projects)
 
@@ -533,7 +547,7 @@ async def get_projects(
     projects = await ProjectDataDB.find({"project_owner": project_owner}).to_list()
 
     projects = filter_out_private_projects(projects, user)
-    projects = filter_in_templates(projects, user)
+    projects = await filter_in_templates(projects, user)
 
     projects_out = await bulk_projects_out(projects)
 

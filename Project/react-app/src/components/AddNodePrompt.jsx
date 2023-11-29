@@ -44,6 +44,7 @@ export default function AddNodePrompt({ path, isOpen, setIsOpen }) {
                     boxShadow: "0px 2px 5px rgba(0,0,0,0.6)",
                 }}>
                 <TextField
+                    autoFocus
                     sx={{
                         position: "relative",
                         zIndex: "100",

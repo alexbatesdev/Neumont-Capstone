@@ -83,14 +83,14 @@ function FileStructureNode({ currentNodeTree, path, depth = 0 }) {
         setHighlightedPath(path)
     }
 
-    const handleDirectoryUpdate = async (pathNotModules) => {
+    const handleDirectoryUpdate = async (path) => {
         // console.log("Updating directory: " + pathNotModules)
 
-        let directoryContents = await fileOperations.getDirectory(webContainer, pathNotModules)
+        let directoryContents = await fileOperations.getDirectory(webContainer, path)
         if (directoryContents == null) directoryContents = {}
         // console.log(directoryContents);
         // console.log("Call set Directory from FileStructureNode")
-        fileOperations.setDirectory(files, pathNotModules, directoryContents).then((value) => {
+        fileOperations.setDirectory(files, path, directoryContents).then((value) => {
             const newValue = { ...value }
             setFiles(newValue)
         })
@@ -214,14 +214,15 @@ function FileStructureNode({ currentNodeTree, path, depth = 0 }) {
             // This works because I don't want to watch the node modules directory, but I do want to watch the root directory (which doesn't get a FileStructureNode)
             // This personally feels like a very creative and good solution to the problem, but something unscaleable and would cause technical debt in the long term
 
+            // This omits the directory and it's children from the watcher
             let splitPath = path.split("/")
             if (splitPath.includes(".next")) return;
+            if (splitPath.includes("node_modules")) return;
 
-            let pathNotModules = ((path == "./node_modules") ? "./" : path)
             let watcher = null;
             if (webContainer) {
 
-                watcher = webContainer.fs.watch(pathNotModules, (event, filename) => {
+                watcher = webContainer.fs.watch(path, (event, filename) => {
                     //if the filename starts with _tmp, ignore it
 
                     // console.log("File Changed")
@@ -231,8 +232,8 @@ function FileStructureNode({ currentNodeTree, path, depth = 0 }) {
                         return;
                     }
 
-                    console.log("HandleDirectoryUpdate PATH: ", pathNotModules)
-                    handleDirectoryUpdate(pathNotModules)
+                    console.log("HandleDirectoryUpdate PATH: ", path)
+                    handleDirectoryUpdate(path)
                 })
             }
             return () => {

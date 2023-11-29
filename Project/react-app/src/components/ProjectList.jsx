@@ -67,6 +67,8 @@ const ProjectList = ({ projects, setProjects, viewOnly = false }) => {
     const [modalOpen, setModalOpen] = React.useState(null);
     const [deleteTarget, setDeleteTarget] = React.useState(null);
     const [hoverIndex, setHoverIndex] = React.useState(-1);
+    const [newProjectFormOpen, setNewProjectFormOpen] = React.useState(false);
+    const [selectedTemplateID, setSelectedTemplateID] = React.useState(0);
 
     const handleFork = async (project) => {
         const body = {
@@ -116,9 +118,8 @@ const ProjectList = ({ projects, setProjects, viewOnly = false }) => {
         })
     }
 
-
     return (<>
-        {!viewOnly && <CreateProjectBar />}
+        {!viewOnly && <CreateProjectBar setSelectedTemplate={setSelectedTemplateID} setNewProjectFormOpen={setNewProjectFormOpen} />}
         {projects && projects.map((project, index) => {
             return (
                 <div
@@ -366,6 +367,18 @@ const ProjectList = ({ projects, setProjects, viewOnly = false }) => {
                 </div>
             </Modal>
             {/* Copilot snippet over, also it was my idea to use a mui Modal, I just didn't want to think about styling right now. Weird tense changes, but that's how it be with cross-time messages. Aren't all messages cross time? */}
+        </>}
+        {newProjectFormOpen != false && <>
+            <Modal open={newProjectFormOpen} onClose={() => setNewProjectFormOpen(false)}>
+                <div style={{
+                    position: "absolute",
+                    top: "50%",
+                    left: "50%",
+                    transform: "translate(-50%, -50%)",
+                }}>
+                    <NewProjectForm setModalOpen={setNewProjectFormOpen} initialTemplateID={selectedTemplateID} />
+                </div>
+            </Modal>
         </>}
     </>);
 }

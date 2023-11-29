@@ -14,6 +14,7 @@ export const WebContainerFrame = ({ }) => {
     const { files, setFiles, fileOperations } = useFiles();
     const { webContainer, setWebContainer, webContainerURL, setWebContainerURL, webContainerStatus, setWebContainerStatus } = useWebContainerContext();
     const { hideWebContainerFrame, setHideWebContainerFrame } = useWebContainer();
+    const [frameLoaded, setFrameLoaded] = React.useState(false);
 
     if (hideWebContainerFrame) {
         return (<>
@@ -105,6 +106,7 @@ export const WebContainerFrame = ({ }) => {
         borderBottomLeftRadius: "0px",
         borderBottomRightRadius: "0px",
         zIndex: 2,
+        backgroundColor: frameLoaded ? "white" : "transparent"
     }
 
     const handleRefreshClick = (e) => {
@@ -136,6 +138,7 @@ export const WebContainerFrame = ({ }) => {
             setFiles(fileTree);
         }
         asyncFunc();
+        setFrameLoaded(true);
     }
 
     return (<>

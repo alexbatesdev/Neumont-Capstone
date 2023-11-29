@@ -6,6 +6,7 @@ import RefreshIcon from '@mui/icons-material/Refresh';
 import LoadingDisplay from './LoadingDisplay';
 import ExpandMore from '@mui/icons-material/ExpandMore';
 import { ExpandLess } from '@mui/icons-material';
+import { Scrollbar } from 'react-scrollbars-custom';
 
 const MiniFileTreeDisplay = ({ files }) => {
     const theme = useTheme();
@@ -46,15 +47,14 @@ const MiniFileTreeDisplay = ({ files }) => {
         flexDirection: 'column',
         justifyContent: 'flex-start',
         alignItems: 'flex-start',
-        // overflow: "hidden",
     }
 
-    return (<div style={outerWrapperStyle}>
+    return (<Scrollbar style={outerWrapperStyle}>
         {fileKeys.map((key, index) => {
             const node = files[key];
             return (<MiniFileStructureNode currentNodeTree={node} displayName={key} />)
         })}
-    </div>)
+    </Scrollbar>)
 };
 
 const MiniFileStructureNode = ({ currentNodeTree, displayName, depth = 0 }) => {

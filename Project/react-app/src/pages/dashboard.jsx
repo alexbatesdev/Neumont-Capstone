@@ -23,8 +23,13 @@ export default function Home() {
     const [projects, setProjects] = React.useState([])
 
     useEffect(() => {
-        if (session.data) {
+        console.log(session)
+        console.log(session.status)
+        console.log(session.status === 'authenticated')
+        if (session.status === 'authenticated') {
+            console.log("Getting projects")
             const getProjects = async () => {
+                console.log("Getting projects for real")
                 const response = await fetch(`${process.env.NEXT_PUBLIC_PROJECT_API_URL}/get_dashboard/${session.data.user.account_id}`, {
                     method: 'GET',
                     headers: {
@@ -39,6 +44,7 @@ export default function Home() {
                         toast.error("Error loading dashboard. Refresh the page to try again.")
                     }
                 }).catch(err => {
+                    console.log(err)
                     toast.error("Error loading dashboard. Refresh the page to try again.")
                 })
 

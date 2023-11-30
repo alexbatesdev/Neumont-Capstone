@@ -384,7 +384,7 @@ const ProjectList = ({ projects, setProjects, viewOnly = false }) => {
         <Box
             onClick={() => setNewProjectFormOpen(true)}
             sx={{
-                position: "absolute",
+                position: "fixed",
                 bottom: "1rem",
                 right: "1rem",
                 backgroundColor: theme.palette.secondary.main,

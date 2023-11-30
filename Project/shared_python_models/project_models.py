@@ -48,7 +48,7 @@ class ProjectCreate(BaseModel):
 
 
 class ProjectData(ProjectCreate):
-    project_id: UUID = Field(default_factory=uuid4)
+    project_id: UUID | int = Field(default_factory=uuid4)
     project_owner: UUID | None = Field(
         default=None
     )  # Type | None is the same as Optional[Type]

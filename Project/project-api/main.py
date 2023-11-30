@@ -10,10 +10,21 @@ from models.project_models import (
     ProjectCreate,
     ProjectDataWithFiles,
 )
-from projectFileTemplates import (
-    react_file_template,
+from template_files import (
     empty_file_template,
+    react_file_template,
+    react_file_template_2,
     next_file_template,
+)
+
+from project_templates import (
+    empty_template,
+    express_template,
+    basic_web_template,
+    react_template,
+    next_template,
+    vue_template,
+    svelte_template,
 )
 
 from jose import JWTError, jwt
@@ -126,8 +137,6 @@ async def filter_in_templates(projects: list[ProjectDataDB], user: AccountWithTo
 
 
 def verify_collaborator(project: ProjectDataDB, user: AccountWithToken):
-    print(str(user.account_id) != project.project_owner)
-    print(str(user.account_id) not in project.collaborators)
     if (
         user.account_id != project.project_owner
         and user.account_id not in project.collaborators
@@ -213,6 +222,24 @@ async def bulk_projects_out(projects: list[ProjectDataDB]):
 
 
 # --------------------------------------------- Endpoints --------------------------------------------- #
+
+
+@app.post("/generate_templates")
+async def generate_templates(user: AccountWithToken = Depends(verify_token)):
+    if not user.isAdmin:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="You do not have permission to generate templates",
+        )
+
+    # React
+
+    # Next.js
+    # Basic Web
+    # Node.js (empty)
+    # Vue
+    # Angular
+    # Svelte
 
 
 @app.get("/")
@@ -411,7 +438,6 @@ async def fork_project(
         project.project_id,
     )
     template.forks.append(project.project_id)
-    print(template.forks)
     try:
         await template.save()
     except Exception as e:
@@ -570,7 +596,6 @@ async def get_dashboard_projects(
     projects = projectsByOwner + projectsSharedWithUser
 
     projects_out = await bulk_projects_out(projects)
-    print(projects_out)
     return projects_out
 
 
@@ -581,7 +606,6 @@ async def update_project(
     body: ProjectDataWithFiles,
     user: AccountWithToken = Depends(verify_token),
 ):
-    print("1")
     if project_id != body.project_id:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -601,7 +625,6 @@ async def update_project(
             detail="You do not have permission to edit this project",
         )
     verify_collaborator(project, user)
-    print("2")
 
     # project.project_id = body.project_id # Doesn't actually ever get changed
     # project.project_owner = body.project_owner # Doesn't actually ever get changed
@@ -618,9 +641,7 @@ async def update_project(
     project.is_template = body.is_template
     project.collaborators = body.collaborators
     project.forks = body.forks
-    print("-------------------------------------")
     await project.replace()
-    print("=====================================")
     project_out = await project_to_project_out(project)
 
     return project_out
@@ -828,7 +849,6 @@ async def remove_collaborator(
         verify_owner(project, user)
 
     verify_item_found(project)
-    print(project.collaborators)
     if collaborator not in project.collaborators:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,

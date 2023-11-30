@@ -94,7 +94,7 @@ const IndexTopBar = () => {
                 </Typography>
 
                 <Typography variant='body2'
-                    onClick={() => window.location.href = "/editor/326ebf85-b329-41da-ad85-a1365e719273"}
+                    onClick={() => window.location.href = "/editor/3"}
                     sx={{
                         color: theme.palette.text.primary,
                         cursor: 'pointer',

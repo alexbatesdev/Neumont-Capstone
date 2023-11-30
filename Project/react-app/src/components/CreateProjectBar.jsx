@@ -34,7 +34,7 @@ const CreateProjectBar = ({ setSelectedTemplate, setNewProjectFormOpen }) => {
                         text="Node.js (empty)"
                         iconDivBackgroundImage='url("/nodejs-icon.png")'
                         onClick={() => {
-                            setSelectedTemplate(process.env.NEXT_PUBLIC_CURRENT_TEMPLATE_ID_EMPTY);
+                            setSelectedTemplate(0);
                             setNewProjectFormOpen(true);
                         }}
                     />
@@ -42,19 +42,23 @@ const CreateProjectBar = ({ setSelectedTemplate, setNewProjectFormOpen }) => {
                         text="Express"
                         iconDivBackgroundImage={`url("/transparent_express_js_icon.png")`}
                         onClick={() => {
-
+                            setSelectedTemplate(1);
                             setNewProjectFormOpen(true);
                         }}
                     />
                     <DashboardTemplateButton
                         text="Basic Web"
                         iconDivBackgroundImage={`url('${process.env.NEXT_PUBLIC_IMG_PROXY}https://logos-download.com/wp-content/uploads/2017/07/HTML5_badge.png')`}
+                        onClick={() => {
+                            setSelectedTemplate(2);
+                            setNewProjectFormOpen(true);
+                        }}
                     />
                     <DashboardTemplateButton
                         text="React"
                         iconDivBackgroundImage={`url('${process.env.NEXT_PUBLIC_IMG_PROXY}https://upload.wikimedia.org/wikipedia/commons/a/a7/React-icon.svg')`}
                         onClick={() => {
-                            setSelectedTemplate(process.env.NEXT_PUBLIC_CURRENT_TEMPLATE_ID_REACT);
+                            setSelectedTemplate(3);
                             setNewProjectFormOpen(true);
                         }}
                     />
@@ -62,7 +66,7 @@ const CreateProjectBar = ({ setSelectedTemplate, setNewProjectFormOpen }) => {
                         text="Next.js"
                         iconDivBackgroundImage={`url('${process.env.NEXT_PUBLIC_IMG_PROXY}https://seekicon.com/free-icon-download/next-js_1.svg')`}
                         onClick={() => {
-                            setSelectedTemplate(process.env.NEXT_PUBLIC_CURRENT_TEMPLATE_ID_NEXT);
+                            setSelectedTemplate(4);
                             setNewProjectFormOpen(true);
                         }}
                         customButtonIconStyle={{
@@ -74,14 +78,26 @@ const CreateProjectBar = ({ setSelectedTemplate, setNewProjectFormOpen }) => {
                     <DashboardTemplateButton
                         text="Vue"
                         iconDivBackgroundImage={`url('${process.env.NEXT_PUBLIC_IMG_PROXY}https://upload.wikimedia.org/wikipedia/commons/9/95/Vue.js_Logo_2.svg')`}
+                        onClick={() => {
+                            setSelectedTemplate(5);
+                            setNewProjectFormOpen(true);
+                        }}
                     />
                     <DashboardTemplateButton
                         text="Angular"
                         iconDivBackgroundImage={`url('${process.env.NEXT_PUBLIC_IMG_PROXY}https://upload.wikimedia.org/wikipedia/commons/c/cf/Angular_full_color_logo.svg')`}
+                        onClick={() => {
+                            setSelectedTemplate(6);
+                            setNewProjectFormOpen(true);
+                        }}
                     />
                     <DashboardTemplateButton
                         text="Svelte"
                         iconDivBackgroundImage={`url('${process.env.NEXT_PUBLIC_IMG_PROXY}https://upload.wikimedia.org/wikipedia/commons/1/1b/Svelte_Logo.svg')`}
+                        onClick={() => {
+                            setSelectedTemplate(7);
+                            setNewProjectFormOpen(true);
+                        }}
                     />
                 </div>
             </Scrollbar>

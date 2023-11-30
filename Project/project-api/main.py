@@ -13,7 +13,6 @@ from models.project_models import (
 from template_files import (
     empty_file_template,
     react_file_template,
-    react_file_template_2,
     next_file_template,
 )
 
@@ -24,6 +23,7 @@ from project_templates import (
     react_template,
     next_template,
     vue_template,
+    angular_template,
     svelte_template,
 )
 
@@ -163,7 +163,9 @@ def verify_item_found(project):
 
 
 # GPT generated and entirely untested 😎
-async def upload_filestructure_to_gridfs(filesystem_json: Directory, project_id: UUID):
+async def upload_filestructure_to_gridfs(
+    filesystem_json: Directory, project_id: UUID | int
+):
     gridfs_bucket = app.state.gridFS
 
     # Check if a file for this project already exists
@@ -232,14 +234,39 @@ async def generate_templates(user: AccountWithToken = Depends(verify_token)):
             detail="You do not have permission to generate templates",
         )
 
-    # React
-
-    # Next.js
-    # Basic Web
     # Node.js (empty)
+    # Express
+    # Basic Web
+    # React
+    # Next.js
     # Vue
     # Angular
     # Svelte
+    templates = [
+        empty_template,
+        express_template,
+        basic_web_template,
+        react_template,
+        next_template,
+        vue_template,
+        angular_template,
+        svelte_template,
+    ]
+
+    for template in templates:
+        entry = ProjectDataDB(
+            project_id=template.project_id,
+            project_owner=template.project_owner,
+            project_name=template.project_name,
+            project_description=template.project_description,
+            start_command=template.start_command,
+            file_structure=await upload_filestructure_to_gridfs(
+                template.file_structure,
+                template.project_id,
+            ),
+            is_template=template.is_template,
+        )
+        await entry.insert()
 
 
 @app.get("/")
@@ -295,7 +322,7 @@ async def insert_new_project(
 @app.post("/new/from_template/{template_id}")
 async def insert_template(
     body: ProjectCreate,
-    template_id: UUID,
+    template_id: UUID | int,
     user: AccountWithToken = Depends(verify_token),
 ):
     body_dict = body.model_dump()
@@ -416,7 +443,7 @@ async def insert_react_template(
 @app.post("/fork/{project_id}")
 async def fork_project(
     body: ProjectCreate,
-    project_id: UUID,
+    project_id: UUID | int,
     user: AccountWithToken = Depends(verify_token),
 ):
     body_dict = body.model_dump()
@@ -511,7 +538,7 @@ async def get_all_templates(user: AccountWithToken = Depends(verify_token)):
 
 # get project by id
 @app.get("/by_id/{project_id}")
-async def get_project(project_id: UUID):
+async def get_project(project_id: UUID | int):
     project = await ProjectDataDB.find_one({"project_id": project_id})
     verify_item_found(project)
     if project.is_private:

@@ -9,10 +9,11 @@ from models.project_models import (
 from template_files import (
     empty_file_template,
     basic_web_file_template,
-    react_file_template_2,
+    react_file_template,
     next_file_template,
     express_file_template,
     vue_file_template,
+    angular_file_template,
     svelte_file_template,
 )
 
@@ -20,7 +21,7 @@ from template_files import (
 empty_template = ProjectDataWithFiles(
     project_id=0,
     project_owner=None,
-    project_name="New Project",
+    project_name="Node.js (empty) Starter Template",
     project_description="A new project",
     start_command="",
     is_template=True,
@@ -54,7 +55,7 @@ react_template = ProjectDataWithFiles(
     project_description="A starter template for React projects",
     start_command="npm start",
     is_template=True,
-    file_structure=Directory(react_file_template_2),
+    file_structure=Directory(react_file_template),
 )
 
 next_template = ProjectDataWithFiles(
@@ -84,7 +85,7 @@ angular_template = ProjectDataWithFiles(
     project_description="A starter template for Angular projects",
     start_command="ng serve",
     is_template=True,
-    file_structure=Directory(empty_file_template),
+    file_structure=Directory(angular_file_template),
 )
 
 svelte_template = ProjectDataWithFiles(

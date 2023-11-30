@@ -47,12 +47,12 @@ export default function Editor() {
     const contextMenuStyle = {
         width: '200px',
         backgroundColor: theme.palette.background.paper,
-        border: `3px solid ${theme.palette.utilBar.default}`,
+        // border: `3px solid ${theme.palette.utilBar.default}`,
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'flex-start',
         alignItems: 'flex-start',
-        boxShadow: '0px 2px 5px rgba(0,0,0,0.6)',
+        boxShadow: '0px 0px 10px 0px rgba(0,0,0,0.75)',
     }
 
     useEffect(() => {

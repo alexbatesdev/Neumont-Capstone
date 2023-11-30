@@ -16,6 +16,7 @@ import AltRouteIcon from '@mui/icons-material/AltRoute';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
+import { Add } from "@mui/icons-material";
 
 
 function formatDate(datetimeString) {
@@ -380,6 +381,29 @@ const ProjectList = ({ projects, setProjects, viewOnly = false }) => {
                 </div>
             </Modal>
         </>}
+        <Box
+            onClick={() => setNewProjectFormOpen(true)}
+            sx={{
+                position: "absolute",
+                bottom: "1rem",
+                right: "1rem",
+                backgroundColor: theme.palette.secondary.main,
+                borderRadius: "50%",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                width: "80px",
+                aspectRatio: "1/1",
+                "&:hover": {
+                    cursor: "pointer",
+                    backgroundColor: theme.palette.secondary.dark,
+                },
+            }}>
+            <Add sx={{
+                color: "black",
+                fontSize: "3rem",
+            }} />
+        </Box>
     </>);
 }
 

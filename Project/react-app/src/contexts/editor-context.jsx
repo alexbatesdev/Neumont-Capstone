@@ -68,8 +68,8 @@ export const EditorContextProvider = ({
     const [messageHistory, setMessageHistory] = useState([]);
     const [conversationThreadID, setConversationThreadID] = useState(null);
 
-
-    const [files, setFiles] = useState(project_in ? project_in.file_structure : {});
+    //🐢 - If the project or file structure is null, set it to an empty object
+    const [files, setFiles] = useState(project_in ? (project_in.file_structure == null ? {} : project_in.file_structure) : {});
 
     const [webContainer, setWebContainer] = useState(null);
 
@@ -114,9 +114,9 @@ export const EditorContextProvider = ({
             ...projectData,
             file_structure: files,
         }
-        //console.log(body)
+        console.log(body)
 
-
+        let success = true;
         const response = await fetch(`${process.env.NEXT_PUBLIC_PROJECT_API_URL}/by_id/${projectMetaData.project_id}`, {
             method: 'PUT',
             headers: {
@@ -126,10 +126,13 @@ export const EditorContextProvider = ({
             body: JSON.stringify(body)
         }).catch(err => {
             toast.error("Error saving project. Download your project to save preserve your work and try again later.")
+            success = false;
             return
         })
-        setIsProjectSaved(true);
-        toast.success("Project saved")
+        if (success) {
+            setIsProjectSaved(true);
+            toast.success("Project saved")
+        }
     }
 
     useEffect(() => {

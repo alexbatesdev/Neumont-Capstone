@@ -39,7 +39,7 @@ const CreateProjectBar = ({ setSelectedTemplate, setNewProjectFormOpen }) => {
                         }}
                     />
                     <DashboardTemplateButton
-                        text="Basic Web"
+                        text="Basic Web (Express)"
                         iconDivBackgroundImage={`url('${process.env.NEXT_PUBLIC_IMG_PROXY}https://logos-download.com/wp-content/uploads/2017/07/HTML5_badge.png')`}
                     />
                     <DashboardTemplateButton

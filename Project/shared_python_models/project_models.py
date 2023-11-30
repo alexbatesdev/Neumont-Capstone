@@ -65,7 +65,7 @@ class ProjectData(ProjectCreate):
 
 
 class ProjectDataWithFiles(ProjectData):
-    file_structure: Directory
+    file_structure: Directory | None = Field(default=None)
 
 
 class ProjectDataDB(ProjectData, Document):

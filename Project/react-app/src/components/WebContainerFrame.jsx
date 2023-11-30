@@ -16,6 +16,13 @@ export const WebContainerFrame = ({ }) => {
     const { hideWebContainerFrame, setHideWebContainerFrame } = useWebContainer();
     const [frameLoaded, setFrameLoaded] = React.useState(false);
 
+    useEffect(() => {
+        return () => {
+            if (webContainer)
+                webContainer.teardown();
+        }
+    }, [])
+
     if (hideWebContainerFrame) {
         return (<>
             <Typography variant='h3' sx={{
@@ -35,12 +42,6 @@ export const WebContainerFrame = ({ }) => {
         </>)
     }
 
-    useEffect(() => {
-        return () => {
-            if (webContainer)
-                webContainer.teardown();
-        }
-    }, [])
 
     const buttonStyle = {
         fontSize: "1rem",

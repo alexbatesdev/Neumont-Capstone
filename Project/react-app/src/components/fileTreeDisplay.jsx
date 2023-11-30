@@ -174,6 +174,9 @@ const FileTreeDisplay = () => {
                 const node = {
                     [key]: files[key]
                 }
+                // // Do not display the node_modules folder
+                // if (key === "node_modules") return null
+
                 return (
                     <FileStructureNode key={key + "-" + index} currentNodeTree={node} path={"./" + key} />
                 );

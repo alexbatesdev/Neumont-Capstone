@@ -121,7 +121,7 @@ const setupWebContainer = async (
 ) => {
     console.log("Setting up web container")
     const webContainerInstance = await WebContainer.boot({
-        workdirName: 'react-app'
+        workdirName: 'webbie-app'
     });
     console.log("Post create");
     try {

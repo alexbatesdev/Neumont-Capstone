@@ -85,7 +85,7 @@ function FileStructureNode({ currentNodeTree, path, depth = 0 }) {
 
     const handleDirectoryUpdate = async (path) => {
         // console.log("Updating directory: " + pathNotModules)
-
+        setIsProjectSaved(false)
         let directoryContents = await fileOperations.getDirectory(webContainer, path)
         if (directoryContents == null) directoryContents = {}
         // console.log(directoryContents);
@@ -98,6 +98,7 @@ function FileStructureNode({ currentNodeTree, path, depth = 0 }) {
 
     const handleDirectoryContextMenu = (event) => {
         event.preventDefault();
+        setHighlightedPath(path)
         // console.log("Context Menu: " + path);
         setContextOpen(true)
         setContextCoords({ x: event.pageX, y: event.pageY })
@@ -148,6 +149,7 @@ function FileStructureNode({ currentNodeTree, path, depth = 0 }) {
 
     const handleFileContextMenu = (event) => {
         event.preventDefault();
+        setHighlightedPath(path)
         // console.log("Context Menu: " + path);
         setContextOpen(true)
         setContextCoords({ x: event.pageX, y: event.pageY })
@@ -216,8 +218,8 @@ function FileStructureNode({ currentNodeTree, path, depth = 0 }) {
 
             // This omits the directory and it's children from the watcher
             let splitPath = path.split("/")
-            if (splitPath.includes(".next")) return;
             if (splitPath.includes("node_modules")) return;
+            if (splitPath.includes(".next")) return;
 
             let watcher = null;
             if (webContainer) {

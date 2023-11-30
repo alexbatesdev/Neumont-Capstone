@@ -179,6 +179,8 @@ async def download_filestructure_from_gridfs(file_id: ObjectId):
     filesystem_json = json.loads(
         filesystem_bytes.decode("utf-8")
     )  # Convert bytes back to JSON
+    if filesystem_json == {}:
+        return None
     filestructure_model = Directory(**filesystem_json)
     return filestructure_model
 

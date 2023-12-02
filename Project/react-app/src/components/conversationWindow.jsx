@@ -10,6 +10,7 @@ import { Message } from "./Message";
 import { ThemeProvider } from "@emotion/react";
 import { useSession } from "next-auth/react";
 import { toast } from "react-toastify";
+import { Scrollbar } from "react-scrollbars-custom";
 
 const trimMessages = (messages) => {
     let newMessages = [];
@@ -234,8 +235,6 @@ export const ConversationWindow = () => {
         flexDirection: "column",
         justifyContent: "flex-start",
         alignItems: "flex-start",
-        overflowY: "auto",
-        overflowX: "hidden",
         width: "calc(100% - 2rem)",
         flexGrow: 1,
     }
@@ -300,7 +299,7 @@ export const ConversationWindow = () => {
                     </Button>
                 </ThemeProvider>
             </Box>
-            <Box ref={messageBoxRef} sx={messageBoxStyle}>
+            <Scrollbar noScrollX ref={messageBoxRef} style={messageBoxStyle}>
                 {messageHistory.map((message, index) => {
                     return (
                         <Message key={"Message-" + index} message={message} />
@@ -308,7 +307,7 @@ export const ConversationWindow = () => {
                 })}
                 {isLoading && <Box sx={loadingMessageStyle}><CircularProgress color="common" /></Box>
                 }
-            </Box>
+            </Scrollbar>
             <Box sx={bottomBarStyle}>
                 <TextField
                     sx={{ flexGrow: 1 }}

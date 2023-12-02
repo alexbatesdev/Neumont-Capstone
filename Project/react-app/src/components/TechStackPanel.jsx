@@ -99,7 +99,7 @@ const TechStackPanel = () => {
                         <Link href={"https://webcontainers.io"} target='_blank' style={{
                             color: theme.palette.secondary.main,
                             textDecorationColor: theme.palette.secondary.main
-                        }}>WebContainers</Link> - Powers the editor's live preview
+                        }}>WebContainers</Link> - Powers the editor&apos;s live preview
                     </Typography>
                     <Typography variant='body1' style={{
                         color: theme.palette.text.primary,
@@ -108,7 +108,7 @@ const TechStackPanel = () => {
                         <Link href={"https://microsoft.github.io/monaco-editor/"} target='_blank' style={{
                             color: theme.palette.secondary.main,
                             textDecorationColor: theme.palette.secondary.main
-                        }}>Monaco</Link> - Powers the editor's code editor
+                        }}>Monaco</Link> - Powers the editor&apos;s code editor
                     </Typography>
                     <Typography variant='body1' style={{
                         color: theme.palette.text.primary,
@@ -117,7 +117,7 @@ const TechStackPanel = () => {
                         <Link href={"http://xtermjs.org"} target='_blank' style={{
                             color: theme.palette.secondary.main,
                             textDecorationColor: theme.palette.secondary.main
-                        }}>xTerm</Link> - Powers the editor's terminal interface
+                        }}>xTerm</Link> - Powers the editor&apos;s terminal interface
                     </Typography>
                 </div>
                 <div style={{

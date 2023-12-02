@@ -14,7 +14,7 @@ const Editor = dynamic(
     () => import('@/ClientSidePages/Editor'),
     {
         ssr: false,
-        loading: () => <LoadingDisplay fun />,
+        loading: () => <LoadingDisplay fun={true} />,
     }
 );
 
@@ -89,15 +89,12 @@ export default function Page() {
 
         }
         if (session.status != "loading") getProject()
-    }, [project_id, session])
+    }, [project_id, session, router.query?.private])
 
     return (<>
         <Head>
             <title>{projData ? projData.project_name + " - Webbie" : "Project Editor"}</title>
             <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🕸️</text></svg>"></link>
-            <link rel="preconnect" href="https://fonts.googleapis.com" />
-            <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="true" />
-            <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@500&family=Teko&display=swap" rel="stylesheet" />
         </Head>
         {!loading ? (
             <EditorContextProvider project_in={projData} hasEditAccess={userHasEditAccess}>

@@ -17,6 +17,33 @@ const FileTreeDisplay = () => {
     const { files, setFiles, fileOperations } = useFiles();
     const { webContainer } = useWebContainer();
 
+    useEffect(() => {
+        const handleDirectoryUpdate = async (path) => {
+            // console.log("Updating directory: " + pathNotModules)
+
+            let directoryContents = await fileOperations.getDirectory(webContainer, "./")
+            if (directoryContents == null) directoryContents = {}
+            // console.log(directoryContents);
+            // console.log("Call set Directory from FileStructureNode")
+            fileOperations.setDirectory(files, "./", directoryContents).then((value) => {
+                const newValue = { ...value }
+                setFiles(newValue)
+            })
+        }
+        let watcher = null;
+        if (webContainer) {
+            watcher = webContainer.fs.watch('./', (event, filename) => {
+                console.log("HandleDirectoryUpdate PATH: ", "./")
+                handleDirectoryUpdate("./")
+            })
+        }
+        return () => {
+            if (watcher) {
+                watcher.close()
+            }
+        }
+    }, [webContainer, files, setFiles, fileOperations])
+
     if (!files) {
         return (
             <LoadingDisplay />
@@ -112,32 +139,6 @@ const FileTreeDisplay = () => {
         }
         asyncFunc();
     }
-
-    const handleDirectoryUpdate = async (path) => {
-        // console.log("Updating directory: " + pathNotModules)
-
-        let directoryContents = await fileOperations.getDirectory(webContainer, "./")
-        if (directoryContents == null) directoryContents = {}
-        // console.log(directoryContents);
-        // console.log("Call set Directory from FileStructureNode")
-        fileOperations.setDirectory(files, "./", directoryContents).then((value) => {
-            const newValue = { ...value }
-            setFiles(newValue)
-        })
-    }
-
-    useEffect(() => {
-        let watcher = null;
-        if (webContainer) {
-            watcher = webContainer.fs.watch('./', (event, filename) => {
-                console.log("HandleDirectoryUpdate PATH: ", "./")
-                handleDirectoryUpdate("./")
-            })
-        }
-        return () => {
-
-        }
-    }, [webContainer])
 
     return (
         <div style={outerWrapperStyle}>

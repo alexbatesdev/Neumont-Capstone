@@ -5,7 +5,7 @@ import RefreshIcon from '@mui/icons-material/Refresh';
 
 import LoadingDisplay from './LoadingDisplay';
 import ExpandMore from '@mui/icons-material/ExpandMore';
-import { ExpandLess } from '@mui/icons-material';
+import ExpandLess from '@mui/icons-material/ExpandLess';
 import { Scrollbar } from 'react-scrollbars-custom';
 
 const MiniFileTreeDisplay = ({ files }) => {
@@ -52,7 +52,7 @@ const MiniFileTreeDisplay = ({ files }) => {
     return (<Scrollbar style={outerWrapperStyle}>
         {fileKeys.map((key, index) => {
             const node = files[key];
-            return (<MiniFileStructureNode currentNodeTree={node} displayName={key} />)
+            return (<MiniFileStructureNode key={key + "-kebab-" + index} currentNodeTree={node} displayName={key} />)
         })}
     </Scrollbar>)
 };
@@ -100,7 +100,7 @@ const MiniFileStructureNode = ({ currentNodeTree, displayName, depth = 0 }) => {
             </div>
             <Collapse in={expanded} timeout="auto" unmountOnExit sx={{ width: "100%" }}>
                 {Object.keys(currentNodeTree).map((key, index) => {
-                    return (<MiniFileStructureNode currentNodeTree={currentNodeTree} displayName={key} depth={depth + 1} />)
+                    return (<MiniFileStructureNode key={key + "-kebab-" + index} currentNodeTree={currentNodeTree} displayName={key} depth={depth + 1} />)
                 })}
             </Collapse>
         </>)

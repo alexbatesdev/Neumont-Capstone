@@ -73,7 +73,7 @@ export const WebContainerContextProvider = ({ children }) => {
             importDynamic();
             setDynamicImportDone(true);
         }
-    }, [files]);
+    }, [files, projectData, dynamicImportDone, setWebContainer, setHideWebContainerFrame, terminalBackground, terminalForeground]);
 
     return (
         <WebContainerContext.Provider

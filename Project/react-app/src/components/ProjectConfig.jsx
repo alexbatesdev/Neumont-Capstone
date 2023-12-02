@@ -3,8 +3,6 @@ import React from 'react';
 import { Button, Stack, Switch, TextField, Typography } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { useEditorContext, useProjectData } from '@/contexts/editor-context';
-import { ThemeProvider, createTheme } from '@mui/material/styles';
-import { outlinedInputClasses } from '@mui/material/OutlinedInput';
 import { useSession } from 'next-auth/react';
 import ProfileMiniAccordion from './ProfileMiniAccordion';
 import CollaboratorsConfigWindow from './CollaboratorsConfigWindow';
@@ -22,14 +20,6 @@ const ProjectConfig = () => {
     const session = useSession();
     const { projectData, setProjectData } = useProjectData();
     const { hasEditAccess } = useEditorContext();
-
-    if (!projectData) {
-        return (
-            <Typography sx={{ pl: "10px" }}>
-                Loading...
-            </Typography>
-        )
-    }
 
     const outerWrapperStyle = {
         width: '100%',
@@ -70,14 +60,14 @@ const ProjectConfig = () => {
 
     const topBannerText = "Project Config"
 
-    const projectID = projectData.project_id;
-    const projectOwner = projectData.project_owner;
-    const [newProjectName, setNewProjectName] = React.useState(projectData.project_name);
-    const [newProjectDescription, setNewProjectDescription] = React.useState(projectData.project_description);
+    const projectID = projectData?.project_id;
+    const projectOwner = projectData?.project_owner;
+    const [newProjectName, setNewProjectName] = React.useState(projectData?.project_name);
+    const [newProjectDescription, setNewProjectDescription] = React.useState(projectData?.project_description);
 
-    const [newIsTemplate, setNewIsTemplate] = React.useState(projectData.is_template);
-    const [newIsPrivate, setNewIsPrivate] = React.useState(projectData.is_private);
-    const [newStartCommand, setNewStartCommand] = React.useState(projectData.start_command);
+    const [newIsTemplate, setNewIsTemplate] = React.useState(projectData?.is_template);
+    const [newIsPrivate, setNewIsPrivate] = React.useState(projectData?.is_private);
+    const [newStartCommand, setNewStartCommand] = React.useState(projectData?.start_command);
 
     //Make API call to get project owner data and collaborators data
     //No need to get project owner data if project owner is the current user
@@ -122,7 +112,13 @@ const ProjectConfig = () => {
         }
     }
 
-
+    if (!projectData) {
+        return (
+            <Typography sx={{ pl: "10px" }}>
+                Loading...
+            </Typography>
+        )
+    }
 
 
     return (<>

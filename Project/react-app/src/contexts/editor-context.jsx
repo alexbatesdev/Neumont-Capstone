@@ -151,7 +151,7 @@ export const EditorContextProvider = ({
             toast.error("Error creating conversation thread. Refresh the page to try again.")
             setConversationThreadID(null)
         })
-    }, [])
+    }, [session.data])
 
     const handleDownloadProject = async () => {
         const zipper = new JSZip();

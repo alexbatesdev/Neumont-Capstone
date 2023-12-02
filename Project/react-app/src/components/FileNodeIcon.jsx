@@ -1,6 +1,12 @@
 import React from 'react';
 
-import { Css, Folder, FolderOpen, Html, Javascript, JavascriptSharp, } from '@mui/icons-material';
+import CssIcon from '@mui/icons-material/Css';
+import HtmlIcon from '@mui/icons-material/Html';
+import JavascriptIcon from '@mui/icons-material/Javascript';
+import JavascriptSharpIcon from '@mui/icons-material/JavascriptSharp';
+import FolderIcon from '@mui/icons-material/Folder';
+import FolderOpenIcon from '@mui/icons-material/FolderOpen';
+
 import CodeIcon from '@mui/icons-material/Code';
 import DataObjectIcon from '@mui/icons-material/DataObject';
 import FormatAlignJustifyIcon from '@mui/icons-material/FormatAlignJustify';
@@ -14,9 +20,10 @@ import PermMediaIcon from '@mui/icons-material/PermMedia';
 import HandymanIcon from '@mui/icons-material/Handyman';
 import GitHubIcon from '@mui/icons-material/GitHub';
 
+
 export const FileNodeIcon = ({ filename, isFolder = false, isOpen = false }) => {
     if (isOpen) {
-        return <FolderOpen />;
+        return <FolderOpenIcon />;
     }
 
     if (isFolder) {
@@ -58,25 +65,25 @@ export const FileNodeIcon = ({ filename, isFolder = false, isOpen = false }) => 
             case 'stylesheets':
                 return <PermMediaIcon />;
             case 'css':
-                return <Css />;
+                return <CssIcon />;
             case 'html':
-                return <Html />;
+                return <HtmlIcon />;
             case 'js':
-                return <Javascript />;
+                return <JavascriptIcon />;
             default:
-                return <Folder />;
+                return <FolderIcon />;
         }
     }
     const extension = filename.split('.').pop();
     switch (extension) {
         case 'js':
-            return <Javascript />;
+            return <JavascriptIcon />;
         case 'jsx':
-            return <JavascriptSharp />;
+            return <JavascriptSharpIcon />;
         case 'html':
-            return <Html />;
+            return <HtmlIcon />;
         case 'css':
-            return <Css />;
+            return <CssIcon />;
         case 'json':
             return <DataObjectIcon />;
         case 'txt':

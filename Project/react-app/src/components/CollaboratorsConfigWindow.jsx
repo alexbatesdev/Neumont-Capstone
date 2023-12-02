@@ -1,12 +1,10 @@
 import React from 'react';
 import { Button, Collapse, Modal, TextField, Typography, useTheme } from '@mui/material';
 import { useRouter } from 'next/router';
-import { useEffect } from 'react';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { AccountCircle, Add } from '@mui/icons-material';
+import AddIcon from '@mui/icons-material/Add';
 import ProfileMiniAccordion from './ProfileMiniAccordion';
-import { Scrollbar } from 'react-scrollbars-custom';
 import { useEditorContext, useProjectData } from '@/contexts/editor-context';
 
 const CollaboratorsConfigWindow = ({ collaborators }) => {
@@ -84,7 +82,7 @@ const CollaboratorsConfigWindow = ({ collaborators }) => {
                     Collaborators
                 </Typography>
                 {hasEditAccess &&
-                    (addCollaboratorExpanded ? <ExpandLessIcon onClick={handleOpenAddCollaboratorModal} sx={{ pr: "10px", height: "40px", width: "40px" }} /> : <Add onClick={handleOpenAddCollaboratorModal} sx={{ pr: "10px", height: "40px", width: "40px" }} />)}
+                    (addCollaboratorExpanded ? <ExpandLessIcon onClick={handleOpenAddCollaboratorModal} sx={{ pr: "10px", height: "40px", width: "40px" }} /> : <AddIcon onClick={handleOpenAddCollaboratorModal} sx={{ pr: "10px", height: "40px", width: "40px" }} />)}
                 {expanded ? <ExpandLessIcon onClick={handleExpand} sx={iconStyle} /> : <ExpandMoreIcon onClick={handleExpand} sx={iconStyle} />}
             </div>
             <Collapse in={addCollaboratorExpanded} sx={{
@@ -120,12 +118,12 @@ const CollaboratorsConfigWindow = ({ collaborators }) => {
                             Search
                         </Button>
                     </div>
-                    {profileSearchResults && profileSearchResults.map((profile) => {
+                    {profileSearchResults && profileSearchResults.map((profile, index) => {
                         //console.log(profile)
                         if (profile.account_id == projectData.project_owner) {
                             return
                         }
-                        return <ProfileMiniAccordion profile_id={profile.account_id} showAddCollaborator={hasEditAccess} />
+                        return <ProfileMiniAccordion key={index + "-kebab-" + profile.account_id} profile_id={profile.account_id} showAddCollaborator={hasEditAccess} />
                     })}
                 </div>
             </Collapse>
@@ -134,7 +132,7 @@ const CollaboratorsConfigWindow = ({ collaborators }) => {
                     No collaborators
                 </Typography>}
                 {collaborators && collaborators.map((collaborator, index) => {
-                    return <ProfileMiniAccordion profile_id={collaborator} showRemoveCollaborator={hasEditAccess} />
+                    return <ProfileMiniAccordion key={index + "-kebab-" + collaborator.account_id} profile_id={collaborator} showRemoveCollaborator={hasEditAccess} />
                 })}
             </Collapse>
         </div>

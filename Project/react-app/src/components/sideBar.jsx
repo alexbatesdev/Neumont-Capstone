@@ -1,10 +1,8 @@
 import React, { useCallback } from "react";
 
 import { Typography, useTheme } from "@mui/material";
-import SaveIcon from '@mui/icons-material/Save';
 import FolderOpenIcon from '@mui/icons-material/FolderOpen';
 import SettingsIcon from '@mui/icons-material/Settings';
-import PaletteIcon from '@mui/icons-material/Palette';
 import StarIcon from '@mui/icons-material/Star';
 
 import { ConversationWindow } from "./ConversationWindow";
@@ -58,7 +56,7 @@ export const SideBar = ({ sidebarWidth, setSidebarWidth }) => {
 
         document.addEventListener('mousemove', handleMouseMove);
         document.addEventListener('mouseup', handleMouseUp);
-    }, [sidebarWidth]);
+    }, [setSidebarWidth]);
 
     const setTab = (tab) => {
         if (tab === selectedTab) {

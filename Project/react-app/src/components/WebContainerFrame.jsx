@@ -21,7 +21,7 @@ export const WebContainerFrame = ({ }) => {
             if (webContainer)
                 webContainer.teardown();
         }
-    }, [])
+    }, [webContainer])
 
     if (hideWebContainerFrame) {
         return (<>

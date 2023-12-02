@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Card, Typography, Button, TextField, Box } from "@mui/material";
 import { useTheme } from '@mui/material/styles';
 import { useRouter } from "next/router";
-import { ArrowRight } from "@mui/icons-material";
+import { ArrowRight } from "@mui/material";
 import { signIn } from "next-auth/react";
 import { toast } from "react-toastify";
 

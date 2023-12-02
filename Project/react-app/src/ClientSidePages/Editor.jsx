@@ -1,27 +1,21 @@
-import React, { useEffect } from 'react'
-
-import dynamic from 'next/dynamic'
-
+import React, { useEffect } from 'react';
 import { useTheme } from '@mui/material/styles';
-
 import { ResizableViewsHorizontal, ResizableViewsVertical } from '@/components/ResizableViews'
-import { EditorContextProvider, useContextMenu, useEditorContext } from '@/contexts/editor-context'
+import { useContextMenu, useEditorContext } from '@/contexts/editor-context'
 import { WebContainerTerminal } from '@/components/WebContainerTerminal'
 import { WebContainerFrame } from '@/components/WebContainerFrame'
 import { CodeEditor } from '@/components/CodeEditor'
 import { SideBar } from '@/components/SideBar'
-import { useRouter } from 'next/router';
-import { Collapse, Typography } from '@mui/material';
+import { Typography } from '@mui/material';
 import { useSession } from 'next-auth/react';
 import { WebContainerContextProvider } from '@/contexts/webContainerContext';
-import LoadingDisplay from '@/components/LoadingDisplay';
 import TopBar from '@/components/TopBar';
 import TopBarButton from '@/components/TopBarButton';
 import SaveIcon from '@mui/icons-material/Save';
 import AltRouteIcon from '@mui/icons-material/AltRoute';
 import ShareIcon from '@mui/icons-material/Share';
 import { toast } from 'react-toastify';
-import { Download } from '@mui/icons-material';
+import DownloadIcon from '@mui/icons-material/Download';
 
 
 
@@ -147,7 +141,7 @@ export default function Editor() {
                     buttonIndex={3}
                 />
                 <TopBarButton
-                    Icon={Download}
+                    Icon={DownloadIcon}
                     text={"Download"}
                     onClick={handleDownloadProject}
                     buttonIndex={4}

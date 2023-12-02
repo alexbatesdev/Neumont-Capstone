@@ -8,7 +8,7 @@ import Editor, { DiffEditor, useMonaco, loader } from '@monaco-editor/react';
 
 import { monaco_spooky, monaco_night_owl } from '@/thatOneStuffFolderUsuallyCalledUtils/themes'
 import { useEditorContext } from '@/contexts/editor-context';
-import { Add } from '@mui/icons-material';
+import Add from '@mui/icons-material/Add';
 
 export const CodeEditor = () => {
     const theme = useTheme();
@@ -166,7 +166,7 @@ export const CodeEditor = () => {
             setCodeEditorDiffMode(false)
             setCodeEditorDiffValue("")
         }
-    }, [openFilePaths])
+    }, [openFilePaths, setHighlightedPath, setCodeEditorDiffMode, setCodeEditorDiffValue])
 
     const editorTabBarStyle = {
         width: "100%",

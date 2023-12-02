@@ -45,7 +45,7 @@ const NewProjectForm = ({ setModalOpen, initialTemplateID }) => {
             setTemplates(data);
         }
         getTemplates();
-    }, []);
+    }, [initialTemplateID, session.data?.token, session.data?.user?.account_id]);
 
     const listItemStyle = (i) => {
         return {

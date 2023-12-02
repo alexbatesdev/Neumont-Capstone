@@ -1,7 +1,9 @@
 
 import React, { useEffect } from 'react';
-import { AccountCircle, Close, Fullscreen, Minimize } from '@mui/icons-material'
 import { Collapse, useTheme } from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
+import FullscreenIcon from '@mui/icons-material/Fullscreen';
+import MinimizeIcon from '@mui/icons-material/Minimize';
 
 const MockEditorWindow = () => {
     const theme = useTheme();
@@ -63,7 +65,7 @@ const MockEditorWindow = () => {
                 backgroundColor: "#130925",
             }}>
                 {/* Mock Window Icons */}
-                <Close style={{
+                <CloseIcon style={{
                     position: "absolute",
                     top: "5px",
                     right: "10px",
@@ -72,7 +74,7 @@ const MockEditorWindow = () => {
                     borderRadius: "50%",
                     color: theme.palette.primary.main,
                 }} />
-                <Fullscreen style={{
+                <FullscreenIcon style={{
                     position: "absolute",
                     top: "5px",
                     right: "30px",
@@ -81,7 +83,7 @@ const MockEditorWindow = () => {
                     borderRadius: "50%",
                     color: theme.palette.primary.main,
                 }} />
-                <Minimize style={{
+                <MinimizeIcon style={{
                     position: "absolute",
                     top: "3px",
                     right: "50px",

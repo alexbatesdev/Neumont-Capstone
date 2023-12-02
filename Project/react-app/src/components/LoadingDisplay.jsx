@@ -1,11 +1,11 @@
-import React from "react";
+import React, { useMemo } from "react";
 
 import { Typography, CircularProgress } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 
 import AnimatedDots from "./AnimatedDotsByGPT";
 
-const LoadingDisplay = ({ webContainerStatus, fun }) => {
+const LoadingDisplay = ({ webContainerStatus, fun = false }) => {
     const theme = useTheme();
 
     const [loadingMessage, setLoadingMessage] = React.useState("Loading");
@@ -46,7 +46,6 @@ const LoadingDisplay = ({ webContainerStatus, fun }) => {
         "Checking The Gravitational Constant",
         "Spinning The Hamster Wheel",
         "Parsing The Meaning Of Life",
-        "",
         "Counting Backwards From Infinity",
         "Preparing To Emit The Brown Note",
         "Hitchhiking Through The Galaxy",
@@ -67,31 +66,17 @@ const LoadingDisplay = ({ webContainerStatus, fun }) => {
     ];
     // End of code written by AI assistant
 
+    React.useEffect(() => {
+        if (!fun) return;
+        //random interval between 300 and 1000
+        const randomIntervalMS = Math.floor(Math.random() * 700) + 300;
+        const interval = setInterval(() => {
+            const randomLoadingMessageIndex = Math.floor(Math.random() * loadingMessages.length);
+            setLoadingMessage(loadingMessages[randomLoadingMessageIndex]);
+        }, randomIntervalMS);
 
-    // React.useEffect(() => {
-    //     if (webContainerStatus == 1) {
-    //         setLoadingMessage("Installing dependencies");
-    //     } else if (webContainerStatus == 2) {
-    //         setLoadingMessage("Starting server");
-    //     } else {
-    //         setLoadingMessage("Loading");
-    //     }
-    // }, [webContainerStatus]);
-
-    if (fun) {
-        //Alternate through messages on a timer
-
-
-        React.useEffect(() => {
-            //random interval between 300 and 1000
-            const randomIntervalMS = Math.floor(Math.random() * 700) + 300;
-            const interval = setInterval(() => {
-                const randomLoadingMessageIndex = Math.floor(Math.random() * loadingMessages.length);
-                setLoadingMessage(loadingMessages[randomLoadingMessageIndex]);
-            }, randomIntervalMS);
-            return () => clearInterval(interval);
-        }, [loadingMessage]);
-    }
+        return () => clearInterval(interval);
+    }, [loadingMessage, fun]);
 
     return (<>
         <div style={{

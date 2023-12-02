@@ -14,12 +14,7 @@ const DependencyDisplay = ({ height, setHeight }) => {
     const [dependencies, setDependencies] = useState([]);
     const [error, setError] = useState(null);
 
-
-    useEffect(() => {
-        doRefresh();
-    }, [webContainer]);
-
-    const doRefresh = () => {
+    const doRefresh = useCallback(() => {
         if (webContainer) {
             setError(null);
             webContainer.fs.readFile("/package.json", "utf8").then((data) => {
@@ -32,7 +27,11 @@ const DependencyDisplay = ({ height, setHeight }) => {
                 setError(err);
             });
         }
-    }
+    }, [webContainer]);
+
+    useEffect(() => {
+        doRefresh();
+    }, [webContainer, doRefresh]);
 
     const handleRefresh = (event) => {
         let target = event.target;
@@ -54,7 +53,7 @@ const DependencyDisplay = ({ height, setHeight }) => {
     // Now that I have entirely forgotten 1) How it worked and 2) What modifications are even mine
     // I am going to re-create it without GPT help
     // Me from the future: Yeah it wasn't hard to remember how it works, this isn't a difficult implementation of the concept
-    const handleMouseDown = useCallback((event) => {
+    const handleMouseDown = (event) => {
         event.preventDefault();
         setIsDragging(true);
 
@@ -99,7 +98,7 @@ const DependencyDisplay = ({ height, setHeight }) => {
 
         document.addEventListener('mousemove', handleMouseMove);
         document.addEventListener('mouseup', handleMouseUp);
-    });
+    };
 
     const dragShieldStyle = {
         width: "100px",

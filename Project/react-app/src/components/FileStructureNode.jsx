@@ -43,6 +43,54 @@ function FileStructureNode({ currentNodeTree, path, depth = 0 }) {
         isProjectSaved, setIsProjectSaved
     } = useEditorContext();
 
+    useEffect(() => {
+        if (currentNodeTree == undefined) {
+            return;
+        }
+        const handleDirectoryUpdate = async (path) => {
+            // console.log("Updating directory: " + pathNotModules)
+            setIsProjectSaved(false)
+            let directoryContents = await fileOperations.getDirectory(webContainer, path)
+            if (directoryContents == null) directoryContents = {}
+            // console.log(directoryContents);
+            // console.log("Call set Directory from FileStructureNode")
+            fileOperations.setDirectory(files, path, directoryContents).then((value) => {
+                const newValue = { ...value }
+                setFiles(newValue)
+            })
+        }
+        let watcher = null;
+        if (currentNodeTree.hasOwnProperty('directory')) {
+            // This omits the directory and it's children from the watcher
+            // I should probably make this more robust 💭
+            let splitPath = path.split("/")
+            if (splitPath.includes("node_modules")) return;
+            if (splitPath.includes(".next")) return;
+
+            if (webContainer) {
+
+                watcher = webContainer.fs.watch(path, (event, filename) => {
+                    //if the filename starts with _tmp, ignore it
+
+                    // console.log("File Changed")
+                    // console.log(event, filename)
+                    if (filename.substring(0, 4) == "_tmp") {
+                        //console.log("Ignoring _tmp file")
+                        return;
+                    }
+
+                    console.log("HandleDirectoryUpdate PATH: ", path)
+                    handleDirectoryUpdate(path)
+                })
+            }
+        }
+        return () => {
+            if (watcher) {
+                watcher.close()
+            }
+        }
+    }, [webContainer, currentNodeTree, path])
+
     if (currentNodeTree == undefined) {
         //console.log("Current Node Tree is undefined")
         return;
@@ -81,19 +129,6 @@ function FileStructureNode({ currentNodeTree, path, depth = 0 }) {
             })
         }
         setHighlightedPath(path)
-    }
-
-    const handleDirectoryUpdate = async (path) => {
-        // console.log("Updating directory: " + pathNotModules)
-        setIsProjectSaved(false)
-        let directoryContents = await fileOperations.getDirectory(webContainer, path)
-        if (directoryContents == null) directoryContents = {}
-        // console.log(directoryContents);
-        // console.log("Call set Directory from FileStructureNode")
-        fileOperations.setDirectory(files, path, directoryContents).then((value) => {
-            const newValue = { ...value }
-            setFiles(newValue)
-        })
     }
 
     const handleDirectoryContextMenu = (event) => {
@@ -211,39 +246,6 @@ function FileStructureNode({ currentNodeTree, path, depth = 0 }) {
     // console.log(currentNodeTree.)
     // Spelling counts!
     if (currentNodeTree.hasOwnProperty('directory')) {
-        useEffect(() => {
-            // ------------------------------------ If the path is node modules watch the root directory instead
-            // This works because I don't want to watch the node modules directory, but I do want to watch the root directory (which doesn't get a FileStructureNode)
-            // This personally feels like a very creative and good solution to the problem, but something unscaleable and would cause technical debt in the long term
-
-            // This omits the directory and it's children from the watcher
-            let splitPath = path.split("/")
-            if (splitPath.includes("node_modules")) return;
-            if (splitPath.includes(".next")) return;
-
-            let watcher = null;
-            if (webContainer) {
-
-                watcher = webContainer.fs.watch(path, (event, filename) => {
-                    //if the filename starts with _tmp, ignore it
-
-                    // console.log("File Changed")
-                    // console.log(event, filename)
-                    if (filename.substring(0, 4) == "_tmp") {
-                        //console.log("Ignoring _tmp file")
-                        return;
-                    }
-
-                    console.log("HandleDirectoryUpdate PATH: ", path)
-                    handleDirectoryUpdate(path)
-                })
-            }
-            return () => {
-                if (watcher) {
-                    watcher.close()
-                }
-            }
-        }, [webContainer])
 
         let fileKeys = Object.keys(currentNodeTree.directory)
         let fileKeys_folders = []

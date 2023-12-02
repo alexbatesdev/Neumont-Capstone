@@ -52,8 +52,6 @@ const FollowingView = ({ following_account_id }) => {
                 Following:
             </Typography>
         </div>
-        {console.log("====================================")}
-        {console.log(following_list)}
         {following_list && following_list.map((account, index) => {
             console.log(account)
 

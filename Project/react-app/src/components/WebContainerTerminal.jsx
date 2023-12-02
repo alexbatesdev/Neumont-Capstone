@@ -33,7 +33,7 @@ export const WebContainerTerminal = () => {
                 resizeObserver.disconnect();
             }
         };
-    }, [terminal_instance]);
+    }, [terminal_instance, fitAddon]);
 
     const terminalStyle = {
         backgroundColor: terminal_instance ? terminal_instance.options.theme.background : "black",

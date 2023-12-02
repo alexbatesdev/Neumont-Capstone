@@ -4,7 +4,7 @@ import { signOut, useSession } from 'next-auth/react';
 import React, { useEffect } from 'react';
 import { toast } from 'react-toastify';
 import EditIcon from '@mui/icons-material/Edit';
-import { Share } from '@mui/icons-material';
+import ShareIcon from '@mui/icons-material/Share';
 
 const ProfileView = ({ profile_in }) => {
     const theme = useTheme();
@@ -46,7 +46,7 @@ const ProfileView = ({ profile_in }) => {
             setNewEmail(profile_in.email)
             setNewAPIKey(profile_in.openai_api_key)
         }
-    }, [session])
+    }, [session, profile_in])
 
     const handleSave = async () => {
         let response = await fetch(`${process.env.NEXT_PUBLIC_ACCOUNT_API_URL}/update_account`, {
@@ -153,7 +153,7 @@ const ProfileView = ({ profile_in }) => {
                     gap: '1rem',
                 }}>
                     <Typography variant="h4">{profile.name}</Typography>
-                    <Share
+                    <ShareIcon
                         onClick={() => {
                             navigator.clipboard.writeText(`${process.env.NEXT_PUBLIC_FRONTEND_BASE_URL}/profile/${profile.account_id}`)
                             toast.success("Copied profile link to clipboard")

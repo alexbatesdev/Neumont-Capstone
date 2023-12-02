@@ -3,11 +3,8 @@ import { Typography, useTheme } from "@mui/material";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import TopBarButton from '@/components/TopBarButton';
-import SaveIcon from '@mui/icons-material/Save';
-import { ArrowBack, ArrowLeft } from '@mui/icons-material';
-import AltRouteIcon from '@mui/icons-material/AltRoute';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useEditorContext, useProjectData } from "@/contexts/editor-context";
-import ShareIcon from '@mui/icons-material/Share';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { TopBarContextProvider } from "@/contexts/topbar-hover-context";
 import { signOut, useSession } from "next-auth/react";
@@ -49,7 +46,7 @@ const TopBar = ({ children, titleText, backLocation, alternate = false, showSign
                 }}>
                     {!hideBack &&
                         <TopBarButton
-                            Icon={ArrowBack}
+                            Icon={ArrowBackIcon}
                             text={"Back"}
                             onClick={handleBack}
                             buttonIndex={0}

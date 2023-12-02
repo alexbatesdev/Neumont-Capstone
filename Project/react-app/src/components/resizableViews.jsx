@@ -53,6 +53,7 @@ export const ResizableViewsHorizontal = ({ children }) => {
     // A lot of back and forth is going on with a lot of these components
     const handleMouseDown = useCallback((event, index) => {
         event.preventDefault();
+        let temp_columns = [...columns];
 
         // Human Addition
         setIsDragging(true);
@@ -211,6 +212,7 @@ export const ResizableViewsVertical = ({ children }) => {
     const handleMouseDown = useCallback((event, index) => {
         event.preventDefault();
         setIsDragging(true);
+        const temp_columns = [...columns];
 
         // Change from clientX to clientY for vertical dragging
         let lastY = event.clientY;

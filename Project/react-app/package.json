@@ -19,6 +19,7 @@
     "@mui/icons-material": "^5.14.13",
     "@mui/material": "^5.14.13",
     "@webcontainer/api": "^1.1.7",
+    "axios": "^1.6.2",
     "jszip": "^3.10.1",
     "moment": "^2.29.4",
     "next": "latest",

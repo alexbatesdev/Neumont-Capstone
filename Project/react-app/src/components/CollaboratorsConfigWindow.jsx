@@ -41,7 +41,7 @@ const CollaboratorsConfigWindow = ({ collaborators }) => {
     }
 
     const handleSearchProfile = async () => {
-        let response = await fetch(`${process.env.NEXT_PUBLIC_ACCOUNT_API_URL}/search/${profileSearchValue}`, {
+        let response = await fetch(`/api/proxy?url=${process.env.NEXT_PUBLIC_ACCOUNT_API_URL}/search/${profileSearchValue}`, {
             headers: {
                 "Content-Type": "application/json"
             }

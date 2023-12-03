@@ -92,7 +92,7 @@ const ProjectConfig = () => {
             return output;
         })
         const saveData = async (data) => {
-            await fetch(`${process.env.NEXT_PUBLIC_PROJECT_API_URL}/by_id/${projectID}/projectData`, {
+            await fetch(`/api/proxy?url=${process.env.NEXT_PUBLIC_PROJECT_API_URL}/by_id/${projectID}/projectData`, {
                 method: 'PATCH',
                 headers: {
                     "content-type": "application/json",

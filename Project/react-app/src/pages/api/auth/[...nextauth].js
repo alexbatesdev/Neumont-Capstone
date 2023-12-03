@@ -32,7 +32,7 @@ export const authOptions = {
                     formData.append("username", credentials.email)
                     formData.append("password", credentials.password)
 
-                    const response = await fetch("http://localhost:8001/auth", {
+                    const response = await fetch(`${process.env.NEXT_PUBLIC_ACCOUNT_API_URL}/auth`, {
                         method: "POST",
                         body: formData,
                         headers: {
@@ -55,7 +55,7 @@ export const authOptions = {
 
                     let user;
 
-                    const userResponse = await fetch("http://localhost:8001/me", {
+                    const userResponse = await fetch(`${process.env.NEXT_PUBLIC_ACCOUNT_API_URL}/me`, {
                         method: "GET",
                         headers: {
                             'content-type': 'application/json',

@@ -30,7 +30,7 @@ export default function Home() {
             console.log("Getting projects")
             const getProjects = async () => {
                 console.log("Getting projects for real")
-                const response = await fetch(`${process.env.NEXT_PUBLIC_PROJECT_API_URL}/get_dashboard/${session.data.user.account_id}`, {
+                const response = await fetch(`/api/proxy?url=${process.env.NEXT_PUBLIC_PROJECT_API_URL}/get_dashboard/${session.data.user.account_id}`, {
                     method: 'GET',
                     headers: {
                         "Authorization": `Bearer ${session.data.token}`,

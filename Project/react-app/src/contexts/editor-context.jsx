@@ -117,7 +117,7 @@ export const EditorContextProvider = ({
         console.log(body)
 
         let success = true;
-        const response = await fetch(`${process.env.NEXT_PUBLIC_PROJECT_API_URL}/by_id/${projectMetaData.project_id}`, {
+        const response = await fetch(`/api/proxy?url=${process.env.NEXT_PUBLIC_PROJECT_API_URL}/by_id/${projectMetaData.project_id}`, {
             method: 'PUT',
             headers: {
                 "Content-Type": "application/json",
@@ -137,7 +137,7 @@ export const EditorContextProvider = ({
 
     useEffect(() => {
         const api_key = session.data == "authenticated" ? (session.data.user.openai_api_key != null ? session.data.user.openai_api_key : "None") : "None";
-        const url = `${process.env.NEXT_PUBLIC_GPT_INTERFACE_API_URL}/new/thread/${api_key}`
+        const url = `/api/proxy?url=${process.env.NEXT_PUBLIC_GPT_INTERFACE_API_URL}/new/thread/${api_key}`
         const response = fetch(url, {
             method: 'POST',
         }).then(res => {

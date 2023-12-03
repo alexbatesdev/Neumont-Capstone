@@ -48,7 +48,7 @@ const CreateProjectBar = ({ setSelectedTemplate, setNewProjectFormOpen }) => {
                     />
                     <DashboardTemplateButton
                         text="Basic Web"
-                        iconDivBackgroundImage={`url('${process.env.NEXT_PUBLIC_IMG_PROXY}https://logos-download.com/wp-content/uploads/2017/07/HTML5_badge.png')`}
+                        iconDivBackgroundImage={`url('/api/img?url=https://logos-download.com/wp-content/uploads/2017/07/HTML5_badge.png')`}
                         onClick={() => {
                             setSelectedTemplate(2);
                             setNewProjectFormOpen(true);
@@ -56,7 +56,7 @@ const CreateProjectBar = ({ setSelectedTemplate, setNewProjectFormOpen }) => {
                     />
                     <DashboardTemplateButton
                         text="React"
-                        iconDivBackgroundImage={`url('${process.env.NEXT_PUBLIC_IMG_PROXY}https://upload.wikimedia.org/wikipedia/commons/a/a7/React-icon.svg')`}
+                        iconDivBackgroundImage={`url('/api/img?url=https://upload.wikimedia.org/wikipedia/commons/a/a7/React-icon.svg')`}
                         onClick={() => {
                             setSelectedTemplate(3);
                             setNewProjectFormOpen(true);
@@ -64,7 +64,7 @@ const CreateProjectBar = ({ setSelectedTemplate, setNewProjectFormOpen }) => {
                     />
                     <DashboardTemplateButton
                         text="Next.js"
-                        iconDivBackgroundImage={`url('${process.env.NEXT_PUBLIC_IMG_PROXY}https://seekicon.com/free-icon-download/next-js_1.svg')`}
+                        iconDivBackgroundImage={`url('/api/img?url=https://seekicon.com/free-icon-download/next-js_1.svg')`}
                         onClick={() => {
                             setSelectedTemplate(4);
                             setNewProjectFormOpen(true);
@@ -77,7 +77,7 @@ const CreateProjectBar = ({ setSelectedTemplate, setNewProjectFormOpen }) => {
                         }} />
                     <DashboardTemplateButton
                         text="Vue"
-                        iconDivBackgroundImage={`url('${process.env.NEXT_PUBLIC_IMG_PROXY}https://upload.wikimedia.org/wikipedia/commons/9/95/Vue.js_Logo_2.svg')`}
+                        iconDivBackgroundImage={`url('/api/img?url=https://upload.wikimedia.org/wikipedia/commons/9/95/Vue.js_Logo_2.svg')`}
                         onClick={() => {
                             setSelectedTemplate(5);
                             setNewProjectFormOpen(true);
@@ -85,7 +85,7 @@ const CreateProjectBar = ({ setSelectedTemplate, setNewProjectFormOpen }) => {
                     />
                     <DashboardTemplateButton
                         text="Angular"
-                        iconDivBackgroundImage={`url('${process.env.NEXT_PUBLIC_IMG_PROXY}https://upload.wikimedia.org/wikipedia/commons/c/cf/Angular_full_color_logo.svg')`}
+                        iconDivBackgroundImage={`url('/api/img?url=https://upload.wikimedia.org/wikipedia/commons/c/cf/Angular_full_color_logo.svg')`}
                         onClick={() => {
                             setSelectedTemplate(6);
                             setNewProjectFormOpen(true);
@@ -93,7 +93,7 @@ const CreateProjectBar = ({ setSelectedTemplate, setNewProjectFormOpen }) => {
                     />
                     <DashboardTemplateButton
                         text="Svelte"
-                        iconDivBackgroundImage={`url('${process.env.NEXT_PUBLIC_IMG_PROXY}https://upload.wikimedia.org/wikipedia/commons/1/1b/Svelte_Logo.svg')`}
+                        iconDivBackgroundImage={`url('/api/img?url=https://upload.wikimedia.org/wikipedia/commons/1/1b/Svelte_Logo.svg')`}
                         onClick={() => {
                             setSelectedTemplate(7);
                             setNewProjectFormOpen(true);

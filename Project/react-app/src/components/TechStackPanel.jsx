@@ -142,15 +142,6 @@ const TechStackPanel = () => {
                         color: theme.palette.text.primary,
                         marginLeft: '1rem',
                     }}>
-                        <Link href={"https://expressjs.com"} target='_blank' style={{
-                            color: theme.palette.secondary.main,
-                            textDecorationColor: theme.palette.secondary.main
-                        }}>Express</Link> - Backend framework for the image proxy (authored by GPT)
-                    </Typography>
-                    <Typography variant='body1' style={{
-                        color: theme.palette.text.primary,
-                        marginLeft: '1rem',
-                    }}>
                         <Link href={"https://www.mongodb.com"} target='_blank' style={{
                             color: theme.palette.secondary.main,
                             textDecorationColor: theme.palette.secondary.main
@@ -161,8 +152,8 @@ const TechStackPanel = () => {
         </Scrollbar>
         <div style={{
             backgroundColor: theme.palette.background.default,
-            width: "800px",
-            minWidth: "800px",
+            width: "650px",
+            minWidth: "650px",
             height: "500px",
             margin: '2rem 1rem',
             borderRadius: '20px',
@@ -368,38 +359,6 @@ const TechStackPanel = () => {
                     showHead={false}
                 />
             )}
-            {expressIconRef.current && internetIconRef.current && (
-                <Xarrow
-                    start={expressIconRef}
-                    end={internetIconRef}
-                    color={theme.palette.primary.main}
-                    strokeWidth={3}
-                    showHead={false}
-                />
-            )}
-            <StorageIcon
-                ref={expressIconRef}
-                style={{
-                    position: 'absolute',
-                    top: '175px',
-                    left: '675px',
-                    width: '75px',
-                    height: '75px',
-                    color: theme.palette.text.primary,
-                    padding: '10px',
-                }} />
-            <Typography variant='h4'
-                style={{
-                    fontFamily: 'Teko',
-                    color: theme.palette.text.primary,
-                    position: 'absolute',
-                    top: '255px',
-                    left: '660px',
-                    backgroundColor: theme.palette.background.default,
-                    zIndex: 1,
-                }}>
-                Image Proxy
-            </Typography>
             <SpaIcon
                 ref={mongoIconRef}
                 style={{
@@ -468,29 +427,6 @@ const TechStackPanel = () => {
                     zIndex: 1,
                 }}>
                 GPT
-            </Typography>
-            <LanguageIcon
-                ref={internetIconRef}
-                style={{
-                    position: 'absolute',
-                    top: '350px',
-                    left: '675px',
-                    width: '75px',
-                    height: '75px',
-                    color: theme.palette.text.primary,
-                    padding: '10px',
-                }} />
-            <Typography variant='h4'
-                style={{
-                    fontFamily: 'Teko',
-                    color: theme.palette.text.primary,
-                    position: 'absolute',
-                    top: '430px',
-                    left: '682px',
-                    backgroundColor: theme.palette.background.default,
-                    zIndex: 1,
-                }}>
-                Internet
             </Typography>
             <div style={{
                 position: 'absolute',

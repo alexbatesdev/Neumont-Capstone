@@ -10,7 +10,7 @@ const FollowingView = ({ following_account_id }) => {
 
     useEffect(() => {
         const getFollowingList = async () => {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_ACCOUNT_API_URL}/following/${following_account_id}`, {
+            const response = await fetch(`/api/proxy?url=${process.env.NEXT_PUBLIC_ACCOUNT_API_URL}/following/${following_account_id}`, {
                 method: 'GET',
             }).then((data) => {
                 console.log(data)

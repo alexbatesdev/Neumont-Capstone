@@ -24,7 +24,7 @@ function ProfileMiniAccordion({ profile_id, showRemoveCollaborator = false, show
     // rest of component code goes here
     useEffect(() => {
         const getProfile = async () => {
-            let response = await fetch(`${process.env.NEXT_PUBLIC_ACCOUNT_API_URL}/by_id/${profile_id}`, {
+            let response = await fetch(`/api/proxy?url=${process.env.NEXT_PUBLIC_ACCOUNT_API_URL}/by_id/${profile_id}`, {
                 headers: {
                     "Content-Type": "application/json"
                 }
@@ -57,7 +57,7 @@ function ProfileMiniAccordion({ profile_id, showRemoveCollaborator = false, show
     }
 
     const removeCollaboratorMethod = async () => {
-        let response = await fetch(`${process.env.NEXT_PUBLIC_PROJECT_API_URL}/by_id/${projectData.project_id}/remove_collaborator/${profile_id}`, {
+        let response = await fetch(`/api/proxy?url=${process.env.NEXT_PUBLIC_PROJECT_API_URL}/by_id/${projectData.project_id}/remove_collaborator/${profile_id}`, {
             method: 'PATCH',
             headers: {
                 "Authorization": `Bearer ${session.data.token}`,
@@ -79,7 +79,7 @@ function ProfileMiniAccordion({ profile_id, showRemoveCollaborator = false, show
     }
 
     const addCollaboratorMethod = async () => {
-        let response = await fetch(`${process.env.NEXT_PUBLIC_PROJECT_API_URL}/by_id/${projectData.project_id}/add_collaborator/${profile_id}`, {
+        let response = await fetch(`/api/proxy?url=${process.env.NEXT_PUBLIC_PROJECT_API_URL}/by_id/${projectData.project_id}/add_collaborator/${profile_id}`, {
             method: 'PATCH',
             headers: {
                 "Authorization": `Bearer ${session.data.token}`,

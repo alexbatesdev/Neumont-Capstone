@@ -21,7 +21,7 @@ const NewProjectForm = ({ setModalOpen, initialTemplateID }) => {
 
     useEffect(() => {
         const getTemplates = async () => {
-            const response = await fetch(process.env.NEXT_PUBLIC_PROJECT_API_URL + `/by_owner/${session.data.user.account_id}/templates/`, {
+            const response = await fetch("/api/proxy?url=" + process.env.NEXT_PUBLIC_PROJECT_API_URL + `/by_owner/${session.data.user.account_id}/templates/`, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
@@ -62,7 +62,7 @@ const NewProjectForm = ({ setModalOpen, initialTemplateID }) => {
 
         // let url = (process.env.NEXT_PUBLIC_PROJECT_API_URL + "/new") + ((selectedTemplateIndex == 0 || selectedTemplateIndex == null) ? "" : ("/template/" + templates[selectedTemplateIndex].toLowerCase()));
         // I wrote ^^this^^ line myself, then I asked GPT to make it more readable. 
-        const baseUrl = process.env.NEXT_PUBLIC_PROJECT_API_URL;
+        const baseUrl = "/api/proxy?url=" + process.env.NEXT_PUBLIC_PROJECT_API_URL;
         const templatePart = selectedTemplateIndex === -1 || selectedTemplateIndex == null
             ? ""
             : `/from_template/${templates[selectedTemplateIndex].project_id}`;

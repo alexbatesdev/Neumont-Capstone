@@ -33,7 +33,7 @@ export const SignUpCard = ({ }) => {
 
     const handleSignUp = () => {
         //Variables to change: 💭
-        const URL = process.env.NEXT_PUBLIC_ACCOUNT_API_URL + "/register";
+        const URL = "/api/proxy?url=" + process.env.NEXT_PUBLIC_ACCOUNT_API_URL + "/register";
 
         if (name.length < 1) return setError("Name is required");
         if (email.length < 1) return setError("Email is required");

@@ -10,15 +10,16 @@ services:
     environment:
       - LOG_LEVEL=DEBUG
       - PYTHONUNBUFFERED=1
-  # next-frontend: # This container is not for development, but for production
-  #   build: ./react-app
-  #   ports:
-  #     - "3000:3000"
+  next-frontend:
+    # This container is not for development, but for production
+    build: ./react-app
+    ports:
+      - "3000:3000"
   account-api:
     image: account-api
     build: ./account-api
-    volumes:
-      - ./account-api:/app
+    # volumes:
+    #   - ./account-api:/app
     ports:
       - "8001:8000"
   account-db:
@@ -33,8 +34,8 @@ services:
   project-api:
     image: project-api
     build: ./project-api
-    volumes:
-      - ./project-api:/app
+    # volumes:
+    #   - ./project-api:/app
     ports:
       - "8002:8000"
   project-db:

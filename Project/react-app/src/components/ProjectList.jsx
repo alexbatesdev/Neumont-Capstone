@@ -80,7 +80,7 @@ const ProjectList = ({ projects, setProjects, viewOnly = false }) => {
             "start_command": project.start_command,
         }
 
-        const response = await fetch(`${process.env.NEXT_PUBLIC_PROJECT_API_URL}/fork/${project.project_id}`, {
+        const response = await fetch(`/api/proxy?url=${process.env.NEXT_PUBLIC_PROJECT_API_URL}/fork/${project.project_id}`, {
             method: 'POST',
             body: JSON.stringify(body),
             headers: {
@@ -101,7 +101,7 @@ const ProjectList = ({ projects, setProjects, viewOnly = false }) => {
     }
 
     const handleDelete = async () => {
-        await fetch(`${process.env.NEXT_PUBLIC_PROJECT_API_URL}/by_id/${deleteTarget.project_id}`, {
+        await fetch(`/api/proxy?url=${process.env.NEXT_PUBLIC_PROJECT_API_URL}/by_id/${deleteTarget.project_id}`, {
             method: 'DELETE',
             headers: {
                 "Authorization": `Bearer ${session.data.token}`,

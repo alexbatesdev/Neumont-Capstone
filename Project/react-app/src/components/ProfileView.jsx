@@ -21,7 +21,7 @@ const ProfileView = ({ profile_in }) => {
     useEffect(() => {
         console.log(session)
         const getProfile = async () => {
-            let response = await fetch(`${process.env.NEXT_PUBLIC_ACCOUNT_API_URL}/me`, {
+            let response = await fetch(`/api/proxy?url=${process.env.NEXT_PUBLIC_ACCOUNT_API_URL}/me`, {
                 headers: {
                     "Authorization": `Bearer ${session.data.token}`,
                     "Content-Type": "application/json"
@@ -49,7 +49,7 @@ const ProfileView = ({ profile_in }) => {
     }, [session, profile_in])
 
     const handleSave = async () => {
-        let response = await fetch(`${process.env.NEXT_PUBLIC_ACCOUNT_API_URL}/update_account`, {
+        let response = await fetch(`/api/proxy?url=${process.env.NEXT_PUBLIC_ACCOUNT_API_URL}/update_account`, {
             method: 'PATCH',
             headers: {
                 "Authorization": `Bearer ${session.data.token}`,
@@ -75,7 +75,7 @@ const ProfileView = ({ profile_in }) => {
     }
 
     const handleDelete = async () => {
-        let response = await fetch(`${process.env.NEXT_PUBLIC_ACCOUNT_API_URL}/deactivate/${session.data.user.account_id}`, {
+        let response = await fetch(`/api/proxy?url=${process.env.NEXT_PUBLIC_ACCOUNT_API_URL}/deactivate/${session.data.user.account_id}`, {
             method: 'DELETE',
             headers: {
                 "Authorization": `Bearer ${session.data.token}`,
@@ -89,7 +89,7 @@ const ProfileView = ({ profile_in }) => {
     }
 
     const handleFollow = async () => {
-        let response = await fetch(`${process.env.NEXT_PUBLIC_ACCOUNT_API_URL}/follow/${profile.account_id}`, {
+        let response = await fetch(`/api/proxy?url=${process.env.NEXT_PUBLIC_ACCOUNT_API_URL}/follow/${profile.account_id}`, {
             method: 'POST',
             headers: {
                 "Authorization": `Bearer ${session.data.token}`,
@@ -109,7 +109,7 @@ const ProfileView = ({ profile_in }) => {
     }
 
     const handleUnfollow = async () => {
-        let response = await fetch(`${process.env.NEXT_PUBLIC_ACCOUNT_API_URL}/unfollow/${profile.account_id}`, {
+        let response = await fetch(`/api/proxy?url=${process.env.NEXT_PUBLIC_ACCOUNT_API_URL}/unfollow/${profile.account_id}`, {
             method: 'DELETE',
             headers: {
                 "Authorization": `Bearer ${session.data.token}`,
@@ -155,7 +155,7 @@ const ProfileView = ({ profile_in }) => {
                     <Typography variant="h4">{profile.name}</Typography>
                     <ShareIcon
                         onClick={() => {
-                            navigator.clipboard.writeText(`${process.env.NEXT_PUBLIC_FRONTEND_BASE_URL}/profile/${profile.account_id}`)
+                            navigator.clipboard.writeText(`/api/proxy?url=${process.env.NEXT_PUBLIC_FRONTEND_BASE_URL}/profile/${profile.account_id}`)
                             toast.success("Copied profile link to clipboard")
                         }}
                         sx={{

@@ -74,7 +74,7 @@ export default function Editor() {
             "start_command": projectData.start_command,
         }
 
-        let response = await fetch(`${process.env.NEXT_PUBLIC_PROJECT_API_URL}/fork/${projectData.project_id}`, {
+        let response = await fetch(`/api/proxy?url=${process.env.NEXT_PUBLIC_PROJECT_API_URL}/fork/${projectData.project_id}`, {
             method: 'POST',
             body: JSON.stringify(body),
             headers: {

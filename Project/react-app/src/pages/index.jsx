@@ -167,6 +167,9 @@ export default function Home() {
               flexDirection: 'row',
               justifyContent: 'space-evenly',
               alignItems: 'center',
+              outline: "solid 4px " + theme.palette.background.paper,
+              outlineOffset: "4px",
+              zIndex: 2,
             }}>
             <TechStackPanel />
           </div>
@@ -216,21 +219,21 @@ export default function Home() {
               />
               <IndexTemplateButton
                 text='Basic Web'
-                iconDivBackgroundImage={`url("${process.env.NEXT_PUBLIC_IMG_PROXY}https://logos-download.com/wp-content/uploads/2017/07/HTML5_badge.png")`}
+                iconDivBackgroundImage={`url("/api/img?url=https://logos-download.com/wp-content/uploads/2017/07/HTML5_badge.png")`}
                 onClick={() => {
                   window.location.href = "/editor/2"
                 }}
               />
               <IndexTemplateButton
                 text='React'
-                iconDivBackgroundImage={`url("${process.env.NEXT_PUBLIC_IMG_PROXY}https://upload.wikimedia.org/wikipedia/commons/a/a7/React-icon.svg")`}
+                iconDivBackgroundImage={`url("/api/img?url=https://upload.wikimedia.org/wikipedia/commons/a/a7/React-icon.svg")`}
                 onClick={() => {
                   window.location.href = "/editor/3"
                 }}
               />
               <IndexTemplateButton
                 text='Next.JS'
-                iconDivBackgroundImage={`url("${process.env.NEXT_PUBLIC_IMG_PROXY}https://seekicon.com/free-icon-download/next-js_1.svg")`}
+                iconDivBackgroundImage={`url("/api/img?url=https://seekicon.com/free-icon-download/next-js_1.svg")`}
                 onClick={() => {
                   window.location.href = "/editor/4"
                 }}
@@ -242,21 +245,21 @@ export default function Home() {
                 }} />
               <IndexTemplateButton
                 text='Vue'
-                iconDivBackgroundImage={`url("${process.env.NEXT_PUBLIC_IMG_PROXY}https://upload.wikimedia.org/wikipedia/commons/9/95/Vue.js_Logo_2.svg")`}
+                iconDivBackgroundImage={`url("/api/img?url=https://upload.wikimedia.org/wikipedia/commons/9/95/Vue.js_Logo_2.svg")`}
                 onClick={() => {
                   window.location.href = "/editor/5"
                 }}
               />
               <IndexTemplateButton
                 text='Angular'
-                iconDivBackgroundImage={`url("${process.env.NEXT_PUBLIC_IMG_PROXY}https://upload.wikimedia.org/wikipedia/commons/c/cf/Angular_full_color_logo.svg")`}
+                iconDivBackgroundImage={`url("/api/img?url=https://upload.wikimedia.org/wikipedia/commons/c/cf/Angular_full_color_logo.svg")`}
                 onClick={() => {
                   window.location.href = "/editor/6"
                 }}
               />
               <IndexTemplateButton
                 text='Svelte'
-                iconDivBackgroundImage={`url("${process.env.NEXT_PUBLIC_IMG_PROXY}https://upload.wikimedia.org/wikipedia/commons/1/1b/Svelte_Logo.svg")`}
+                iconDivBackgroundImage={`url("/api/img?url=https://upload.wikimedia.org/wikipedia/commons/1/1b/Svelte_Logo.svg")`}
                 onClick={() => {
                   window.location.href = "/editor/7"
                 }}

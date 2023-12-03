@@ -57,6 +57,7 @@ const MockEditorWindow = () => {
         <div style={{
             maxWidth: '50%',
             position: 'relative',
+            boxShadow: '0px 0px 10px 0px rgba(0,0,0,0.3)',
         }}>
             <div style={{
                 width: "550px",

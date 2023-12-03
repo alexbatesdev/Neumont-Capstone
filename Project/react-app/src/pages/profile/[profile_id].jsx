@@ -19,7 +19,7 @@ export default function Page() {
 
     useEffect(() => {
         const asyncFunc = async () => {
-            let response = await fetch(`${process.env.NEXT_PUBLIC_ACCOUNT_API_URL}/by_id/${profile_id}`, {
+            let response = await fetch(`/api/proxy?url=${process.env.NEXT_PUBLIC_ACCOUNT_API_URL}/by_id/${profile_id}`, {
                 method: 'GET',
                 headers: {
                     "Content-Type": "application/json"
@@ -32,7 +32,7 @@ export default function Page() {
             let data = await response.json()
             console.log(data)
             setProfileData(data)
-            let response2 = await fetch(`${process.env.NEXT_PUBLIC_PROJECT_API_URL}/public/by_owner/${profile_id}`, {
+            let response2 = await fetch(`/api/proxy?url=${process.env.NEXT_PUBLIC_PROJECT_API_URL}/public/by_owner/${profile_id}`, {
                 method: 'GET',
                 headers: {
                     "Content-Type": "application/json"

@@ -47,7 +47,7 @@ export default function Page() {
             //console.log(session.data)
             let is_private = router.query.private;
 
-            let endpointURL = `${process.env.NEXT_PUBLIC_PROJECT_API_URL}/${is_private ? "private/" : ""}by_id/${project_id}`
+            let endpointURL = `/api/proxy?url=${process.env.NEXT_PUBLIC_PROJECT_API_URL}/${is_private ? "private/" : ""}by_id/${project_id}`
             console.log(endpointURL)
             const response = await fetch(endpointURL, {
                 method: 'GET',

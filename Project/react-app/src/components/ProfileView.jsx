@@ -155,7 +155,7 @@ const ProfileView = ({ profile_in }) => {
                     <Typography variant="h4">{profile.name}</Typography>
                     <ShareIcon
                         onClick={() => {
-                            navigator.clipboard.writeText(`/api/proxy?url=${process.env.NEXT_PUBLIC_FRONTEND_BASE_URL}/profile/${profile.account_id}`)
+                            navigator.clipboard.writeText(`${process.env.NEXT_PUBLIC_FRONTEND_BASE_URL}/profile/${profile.account_id}`)
                             toast.success("Copied profile link to clipboard")
                         }}
                         sx={{

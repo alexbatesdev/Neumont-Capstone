@@ -21,7 +21,7 @@ const NewProjectForm = ({ setModalOpen, initialTemplateID }) => {
 
     useEffect(() => {
         const getTemplates = async () => {
-            const response = await fetch("/api/proxy?url=" + process.env.NEXT_PUBLIC_PROJECT_API_URL + `/by_owner/${session.data.user.account_id}/templates/`, {
+            const response = await fetch("/api/proxy?url=" + process.env.NEXT_PUBLIC_PROJECT_API_URL + `/by_owner/${session.data.user.account_id}/templates`, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",

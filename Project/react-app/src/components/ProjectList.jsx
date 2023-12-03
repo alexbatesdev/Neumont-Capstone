@@ -3,10 +3,8 @@ import React, { useEffect } from "react";
 import { Button, Typography, useTheme, Card, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Modal, Box } from '@mui/material'
 
 import moment, { utc } from "moment/moment";
-import Link from "next/link";
 import NewProjectForm from "./NewProjectForm";
 import { useSession } from "next-auth/react";
-import ShareIcon from '@mui/icons-material/Share';
 import { toast } from "react-toastify";
 
 import CreateProjectBar from '@/components/CreateProjectBar'
@@ -17,6 +15,7 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import AddIcon from '@mui/icons-material/Add';
+import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
 
 
 function formatDate(datetimeString) {
@@ -177,7 +176,13 @@ const ProjectList = ({ projects, setProjects, viewOnly = false }) => {
                             <AltRouteIcon />
                             <Typography variant="body1">{project.forks.length}</Typography>
                         </div>
-                        {project.is_template && <Typography variant="body1" color="secondary.main">Template</Typography>}
+                        {!project.is_template && <Typography variant="body1" sx={{
+                            color: "#5893ff",
+                            border: "1px solid #5893ff",
+                            borderRadius: "15px",
+                            padding: "1px 8px",
+                        }}>Template</Typography>}
+                        {project.project_owner != session.data.user.account_id && <PeopleAltIcon color="secondary" />}
                     </div>
                     <div style={{
                         display: "flex",

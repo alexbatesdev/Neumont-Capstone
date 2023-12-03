@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react'
-import { OneComponentTemplate } from '@/components/oneComponentPageTemplate'
 
 import Head from 'next/head'
 import Image from 'next/image'
@@ -10,8 +9,8 @@ import { signOut, useSession } from 'next-auth/react'
 import TopBar from '@/components/TopBar'
 import TopBarButton from '@/components/TopBarButton'
 
-import { SignUpCard } from '@/components/signUpCard'
-import { SignInCard } from '@/components/signInCard'
+import { SignUpCard } from '@/components/SignUpCard'
+import { SignInCard } from '@/components/SignInCard'
 
 //This page is saying it has random errors despite the fact that it doesn't. I don't know why.
 //I think it's an IDE issue because the text is being highlighted wrong too

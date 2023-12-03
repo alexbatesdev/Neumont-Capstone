@@ -12,8 +12,6 @@ import PeopleIcon from '@mui/icons-material/People';
 import BoltIcon from '@mui/icons-material/Bolt';
 // MongoDB Icon
 import SpaIcon from '@mui/icons-material/Spa';
-// Express Icon
-import StorageIcon from '@mui/icons-material/Storage';
 // External Resources Icon
 import LanguageIcon from '@mui/icons-material/Language';
 import { Scrollbar } from 'react-scrollbars-custom';
@@ -28,9 +26,7 @@ const TechStackPanel = () => {
     const fastapiIconRef3 = useRef(null);
     const mongoIconRef = useRef(null);
     const mongoIconRef2 = useRef(null);
-    const expressIconRef = useRef(null);
     const gptIconRef = useRef(null);
-    const internetIconRef = useRef(null);
 
 
     return (<>
@@ -244,16 +240,6 @@ const TechStackPanel = () => {
                     showHead={false}
                 />
             )}
-            {expressIconRef.current && reactIconRef.current && (
-                <Xarrow
-                    start={reactIconRef}
-                    end={expressIconRef}
-                    endAnchor={"top"}
-                    color={theme.palette.primary.main}
-                    strokeWidth={3}
-                    showHead={false}
-                />
-            )}
             <BoltIcon
                 ref={fastapiIconRef}
                 style={{
@@ -457,18 +443,6 @@ const TechStackPanel = () => {
                     <br />  - Account API
                     <br />  - Project API
                     <br />  - GPT interface API
-                </Typography>
-                <Typography variant='body2' style={{
-                    color: theme.palette.text.primary,
-                    paddingBottom: "5px"
-                }}>
-                    <span style={{
-                        color: theme.palette.secondary.main,
-                        fontWeight: "bold"
-                    }}>
-                        Express
-                    </span>
-                    <br />  - Image Proxy
                 </Typography>
                 <Typography variant='body2' style={{
                     color: theme.palette.text.primary,

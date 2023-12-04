@@ -176,7 +176,7 @@ const ProjectList = ({ projects, setProjects, viewOnly = false }) => {
                             <AltRouteIcon />
                             <Typography variant="body1">{project.forks.length}</Typography>
                         </div>
-                        {!project.is_template && <Typography variant="body1" sx={{
+                        {project.is_template && <Typography variant="body1" sx={{
                             color: "#5893ff",
                             border: "1px solid #5893ff",
                             borderRadius: "15px",

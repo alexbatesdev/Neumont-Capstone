@@ -53,7 +53,6 @@ class AccountOut(BaseModel):
     name: str
     email: EmailStr
     projects: Optional[List[UUID]] = Field([])
-    projects_shared_with_me: Optional[List[UUID]] = Field([])
     my_templates: Optional[List[UUID]] = Field([])
     isAdmin: Optional[bool] = Field(False)
     openai_api_key: Optional[str] = Field(None)

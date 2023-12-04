@@ -967,7 +967,8 @@ async def delete_project(
         async with httpx.AsyncClient() as client:
             await client.delete(
                 # I should be future proofing like this more, also another technical debt relief round will be getting old hardcoded URLs 💭
-                f"http://{config('ACCOUNT_API_HOST')}:{config('ACCOUNT_API_PORT')}/remove_project_reference/{str(project.project_id)}"
+                f"http://{config('ACCOUNT_API_HOST')}:{config('ACCOUNT_API_PORT')}/remove_project_reference/{str(project.project_id)}",
+                headers={"Authorization": f"Bearer {user.access_token}"},
             )
     except:
         raise HTTPException(
@@ -982,7 +983,8 @@ async def delete_project(
         async with httpx.AsyncClient() as client:
             await client.post(
                 # I should be future proofing like this more, also another technical debt relief round will be getting old hardcoded URLs 💭
-                f"http://{config('ACCOUNT_API_HOST')}:{config('ACCOUNT_API_PORT')}/add_project_reference/{str(project.project_id)}"
+                f"http://{config('ACCOUNT_API_HOST')}:{config('ACCOUNT_API_PORT')}/add_project_reference/{str(project.project_id)}",
+                headers={"Authorization": f"Bearer {user.access_token}"},
             )
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,

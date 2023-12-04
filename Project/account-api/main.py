@@ -472,12 +472,6 @@ async def add_collaborator(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Project not in project list",
         )
-    if project_id in collaborator_account.projects_shared_with_me:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Project already shared with this Account",
-        )
-    collaborator_account.projects_shared_with_me.append(project_id)
     await collaborator_account.save()
     return {"success": True}
 
@@ -504,54 +498,8 @@ async def remove_collaborator(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Project not in project list",
         )
-    if project_id not in collaborator_account.projects_shared_with_me:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Project not shared with this Account",
-        )
-    collaborator_account.projects_shared_with_me.remove(project_id)
     await collaborator_account.save()
     return {"success": True}
-
-
-@app.delete("/remove_project_shared_with_me/{project_id}")
-async def remove_project_shared_with_me(
-    current_user: Annotated[AccountDB, Depends(get_current_user_with_token)],
-    project_id: str,
-):
-    if project_id is None:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Project id required",
-        )
-    if project_id not in current_user.projects_shared_with_me:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Project not in project list",
-        )
-    current_user.projects_shared_with_me.remove(project_id)
-
-    try:
-        async with httpx.AsyncClient() as client:
-            await client.post(
-                f"http://{config('PROJECT_API_HOST')}:{config('PROJECT_API_PORT')}/by_id/{project_id}/remove_collaborator/{current_user.account_id}",
-                headers={"Authorization": f"Bearer {current_user.access_token}"},
-            )
-    except:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Unable to remove collaborator from project",
-        )
-
-    try:
-        await current_user.save()
-    except:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Unable to save changes, please contact support. You have been removed from the project, but it will still appear in your project list until resolved.",
-        )
-
-    return {"project_list": current_user.projects_shared_with_me}
 
 
 @app.post("/add_template/{project_id}")

@@ -39,6 +39,7 @@ const NewProjectForm = ({ setModalOpen, initialTemplateID }) => {
             for (let i = 0; i < data.length; i++) {
                 if (data[i].project_id == initialTemplateID) {
                     setSelectedTemplateIndex(i);
+                    setServerStartCommand(data[i].start_command);
                     break;
                 }
             }

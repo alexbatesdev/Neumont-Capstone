@@ -2,7 +2,7 @@ import React from 'react';
 import { theme } from "../thatOneStuffFolderUsuallyCalledUtils/themes";
 import { withThemeFromJSXProvider } from "@storybook/addon-themes";
 import { ThemeProvider } from "@mui/material";
-import { SignUpCard } from './SlignUpCard';
+import { SignUpCard } from './SignUpCard';
 import "../reset.css"
 
 export default {

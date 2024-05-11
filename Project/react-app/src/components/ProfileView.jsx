@@ -49,13 +49,17 @@ const ProfileView = ({ profile_in }) => {
     }, [session, profile_in])
 
     const handleSave = async () => {
-        let response = await fetch(`/api/proxy?url=${process.env.NEXT_PUBLIC_ACCOUNT_API_URL}/update_account`, {
+        fetch(`/api/proxy?url=${process.env.NEXT_PUBLIC_ACCOUNT_API_URL}/update_account`, {
             method: 'PATCH',
             headers: {
                 "Authorization": `Bearer ${session.data.token}`,
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify({ name: newName, email: newEmail })
+            body: JSON.stringify({
+                name: newName,
+                email: newEmail,
+                openai_api_key: newAPIKey
+            })
         }).then(res => {
             if (res.status !== 200) {
                 toast.error("Error updating profile")
@@ -238,7 +242,7 @@ const ProfileView = ({ profile_in }) => {
                     <TextField variant='outlined' value={newName} disabled={!editMode} onChange={(event) => setNewName(event.target.value)} label="Name" />
                     <TextField variant='outlined' value={newEmail} disabled={!editMode} onChange={(event) => setNewEmail(event.target.value)} label="Email" />
                 </div>
-                <TextField variant='outlined' fullWidth value={newAPIKey} disabled={!editMode} onChange={(event) => setNewAPIKey(event.target.value)} label="OpenAI api key (Needed to access GPT 4)" sx={{ mt: "1rem" }} />
+                <TextField variant='outlined' fullWidth value={newAPIKey} disabled={!editMode} onChange={(event) => setNewAPIKey(event.target.value)} label="OpenAI api key (Needed to access ChatGPT)" sx={{ mt: "1rem" }} />
                 <div style={{
                     display: 'flex',
                     flexDirection: 'row',

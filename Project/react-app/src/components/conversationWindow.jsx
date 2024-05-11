@@ -286,8 +286,10 @@ export const ConversationWindow = () => {
                 </Typography>
                 <ThemeProvider theme={() => modifyThemeColors(theme, "#45b288", "#8d7eff")} >
                     <Button
+                        disabled={session.data.user.openai_api_key == null}
                         variant="contained"
                         onClick={() => {
+                            console.log(session)
                             if (session.status == "authenticated" && session.data.user.openai_api_key != null) {
                                 setModelIsGPT4(!modelIsGPT4)
                             } else {

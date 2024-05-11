@@ -263,6 +263,7 @@ async def update_account(
 ):
     current_user.name = account_in.name
     current_user.email = account_in.email
+    current_user.openai_api_key = account_in.openai_api_key
     await current_user.save()
     return {"success": True}
 

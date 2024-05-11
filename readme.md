@@ -41,3 +41,9 @@ Startup will likely include filling out one or more .env files, then running a d
 To run the undockerized frontend run `npm start` in the react-frontend directory.
 
 For storybook use check the readme in the react-frontend directory.
+
+Me from later:
+
+I just ran `docker-compose up` after fiing a case sensitivity issue. It's running, but there's no data in the database which means no templates. 
+
+To run the frontend check the readme in the react-app directory.

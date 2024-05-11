@@ -2,9 +2,9 @@ FROM python:3.10-slim
 # In a non-development environment, you should not use the --reload flag
 # Also in a non-development environment, I should be copying the source code
 # into the image, and not mounting it as a volume (see docker-compose.yml)
-WORKDIR /app
-COPY . /app
+# WORKDIR /app
+# COPY . /app
 COPY requirements.txt /app/requirements.txt
 RUN pip install --no-cache-dir -r /app/requirements.txt
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"] 
-# "--reload"
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"] 
+#, "--reload"

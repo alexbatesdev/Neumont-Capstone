@@ -18,8 +18,8 @@ services:
   account-api:
     image: account-api
     build: ./account-api
-    # volumes:
-    #   - ./account-api:/app
+    volumes:
+      - ./account-api:/app
     ports:
       - "8001:8000"
   account-db:
